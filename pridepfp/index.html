@@ -10,21 +10,43 @@
 	<body>
 		<div class="container">
 			<div class="controls">
+
+				<!-- Image Input -->
 				<div class="tab-container">
 					<div class="tab">
 						<button class="tab-links" data-target="link">Link</button>
 						<button class="tab-links" data-target="upload">Upload</button>
 					</div>
 					<div id="link" class="tab-content">
-					  <h3>Link</h3>
-					  <p>Provide a direct link to your picture OR to your twitter page.</p>
+						<h3>Link</h3>
+						<p>Provide a direct link to your picture OR to your twitter page.</p>
 					</div>
 					<div id="upload" class="tab-content">
-					  <h3>Upload</h3>
-					  <label for="input-img">Upload an image:</label>
-					  <input type="file" id="input-img" name="input-img" accept="image/*">
+						<h3>Upload</h3>
+						<label for="input-img">Upload an image:</label>
+						<input type="file" id="input-img" name="input-img" accept="image/*">
 					</div>
 				</div>
+
+				<!-- Flags -->
+				<div>
+					<!-- First Flag -->
+					<label for="flag1">Flag:</label>
+					<select name="flag1" id="flag1"></select>
+
+					<!-- Second Flag -->
+					<input type="checkbox" id="include-flag2" name="second-flag">
+					<label for="include-flag2">Second Flag</label>
+					<select name="flag2" id="flag2" disabled></select>
+				</div>
+
+				<fieldset id="is-fill">
+					<input type="radio" name="is-fill" value="Fit" checked>
+					<label for="fit">Fit</label><br>
+					<input type="radio" name="is-fill" value="Fill">
+					<label for="fill">Fill</label><br>
+				</fieldset>
+
 			</div>
 			<canvas id="output" width="1024" height="1024"></canvas>
 		</div>
