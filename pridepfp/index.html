@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="lib/jquery.min.js" type="text/javascript"></script>
+		<script src="js/app.js" type="module"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="controls">
+				<div class="tab-container">
+					<div class="tab">
+						<button class="tab-links" data-target="link">Link</button>
+						<button class="tab-links" data-target="upload">Upload</button>
+					</div>
+					<div id="link" class="tab-content">
+					  <h3>Link</h3>
+					  <p>Provide a direct link to your picture OR to your twitter page.</p>
+					</div>
+					<div id="upload" class="tab-content">
+					  <h3>Upload</h3>
+					  <label for="input-img">Upload an image:</label>
+					  <input type="file" id="input-img" name="input-img" accept="image/*">
+					</div>
+				</div>
+			</div>
+			<canvas id="output" width="1024" height="1024"></canvas>
+		</div>
+	</body>
+</html>
