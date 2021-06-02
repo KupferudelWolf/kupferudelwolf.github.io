@@ -127,7 +127,7 @@
 
         data = {
             fill: false,
-            gradient: true,
+            gradient: false,
             image: null,
             ring: !true,
             splitFlag: false,
@@ -151,8 +151,15 @@
             // if ( !this.image ) return;
 
             /// Draw the flag.
+            this.ctx.save();
             this.drawFlag( this.flag1 );
-            if ( this.splitFlag ) this.drawFlag( this.flag2 );
+            if ( this.splitFlag ) {
+                this.ctx.beginPath();
+                this.ctx.rect( w/2, 0, w/2, h );
+                this.ctx.clip();
+                this.drawFlag( this.flag2 );
+            }
+            this.ctx.restore();
 
             /// Mask the flag.
             this.ctx.fillStyle = 'black';
@@ -195,7 +202,7 @@
         }
 
         drawFlag( prop ) {
-            this.ctx.save();
+            // this.ctx.save();
 
             let w = this.cvs.width,
                 h = this.cvs.height;
@@ -233,7 +240,14 @@
                 }
             }
 
-            this.ctx.restore();
+            // this.ctx.restore();
+
+            if ( prop.vertical ) {
+                this.ctx.translate( w/2, h/2 );
+                this.ctx.rotate( -Math.PI / 2 );
+                this.ctx.translate( -w/2, -h/2 );
+            }
+
             if ( this.data.gradient ) return;
 
             if ( prop.chevron ) {
