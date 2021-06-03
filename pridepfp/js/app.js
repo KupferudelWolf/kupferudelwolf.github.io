@@ -161,18 +161,20 @@
             this.ctx.clearRect( 0, 0, w, h );
 
             /// Draw the flag.
-            this.ctx.save();
+            // this.ctx.save();
             if ( this.mode === 'Overlay' ) {
                 this.ctx.globalAlpha = 1/3;
             }
-            this.drawFlag( this.flag1 );
             if ( this.splitFlag ) {
-                this.ctx.beginPath();
-                this.ctx.rect( w/2, 0, w/2, h );
-                this.ctx.clip();
-                this.drawFlag( this.flag2 );
+                this.drawFlag( this.flag1, 0, this.cvs.width/2 );
+                // this.ctx.beginPath();
+                // this.ctx.rect( w/2, 0, w/2, h );
+                // this.ctx.clip();
+                this.drawFlag( this.flag2, this.cvs.width/2, this.cvs.width/2 );
+            } else {
+                this.drawFlag( this.flag1, 0, this.cvs.width );
             }
-            this.ctx.restore();
+            // this.ctx.restore();
 
             /// Mask the flag.
             if ( this.mode !== 'Overlay' ) {
@@ -210,7 +212,7 @@
                 outW *= aspect;
                 outX = Math.ceil((this.cvs.width - outW) / 2);
             } else if ( inW > inH ) {
-                outH *= 1 / aspect;
+                outH /= aspect;
                 outY = Math.ceil((this.cvs.height - outH) / 2);
             }
             this.ctx.save();
@@ -225,10 +227,10 @@
             this.ctx.restore();
         }
 
-        drawFlag( prop ) {
-            let w = this.cvs.width,
-                h = this.cvs.height;
+        drawFlag( prop, x, w ) {
+            let h = this.cvs.height;
 
+            this.ctx.save();
             if ( prop.vertical ) {
                 this.ctx.translate( w/2, h/2 );
                 this.ctx.rotate( Math.PI / 2 );
@@ -250,22 +252,23 @@
                     this.ctx.fillStyle = grad;
                     this.ctx.fillRect( 0, 0, w, h );
                 } else {
-                    let x = 0,
+                    let xs = x,
                         y = 0,
                         hs = Math.ceil(h / prop.bars.length);
                     prop.bars.forEach( ( col ) => {
                         this.ctx.fillStyle = col;
-                        this.ctx.fillRect( x, y, w, hs );
+                        this.ctx.fillRect( xs, y, w, hs );
                         y += hs;
                     });
                 }
             }
 
-            if ( prop.vertical ) {
-                this.ctx.translate( w/2, h/2 );
-                this.ctx.rotate( -Math.PI / 2 );
-                this.ctx.translate( -w/2, -h/2 );
-            }
+            // if ( prop.vertical ) {
+            //     this.ctx.translate( w/2, h/2 );
+            //     this.ctx.rotate( -Math.PI / 2 );
+            //     this.ctx.translate( -w/2, -h/2 );
+            // }
+            this.ctx.restore();
 
             // if ( this.gradient ) return;
 
