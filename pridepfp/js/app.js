@@ -89,7 +89,7 @@
                 },
                 'Intersex': {
                     'bars': [ '#FFD800' ],
-                    'circle': [ '#7902A9' ]
+                    'circle': [ '#7902A9', 80 ]
                 },
                 'Nonbinary': {
                     'bars': [ '#fdf435', '#FFFFFF', '#9C5CD4', '#000000' ]
@@ -308,10 +308,17 @@
                 }
             }
             if ( prop.circle ) {
-                this.ctxDummy.fillStyle = prop.circle[0];
+                this.ctxDummy.lineWidth = prop.circle[1];
                 this.ctxDummy.beginPath();
-                this.ctxDummy.arc( w/2, h/2, w/2 - this.width/2, 0, 2 * Math.PI );
-                this.ctxDummy.fill();
+                if ( this.mode === 'Overlay' ) {
+                    this.ctxDummy.strokeStyle = prop.circle[0];
+                    this.ctxDummy.arc( w/2, h/2, w/3 - prop.circle[1], 0, 2 * Math.PI );
+                    this.ctxDummy.stroke();
+                } else {
+                    this.ctxDummy.fillStyle = prop.circle[0];
+                    this.ctxDummy.arc( w/2, h/2, w/2 - this.width/2, 0, 2 * Math.PI );
+                    this.ctxDummy.fill();
+                }
             }
         }
     }
