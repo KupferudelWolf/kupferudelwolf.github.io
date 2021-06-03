@@ -157,8 +157,6 @@
             this.ctx.globalCompositeOperation = 'source-over';
             this.ctx.clearRect( 0, 0, w, h );
 
-            // if ( !this.image ) return;
-
             /// Draw the flag.
             this.ctx.save();
             this.drawFlag( this.flag1 );
@@ -220,8 +218,6 @@
         }
 
         drawFlag( prop ) {
-            // this.ctx.save();
-
             let w = this.cvs.width,
                 h = this.cvs.height;
 
@@ -257,15 +253,13 @@
                 }
             }
 
-            // this.ctx.restore();
-
             if ( prop.vertical ) {
                 this.ctx.translate( w/2, h/2 );
                 this.ctx.rotate( -Math.PI / 2 );
                 this.ctx.translate( -w/2, -h/2 );
             }
 
-            if ( this.gradient ) return;
+            // if ( this.gradient ) return;
 
             if ( prop.chevron ) {
                 let x = 0,
