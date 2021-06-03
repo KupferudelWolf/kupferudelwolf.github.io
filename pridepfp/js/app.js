@@ -150,7 +150,7 @@
             splitFlag: false,
             flag1: FLAGDATA['Pride'],
             flag2: FLAGDATA['Pride'],
-            width: 64
+            width: 80
         }
 
         update() {
@@ -458,8 +458,8 @@
             $('#gradient').prop('checked', false);
             APP.data.ring = true;
             $('#ring').prop('checked', true);
-            APP.data.width = 64;
-            $('#width').val(64);
+            APP.data.width = 80;
+            $('#width').val(80);
             APP.data.imageX = 0;
             APP.data.imageY = 0;
             APP.data.imageZ = 1;
