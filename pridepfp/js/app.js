@@ -137,7 +137,7 @@
                 '#004DFF',
                 '#750787'
             ],
-            imageFill: false,
+            imageFill: true,
             gradient: false,
             image: null,
             imageX: 0,
@@ -393,12 +393,13 @@
         });
 
         $('input[name="is-fill"]').on( 'change', function () {
-            APP.data.imageFill = $(this).val() === 'Fill';
-            APP.data.imageX = 0;
-            APP.data.imageY = 0;
-            APP.data.imageZ = 1;
-            $('#offset-x, #offset-y, #offset-z').val(0);
-            APP.update();
+            APP.imageFill = $(this).val() === 'Fill';
+            // APP.data.imageFill = $(this).val() === 'Fill';
+            // APP.data.imageX = 0;
+            // APP.data.imageY = 0;
+            // APP.data.imageZ = 1;
+            // $('#offset-x, #offset-y, #offset-z').val(0);
+            // APP.update();
         });
 
         $('#flag1, #flag2').on( 'change', function () {
@@ -447,9 +448,9 @@
             APP.data.flag1 = FLAGDATA['Pride'];
             APP.data.flag2 = FLAGDATA['Pride'];
             $('#flag1, #flag2').val('Pride');
-            APP.data.imageFill = false;
-            $('#is-fill-fit').prop('checked', true);
-            $('#is-fill-fill').prop('checked', false);
+            APP.data.imageFill = true;
+            $('#is-fill-fit').prop('checked', false);
+            $('#is-fill-fill').prop('checked', true);
             APP.data.gradient = false;
             $('#gradient').prop('checked', false);
             APP.data.ring = true;
