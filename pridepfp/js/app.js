@@ -126,20 +126,18 @@
         }
 
         data = {
-            fill: false,
+            imageFill: false,
             gradient: false,
             image: null,
-            ring: !true,
+            imageX: 0,
+            imageY: 0,
+            imageZ: 1,
+            ring: true,
             splitFlag: false,
             flag1: FLAGDATA['Pride'],
             flag2: FLAGDATA['Pride'],
             width: 50
         }
-
-        // get image()  { return this.data.image; }
-        // set image(x) { this.data.image = x; this.update(); }
-        // get splitFlag()  { return this.data.splitFlag; }
-        // set splitFlag(x) { this.data.splitFlag = x; this.update(); }
 
         update() {
             let w = this.cvs.width,
@@ -163,7 +161,7 @@
 
             /// Mask the flag.
             this.ctx.fillStyle = 'black';
-            if ( this.data.ring ) {
+            if ( this.ring ) {
                 this.ctx.globalCompositeOperation = 'destination-in';
                 this.ctx.beginPath();
                 this.ctx.arc( w/2, h/2, w/2, 0, 2 * Math.PI );
@@ -171,7 +169,7 @@
             }
             this.ctx.globalCompositeOperation = 'destination-out';
             this.ctx.beginPath();
-            this.ctx.arc( w/2, h/2, w/2 - this.data.width, 0, 2 * Math.PI );
+            this.ctx.arc( w/2, h/2, w/2 - this.width, 0, 2 * Math.PI );
             this.ctx.fill();
 
             if ( !this.image ) return;
@@ -186,7 +184,7 @@
                 outY = 0,
                 outW = w,
                 outH = h;
-            if ( this.data.fill ) {
+            if ( this.imageFill ) {
                 let temp = inW;
                 inW = inH;
                 inH = temp;
@@ -198,7 +196,16 @@
                 outH *= 1 / aspect;
                 outY = Math.ceil((this.cvs.height - outH) / 2);
             }
-            this.ctx.drawImage( img, outX, outY, outW, outH );
+            this.ctx.save();
+            this.ctx.translate( w/2, h/2 );
+            this.ctx.scale( this.imageZ, this.imageZ );
+            this.ctx.translate( -w/2, -h/2 );
+            this.ctx.drawImage(
+                img,
+                outX + this.imageX, outY + this.imageY,
+                outW, outH
+            );
+            this.ctx.restore();
         }
 
         drawFlag( prop ) {
@@ -219,7 +226,7 @@
             }
 
             if ( prop.bars ) {
-                if ( this.data.gradient ) {
+                if ( this.gradient ) {
                     let grad = this.ctx.createLinearGradient( 0, 0, 0, h );
                     grad.addColorStop( 0, prop.bars[0] );
                     for ( let i = 0, l = prop.bars.length; i < l; ++i ) {
@@ -248,7 +255,7 @@
                 this.ctx.translate( -w/2, -h/2 );
             }
 
-            if ( this.data.gradient ) return;
+            if ( this.gradient ) return;
 
             if ( prop.chevron ) {
                 let x = 0,
@@ -271,7 +278,7 @@
             if ( prop.circle ) {
                 this.ctx.fillStyle = prop.circle[0];
                 this.ctx.beginPath();
-                this.ctx.arc( w/2, h/2, w/2 - this.data.width/2, 0, 2 * Math.PI );
+                this.ctx.arc( w/2, h/2, w/2 - this.width/2, 0, 2 * Math.PI );
                 this.ctx.fill();
             }
         }
@@ -315,7 +322,7 @@
         });
 
         $('#input-img').on( 'change', function () {
-            if( ! this.files ) return;
+            if ( !this.files ) return;
             let imageFile = this.files[0],
                 reader = new FileReader();
             reader.readAsDataURL(imageFile);
@@ -328,15 +335,59 @@
             }
         });
 
+        $('#input-url').on( 'change input', function () {
+            let img = new Image(),
+                val = $(this).val();
+            img.onerror = function () {
+                let url = new URL(val),
+                    host = url.hostname.split('.').slice(-2, -1)[0],
+                    user = url.pathname.split('/').pop();
+                img.src = `https://unavatar.vercel.app/${host}/${user}`;
+                img.onerror = function () {
+                    console.error(`Failed to find an image at ${val}.`);
+                    img.src = 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png';
+                }
+            }
+            img.onload = function () {
+                APP.image = img;
+            }
+            img.src = val;
+        });
+
         $('#include-flag2').on( 'change', function () {
             $('#flag2').prop( 'disabled', !$(this).attr('checked') );
-            APP.splitFlag = $(this).attr('checked') === 'checked';
+            APP.splitFlag = $(this).is(':checked');
+        });
+
+        $('input[name="is-fill"]').on( 'change', function () {
+            APP.data.imageFill = $(this).val() === 'Fill';
+            APP.data.imageX = 0;
+            APP.data.imageY = 0;
+            $('#offset-x, #offset-y').val(0);
+            APP.update();
         });
 
         $('#flag1, #flag2').on( 'change', function () {
-            let id = $(this).attr('id');
-            APP[id] = FLAGDATA[$(this).val()];
-            console.log(APP[id]);
+            let id = $(this).attr('id'),
+                val = $(this).val();
+            APP[id] = FLAGDATA[ val ];
         });
+
+        $('#gradient, #ring').on( 'change', function () {
+            let id = $(this).attr('id');
+            APP[id] = $(this).is(':checked');
+        });
+
+        $('#width').on( 'change input', function () {
+            APP.width = $(this).val();
+        });
+
+        $('#offset-x, #offset-y, #offset-z').on( 'change input', function () {
+            let id = 'image' + $(this).attr('id').slice(-1).toUpperCase();
+            APP[id] = $(this).val() * 1;
+        });
+
+        $('#input-url').trigger('change');
+        // APP.update();
     });
 })();

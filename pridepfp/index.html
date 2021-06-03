@@ -9,6 +9,7 @@
 	</head>
 	<body>
 		<div class="container">
+
 			<div class="controls">
 
 				<!-- Image Input -->
@@ -20,6 +21,8 @@
 					<div id="link" class="tab-content">
 						<h3>Link</h3>
 						<p>Provide a direct link to your picture OR to your twitter page.</p>
+						<label for="url">URL:</label>
+						<input type="url" name="url" id="input-url" value="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png">
 					</div>
 					<div id="upload" class="tab-content">
 						<h3>Upload</h3>
@@ -35,20 +38,48 @@
 					<select name="flag1" id="flag1"></select>
 
 					<!-- Second Flag -->
-					<input type="checkbox" id="include-flag2" name="second-flag">
+					<input type="checkbox" id="include-flag2" name="include-flag2">
 					<label for="include-flag2">Second Flag</label>
 					<select name="flag2" id="flag2" disabled></select>
 				</div>
 
-				<fieldset id="is-fill">
+				<div>
+					<p>Image Fill:</p>
 					<input type="radio" name="is-fill" value="Fit" checked>
 					<label for="fit">Fit</label><br>
 					<input type="radio" name="is-fill" value="Fill">
 					<label for="fill">Fill</label><br>
-				</fieldset>
+				</div>
+
+				<p>
+					<input type="checkbox" id="gradient" name="gradient">
+					<label for="gradient">Gradient</label>
+				</p>
+				<p>
+					<input type="checkbox" id="ring" name="ring" checked>
+					<label for="ring">Ring</label>
+				</p>
+				<p>
+					<label for="width">Width</label>
+					<input type="range" min="25" max="200" value="50" class="slider" id="width" name="width">
+				</p>
+				<p>
+					<label for="offset-x">Horizontal Offset</label>
+					<input type="range" min="-512" max="512" value="0" class="slider" id="offset-x" name="offset-x">
+				</p>
+				<p>
+					<label for="offset-y">Vertical Offset</label>
+					<input type="range" min="-512" max="512" value="0" class="slider" id="offset-y" name="offset-y">
+				</p>
+				<p>
+					<label for="offset-z">Scale</label>
+					<input type="range" min="1" max="3" step="0.01" value="1" class="slider" id="offset-z" name="offset-z">
+				</p>
 
 			</div>
+
 			<canvas id="output" width="1024" height="1024"></canvas>
+
 		</div>
 	</body>
 </html>
