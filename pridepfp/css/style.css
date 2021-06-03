@@ -35,6 +35,7 @@ div {
 
 .controls {
     min-width: 512px;
+    max-width: 1024px;
     flex-grow: 1;
     margin: 24px;
     margin-right: 0;
@@ -49,6 +50,8 @@ canvas#output {
     width: 512px;
     height: 512px;
     cursor: move;
+    margin: 24px;
+    margin-left: 0;
 }
 
 select,
@@ -62,7 +65,7 @@ input[type="range"] {
 }
 
 input[type="url"] {
-    width: 100%;
+    width: 95%;
 }
 
 p input {
