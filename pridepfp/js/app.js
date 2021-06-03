@@ -146,7 +146,7 @@
             imageX: 0,
             imageY: 0,
             imageZ: 1,
-            ring: true,
+            mode: 'Ring',
             splitFlag: false,
             flag1: FLAGDATA['Pride'],
             flag2: FLAGDATA['Pride'],
@@ -162,6 +162,9 @@
 
             /// Draw the flag.
             this.ctx.save();
+            if ( this.mode === 'Overlay' ) {
+                this.ctx.globalAlpha = 1/3;
+            }
             this.drawFlag( this.flag1 );
             if ( this.splitFlag ) {
                 this.ctx.beginPath();
@@ -172,17 +175,19 @@
             this.ctx.restore();
 
             /// Mask the flag.
-            this.ctx.fillStyle = 'black';
-            if ( this.ring ) {
-                this.ctx.globalCompositeOperation = 'destination-in';
+            if ( this.mode !== 'Overlay' ) {
+                this.ctx.fillStyle = 'black';
+                if ( this.mode === 'Ring' ) {
+                    this.ctx.globalCompositeOperation = 'destination-in';
+                    this.ctx.beginPath();
+                    this.ctx.arc( w/2, h/2, w/2, 0, 2 * Math.PI );
+                    this.ctx.fill();
+                }
+                this.ctx.globalCompositeOperation = 'destination-out';
                 this.ctx.beginPath();
-                this.ctx.arc( w/2, h/2, w/2, 0, 2 * Math.PI );
+                this.ctx.arc( w/2, h/2, w/2 - this.width, 0, 2 * Math.PI );
                 this.ctx.fill();
             }
-            this.ctx.globalCompositeOperation = 'destination-out';
-            this.ctx.beginPath();
-            this.ctx.arc( w/2, h/2, w/2 - this.width, 0, 2 * Math.PI );
-            this.ctx.fill();
 
             if ( !this.image ) return;
 
@@ -416,9 +421,12 @@
             }
         });
 
-        $('#gradient, #ring').on( 'change', function () {
-            let id = $(this).attr('id');
-            APP[id] = $(this).is(':checked');
+        $('#gradient').on( 'change', function () {
+            APP.gradient = $(this).is(':checked');
+        });
+
+        $('input[name="mode"]').on( 'change', function () {
+            APP.mode = $(this).val();
         });
 
         $('#width').on( 'change input', function () {
@@ -452,12 +460,14 @@
             APP.data.flag2 = FLAGDATA['Pride'];
             $('#flag1, #flag2').val('Pride');
             APP.data.imageFill = true;
-            $('#is-fill-fit').prop('checked', false);
             $('#is-fill-fill').prop('checked', true);
+            $('#is-fill-fit').prop('checked', false);
             APP.data.gradient = false;
             $('#gradient').prop('checked', false);
-            APP.data.ring = true;
-            $('#ring').prop('checked', true);
+            APP.data.mode = 'Ring';
+            $('#mode-ring').prop('checked', true);
+            $('#mode-hole').prop('checked', false);
+            $('#mode-overlay').prop('checked', false);
             APP.data.width = 80;
             $('#width').val(80);
             APP.data.imageX = 0;
