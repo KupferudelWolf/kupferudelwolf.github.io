@@ -126,6 +126,14 @@
         }
 
         data = {
+            custom: [
+                '#E40303',
+                '#FF8C00',
+                '#FFED00',
+                '#008026',
+                '#004DFF',
+                '#750787'
+            ],
             imageFill: false,
             gradient: false,
             image: null,
@@ -221,8 +229,7 @@
             }
 
             if ( prop.custom ) {
-                //
-                prop.bars = [];
+                prop.bars = this.data.custom;
             }
 
             if ( prop.bars ) {
@@ -401,6 +408,11 @@
             let id = $(this).attr('id'),
                 val = $(this).val();
             APP[id] = FLAGDATA[ val ];
+            if ( val === 'Custom' ) {
+                $('#color-pickers').show();
+            } else {
+                $('#color-pickers').hide();
+            }
         });
 
         $('#gradient, #ring').on( 'change', function () {
@@ -417,7 +429,23 @@
             APP[id] = $(this).val() * 1;
         });
 
+        $('#color-pickers input[type="color"]').on( 'change input', function () {
+            let ind = $(this).attr('id').split('-').pop() * 1;
+            APP.data.custom[ind] = $(this).val();
+            APP.update();
+        });
+
+        $('#num-bars').on( 'change input', function () {
+            $('#color-pickers input[type="color"]').hide();
+            APP.data.custom = [];
+            for ( let i = 0, l = $(this).val(); i < l; ++i ) {
+                APP.data.custom[i] = $(`#color-${i}`).show().val();
+            }
+            APP.update();
+        });
+
         $('#input-url').trigger('change');
-        // APP.update();
+        $('#num-bars').trigger('change');
+        $('#color-pickers').hide();
     });
 })();
