@@ -78,6 +78,9 @@
                 'Genderfluid': {
                     'bars': [ '#FE75A1', '#FFFFFF', '#BE17D6', '#000000', '#333EBC' ]
                 },
+                'Genderflux': {
+                    'bars': [ '#F47694', '#F2A2B9', '#CECECE', '#7CE0F7', '#3ECDF9', '#FFF48D' ]
+                },
                 'Genderqueer': {
                     'bars': [ '#B57EDC', '#FFFFFF', '#4A8123' ]
                 },
