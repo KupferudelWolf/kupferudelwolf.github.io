@@ -13,6 +13,9 @@
                 }
             },
             'Sexuality': {
+                'Aroace': {
+                    'bars': [ '#E28C00', '#ECCD00', '#FFFFFF', '#62AEDC', '#203856' ]
+                },
                 'Aromantic': {
                     'bars': [ '#3DA542', '#A7D479', '#FFFFFF', '#A3A3A3', '#000000' ]
                 },
