@@ -144,7 +144,7 @@
             splitFlag: false,
             flag1: FLAGDATA['Pride'],
             flag2: FLAGDATA['Pride'],
-            width: 50
+            width: 64
         }
 
         update() {
@@ -441,6 +441,30 @@
             for ( let i = 0, l = $(this).val(); i < l; ++i ) {
                 APP.data.custom[i] = $(`#color-${i}`).show().val();
             }
+            APP.update();
+        });
+
+        $('#reset').on( 'click', function () {
+            APP.data.splitFlag = false;
+            $('#include-flag2').prop('checked', false);
+            APP.data.flag1 = FLAGDATA['Pride'];
+            APP.data.flag2 = FLAGDATA['Pride'];
+            $('#flag1, #flag2').val('Pride');
+            APP.data.imageFill = false;
+            $('#is-fill-fit').prop('checked', true);
+            $('#is-fill-fill').prop('checked', false);
+            APP.data.gradient = false;
+            $('#gradient').prop('checked', false);
+            APP.data.ring = true;
+            $('#ring').prop('checked', true);
+            APP.data.width = 64;
+            $('#width').val(64);
+            APP.data.imageX = 0;
+            APP.data.imageY = 0;
+            APP.data.imageZ = 1;
+            $('#offset-x, #offset-y').val(0);
+            $('#offset-z').val(1);
+
             APP.update();
         });
 

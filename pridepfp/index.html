@@ -58,9 +58,9 @@
 							Image Fitting
 						</div>
 						<div class="flex-right">
-							<input type="radio" name="is-fill" value="Fit" checked>
+							<input type="radio" name="is-fill" id="is-fill-fit" value="Fit" checked>
 							<label for="fit">Fit</label><br>
-							<input type="radio" name="is-fill" value="Fill">
+							<input type="radio" name="is-fill" id="is-fill-fill" value="Fill">
 							<label for="fill">Fill</label><br>
 						</div>
 					</div>
@@ -70,7 +70,7 @@
 							<p><label for="width">Width</label></p>
 						</div>
 						<div class="flex-right">
-							<p><input type="range" min="25" max="200" value="50" class="slider" id="width" name="width"></p>
+							<p><input type="range" min="25" max="200" value="64" class="slider" id="width" name="width"></p>
 						</div>
 					</div>
 					<div class="flex nobreak">
@@ -109,6 +109,13 @@
 								<input type="checkbox" id="ring" name="ring" checked>
 								<label for="ring">Ring</label>
 							</p>
+						</div>
+					</div>
+
+					<div class="flex">
+						<div class="flex-left"></div>
+						<div class="flex-right">
+							<p><input type="button" id="reset" name="reset" value="Reset"></p>
 						</div>
 					</div>
 
