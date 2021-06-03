@@ -153,6 +153,7 @@
             imageY: 0,
             imageZ: 1,
             mode: 'Ring',
+            opacity: 0.33,
             splitFlag: false,
             flag1: FLAGDATA['Pride'],
             flag2: FLAGDATA['Pride'],
@@ -169,7 +170,7 @@
             /// Draw the flag.
             // this.ctx.save();
             if ( this.mode === 'Overlay' ) {
-                this.ctx.globalAlpha = 1/3;
+                this.ctx.globalAlpha = this.opacity;
             }
             if ( this.splitFlag ) {
                 this.drawFlag( this.flag1 );
@@ -280,14 +281,7 @@
                 }
             }
 
-            // if ( prop.vertical ) {
-            //     this.ctxDummy.translate( w/2, h/2 );
-            //     this.ctxDummy.rotate( -Math.PI / 2 );
-            //     this.ctxDummy.translate( -w/2, -h/2 );
-            // }
             this.ctxDummy.restore();
-
-            // if ( this.gradient ) return;
 
             if ( prop.chevron ) {
                 let x = 0,
@@ -429,12 +423,6 @@
 
         $('input[name="is-fill"]').on( 'change', function () {
             APP.imageFill = $(this).val() === 'Fill';
-            // APP.data.imageFill = $(this).val() === 'Fill';
-            // APP.data.imageX = 0;
-            // APP.data.imageY = 0;
-            // APP.data.imageZ = 1;
-            // $('#offset-x, #offset-y, #offset-z').val(0);
-            // APP.update();
         });
 
         $('#flag1, #flag2').on( 'change', function () {
@@ -454,10 +442,21 @@
 
         $('input[name="mode"]').on( 'change', function () {
             APP.mode = $(this).val();
+            if ( APP.mode === 'Overlay' ) {
+                $('#width, label[for="width"]').hide();
+                $('#opacity, label[for="opacity"]').show();
+            } else {
+                $('#width, label[for="width"]').show();
+                $('#opacity, label[for="opacity"]').hide();
+            }
         });
 
         $('#width').on( 'change input', function () {
             APP.width = $(this).val();
+        });
+
+        $('#opacity').on( 'change input', function () {
+            APP.opacity = $(this).val();
         });
 
         $('#offset-x, #offset-y, #offset-z').on( 'change input', function () {
@@ -497,6 +496,8 @@
             $('#mode-overlay').prop('checked', false);
             APP.data.width = 80;
             $('#width').val(80);
+            APP.data.opacity = 0.33;
+            $('#opacity').val(0.33);
             APP.data.imageX = 0;
             APP.data.imageY = 0;
             APP.data.imageZ = 1;
@@ -507,6 +508,8 @@
         });
 
         $('#input-url').trigger('change');
+        $('#width, label[for="width"]').show();
+        $('#opacity, label[for="opacity"]').hide();
         $('#num-bars').trigger('change');
         $('#color-pickers').hide();
     });
