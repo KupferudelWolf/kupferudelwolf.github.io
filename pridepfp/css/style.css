@@ -1,51 +1,124 @@
 body {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    font-family: 'Raleway';
+    font-size: medium;
+}
+body * {
+    font-family: 'Raleway';
+    font-size: medium;
 }
 
-.container {
-  display: flex;
+div {
+    margin-bottom: 24px;
+}
+
+.nobreak {
+    margin-bottom: 0 !important;
+}
+
+.flex {
+    display: flex;
+    gap: 24px;
+}
+.flex-left {
+    width: 25%;
+    text-align: right;
+    margin: 0;
+}
+.flex-right {
+    flex-grow: 1;
+    text-align: left;
+    margin: 0;
 }
 
 .controls {
-  flex-grow: 1;
+    flex-grow: 1;
+    margin: 24px;
+    margin-right: 0;
+}
+
+.controls .options {
+    border: 1px solid #ccc;
+    padding: 14px 16px;
 }
 
 canvas#output {
-  width: 512px;
-  cursor: move;
+    width: 512px;
+    height: 512px;
+    cursor: move;
+}
+
+select,
+input[type="checkbox"] {
+    margin: 0 0.1em;
+}
+
+input[type="range"] {
+    width: 100%;
+}
+
+input[type="url"] {
+    width: 100%;
+}
+
+p input {
+    margin: 0;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 12px;
 }
 
 
 
+.tab-container {
+    white-space: normal;
+    height: 192px;
+}
+.tab-container > div {
+    white-space: normal;
+    margin: 0;
+}
+
 .tab {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
 }
 
 .tab button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
 }
 .tab button:hover {
-  background-color: #ddd;
+    background-color: #ddd;
 }
 .tab button.active {
-  background-color: #ccc;
+    background-color: #ccc;
 }
 
 .tab-content {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
+    display: none;
+    padding: 24px 16px;
+    border: 1px solid #ccc;
+    border-top: none;
 }
 .tab-content.active {
-  display: block;
+    display: block;
+}
+.tab-content > *:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+.tab-content > *:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
 }

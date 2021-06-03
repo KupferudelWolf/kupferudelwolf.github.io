@@ -392,7 +392,8 @@
             APP.data.imageFill = $(this).val() === 'Fill';
             APP.data.imageX = 0;
             APP.data.imageY = 0;
-            $('#offset-x, #offset-y').val(0);
+            APP.data.imageZ = 1;
+            $('#offset-x, #offset-y, #offset-z').val(0);
             APP.update();
         });
 
