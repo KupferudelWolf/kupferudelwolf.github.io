@@ -122,6 +122,12 @@
             this.cvs = cvs;
             this.ctx = this.cvs.getContext('2d');
 
+            this.cvsDummy = $('<canvas>')
+                .attr( 'width', this.cvs.width )
+                .attr( 'height', this.cvs.height )
+                .get(0);
+            this.ctxDummy = this.cvsDummy.getContext('2d');
+
             for ( let key of Object.keys(this.data) ) {
                 this.__defineGetter__( key, () => this.data[key]);
                 this.__defineSetter__( key, (val) => {
@@ -166,13 +172,22 @@
                 this.ctx.globalAlpha = 1/3;
             }
             if ( this.splitFlag ) {
-                this.drawFlag( this.flag1, 0, this.cvs.width/2 );
+                this.drawFlag( this.flag1 );
+                this.ctx.drawImage( this.cvsDummy,
+                    0, 0, this.cvs.width/2, this.cvs.height,
+                    0, 0, this.cvs.width/2, this.cvs.height
+                );
                 // this.ctx.beginPath();
                 // this.ctx.rect( w/2, 0, w/2, h );
                 // this.ctx.clip();
-                this.drawFlag( this.flag2, this.cvs.width/2, this.cvs.width/2 );
+                this.drawFlag( this.flag2 );
+                this.ctx.drawImage( this.cvsDummy,
+                    this.cvs.width/2, 0, this.cvs.width/2, this.cvs.height,
+                    this.cvs.width/2, 0, this.cvs.width/2, this.cvs.height
+                );
             } else {
-                this.drawFlag( this.flag1, 0, this.cvs.width );
+                this.drawFlag( this.flag1 );
+                this.ctx.drawImage( this.cvsDummy, 0, 0 );
             }
             this.ctx.globalAlpha = 1;
             // this.ctx.restore();
@@ -228,14 +243,15 @@
             this.ctx.restore();
         }
 
-        drawFlag( prop, x, w ) {
-            let h = this.cvs.height;
+        drawFlag( prop ) {
+            let w = this.cvs.width,
+                h = this.cvs.height;
 
-            this.ctx.save();
+            this.ctxDummy.save();
             if ( prop.vertical ) {
-                this.ctx.translate( w/2, h/2 );
-                this.ctx.rotate( Math.PI / 2 );
-                this.ctx.translate( -w/2, -h/2 );
+                this.ctxDummy.translate( w/2, h/2 );
+                this.ctxDummy.rotate( Math.PI / 2 );
+                this.ctxDummy.translate( -w/2, -h/2 );
             }
 
             if ( prop.custom ) {
@@ -244,32 +260,32 @@
 
             if ( prop.bars ) {
                 if ( this.gradient ) {
-                    let grad = this.ctx.createLinearGradient( 0, 0, 0, h );
+                    let grad = this.ctxDummy.createLinearGradient( 0, 0, 0, h );
                     grad.addColorStop( 0, prop.bars[0] );
                     for ( let i = 0, l = prop.bars.length; i < l; ++i ) {
                         grad.addColorStop( (i + 0.5) / l, prop.bars[i] );
                     }
                     grad.addColorStop( 1, prop.bars[ prop.bars.length - 1 ] );
-                    this.ctx.fillStyle = grad;
-                    this.ctx.fillRect( 0, 0, w, h );
+                    this.ctxDummy.fillStyle = grad;
+                    this.ctxDummy.fillRect( 0, 0, w, h );
                 } else {
-                    let xs = x,
+                    let x = 0,
                         y = 0,
                         hs = Math.ceil(h / prop.bars.length);
                     prop.bars.forEach( ( col ) => {
-                        this.ctx.fillStyle = col;
-                        this.ctx.fillRect( xs, y, w, hs );
+                        this.ctxDummy.fillStyle = col;
+                        this.ctxDummy.fillRect( x, y, w, hs );
                         y += hs;
                     });
                 }
             }
 
             // if ( prop.vertical ) {
-            //     this.ctx.translate( w/2, h/2 );
-            //     this.ctx.rotate( -Math.PI / 2 );
-            //     this.ctx.translate( -w/2, -h/2 );
+            //     this.ctxDummy.translate( w/2, h/2 );
+            //     this.ctxDummy.rotate( -Math.PI / 2 );
+            //     this.ctxDummy.translate( -w/2, -h/2 );
             // }
-            this.ctx.restore();
+            this.ctxDummy.restore();
 
             // if ( this.gradient ) return;
 
@@ -278,24 +294,24 @@
                     ws = w / 2,
                     off = ws / 6,
                     max = prop.chevron.length;
-                for (let i = 0; i < 5; ++i) {
+                for (let i = 0; i < max; ++i) {
                     let ind = Math.min( i, max ),
                         col = prop.chevron[ind];
-                    this.ctx.fillStyle = col;
-                    this.ctx.beginPath();
-                    this.ctx.moveTo( x - off, 0 );
-                    this.ctx.lineTo( x + ws, h / 2 );
-                    this.ctx.lineTo( x - off, h );
-                    this.ctx.closePath();
-                    this.ctx.fill();
+                    this.ctxDummy.fillStyle = col;
+                    this.ctxDummy.beginPath();
+                    this.ctxDummy.moveTo( x - off, 0 );
+                    this.ctxDummy.lineTo( x + ws, h / 2 );
+                    this.ctxDummy.lineTo( x - off, h );
+                    this.ctxDummy.closePath();
+                    this.ctxDummy.fill();
                     x -= off;
                 }
             }
             if ( prop.circle ) {
-                this.ctx.fillStyle = prop.circle[0];
-                this.ctx.beginPath();
-                this.ctx.arc( w/2, h/2, w/2 - this.width/2, 0, 2 * Math.PI );
-                this.ctx.fill();
+                this.ctxDummy.fillStyle = prop.circle[0];
+                this.ctxDummy.beginPath();
+                this.ctxDummy.arc( w/2, h/2, w/2 - this.width/2, 0, 2 * Math.PI );
+                this.ctxDummy.fill();
             }
         }
     }
