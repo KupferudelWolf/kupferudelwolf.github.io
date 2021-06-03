@@ -174,6 +174,7 @@
             } else {
                 this.drawFlag( this.flag1, 0, this.cvs.width );
             }
+            this.ctx.globalAlpha = 1;
             // this.ctx.restore();
 
             /// Mask the flag.
