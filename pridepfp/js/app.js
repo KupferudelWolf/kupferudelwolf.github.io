@@ -321,6 +321,35 @@
                 .addClass( 'active' );
         });
 
+        $('canvas#output')
+            .on( 'mousewheel', function (e) {
+                e.preventDefault();
+                let dz = e.originalEvent.wheelDelta / 120;
+                $('#offset-z').val($('#offset-z').val() * 1 + dz * 0.1).trigger('input');
+            })
+            .on( 'mousedown', function (e) {
+                e.preventDefault();
+                let self = $(this);
+                self.data('x', e.pageX)
+                    .data('y', e.pageY)
+                    .addClass('active');
+            })
+            .on( 'mousemove', function (e) {
+                e.preventDefault();
+                let self = $(this);
+                if ( !self.is('.active') ) return;
+                let dx = e.pageX - self.data('x') * 1,
+                    dy = e.pageY - self.data('y') * 1;
+                $('#offset-x').val($('#offset-x').val() * 1 + dx * 2).trigger('input');
+                $('#offset-y').val($('#offset-y').val() * 1 + dy * 2).trigger('input');
+                self.data('x', e.pageX)
+                    .data('y', e.pageY);
+            })
+            .on( 'mouseup mouseleave', function (e) {
+                e.preventDefault();
+                $(this).removeClass('active');
+            });
+
         $('#input-img').on( 'change', function () {
             if ( !this.files ) return;
             let imageFile = this.files[0],
