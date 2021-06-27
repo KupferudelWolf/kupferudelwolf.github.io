@@ -1,15 +1,3 @@
-body {
-    margin: 0;
-    padding: 0;
-    white-space: nowrap;
-    font-family: 'Raleway';
-    font-size: medium;
-}
-body * {
-    font-family: 'Raleway';
-    font-size: medium;
-}
-
 div {
     margin-bottom: 24px;
 }
