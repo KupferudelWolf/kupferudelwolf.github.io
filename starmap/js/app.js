@@ -721,6 +721,8 @@
                 planetY: top,
                 planetWidth: diam,
                 planetHeight: diam,
+                self: this,
+                parent: this.parent,
                 draw: ( ctx, x, y ) => {
                     ctx.drawImage( cvs, x, y );
                 }
@@ -747,30 +749,23 @@
     class App {
         constructor() {
             CVS.width = $(window).width();
-            CVS.height = Math.floor( $(window).height() * 2 / ( 3 * 80 ) ) * 80;
+            CVS.height = 800;
             extendCTX( CTX );
 
             this.images = [];
             this.loadImages().then( () => {
                 let pad = PAD,
                     x = pad / 2,
-                    y = CVS.height/2,
+                    y = 320,
+                    width = 0,
                     pos = {},
-                    sun, mercury, venus, earth, mars, jupiter, saturn, neptune, uranus;
+                    sun, sunDraw,
+                    mercury, venus, earth, mars,
+                    jupiter, saturn, neptune, uranus,
+                    draws = [], drawsTemp = [],
+                    planets = [];
 
                 this.initGrad( 256 );
-
-                CTX.fillStyle = '#1f1f24';
-                CTX.fillRect( 0, 0, CVS.width, CVS.height );
-
-                if ( DEBUG_DRAW ) {
-                    let lSDemo = 80
-                    CTX.strokeStyle = 'red';
-                    CTX.line( 0, CVS.height / 2, CVS.width, CVS.height / 2 );
-                    CTX.line( 0, CVS.height / 2 - lSDemo, CVS.width, CVS.height / 2 - lSDemo );
-                    CTX.line( 0, CVS.height / 2 - lSDemo * 2, CVS.width, CVS.height / 2 - lSDemo * 2 );
-                    CTX.line( 0, CVS.height / 2 - lSDemo * 3, CVS.width, CVS.height / 2 - lSDemo * 3 );
-                }
 
                 sun = new Star( 696340, SOLAR_MASS, {
                     name: 'Sol',
@@ -848,7 +843,7 @@
                     rings: 'icy'
                 });
 
-                let planets = [
+                planets = [
                     mercury, venus, earth, mars,
                     jupiter, saturn, neptune, uranus,
                     new Planet( 1737.4, 7.342e+22, {
@@ -883,23 +878,46 @@
                         atmosphere: 1.45
                     })
                 ];
-                let draws = [ ...planets ], drawsTemp = [];
 
                 planets.sort( function ( a, b ) {
                     return a.semi - b.semi;
                 });
 
-                let sunDraw = sun.update();
+                sunDraw = sun.update();
+                width += sunDraw.width;
+
+                for ( let i = 0, l = planets.length; i < l; ++i ) {
+                    if ( !planets[i] ) continue;
+                    let leftAlign = planets[i].parent.name !== 'Sol',
+                        upd = planets[i].update( leftAlign );
+                    draws.push( upd );
+                    if ( !leftAlign ) {
+                        width += upd.width;
+                    }
+                }
+
+                CVS.width = width + PAD;
+                CTX.fillStyle = '#1f1f24';
+                CTX.fillRect( 0, 0, CVS.width, CVS.height );
+
+                if ( DEBUG_DRAW ) {
+                    let lSDemo = 80
+                    CTX.strokeStyle = 'red';
+                    CTX.line( 0, CVS.height / 2, CVS.width, CVS.height / 2 );
+                    CTX.line( 0, CVS.height / 2 - lSDemo, CVS.width, CVS.height / 2 - lSDemo );
+                    CTX.line( 0, CVS.height / 2 - lSDemo * 2, CVS.width, CVS.height / 2 - lSDemo * 2 );
+                    CTX.line( 0, CVS.height / 2 - lSDemo * 3, CVS.width, CVS.height / 2 - lSDemo * 3 );
+                }
+
                 sunDraw.draw( CTX, x, y - sunDraw.planetHeight / 2 );
                 x += sunDraw.width;
 
-                planets.forEach( ( planet ) => {
-                    if ( !planet ) return;
+                draws.forEach( ( planet ) => {
                     if ( !planet.parent || planet.parent.name !== 'Sol' ) {
                         if ( planet.parent ) drawsTemp.push( planet );
                         return;
                     }
-                    let upd = planet.update(),
+                    let upd = planet,
                         pX = x,
                         pY = y + upd.planetHeight / 2 - upd.height;
                     if ( DEBUG_DRAW ) {
@@ -909,7 +927,7 @@
                         CTX.strokeRect( pX, pY, upd.width, upd.height );
                     }
                     upd.draw( CTX, pX, pY );
-                    pos[ planet.name ] = [ pX + upd.width / 2, pY + upd.height ];
+                    pos[ planet.self.name ] = [ pX + upd.width / 2, pY + upd.height ];
                     x += upd.width;
                 });
 
@@ -919,16 +937,15 @@
                 while ( draws.length ) {
                     let cont = false;
                     draws.forEach( ( planet ) => {
-                        if ( !planet ) return;
-                        let name = planet.parent.name,
-                            p = pos[ name ],
+                        let parent = planet.parent.name,
+                            p = pos[ parent ],
                             pX, pY, upd;
                         if ( !p ) {
                             drawsTemp.push( p );
                             return;
                         }
                         cont = true;
-                        upd = planet.update( true );
+                        upd = planet;
                         pX = p[0] - upd.planetWidth / 2;
                         pY = p[1];
                         upd.draw( CTX, pX, pY );

@@ -17,3 +17,10 @@ body {
 canvas {
     /* border: 1px solid #e2e3e4; */
 }
+
+.container {
+    display: block;
+    width: 100vw;
+    height: auto;
+    overflow-x: auto;
+}
