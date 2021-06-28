@@ -40,7 +40,6 @@
             this.stroke();
         };
     };
-    extendCTX( CTX );
 
     const COLOR = {
         aquatic: {
@@ -114,6 +113,7 @@
             this.cvsBody = $('<canvas>').get(0);
             this.ctxBody = this.cvsBody.getContext('2d');
             extendCTX( this.ctxBody );
+            this.ctxBody.textBaseline = 'bottom';
         }
 
         get parent() { return this._parent; }
@@ -549,6 +549,7 @@
                 }
             }
             diam = radOut * 2;
+
             if ( leftAlign ) {
                 right = 96;
                 top = PAD / 4;
@@ -556,7 +557,7 @@
                     top = bottom = PAD / 8;
                 }
             } else {
-                top = 80;
+                top = 80 + 80 - ( radOut % 80 );
                 left = right = PAD / 2;
             }
 
@@ -680,14 +681,12 @@
                 ctx.fillText( this.subClass.toUpperCase(), textX, textY );
             } else {
                 textX = radOut;
+                textY = 80 - top;
                 if ( this.isGasGiant ) {
-                    textY = 36;
                     fontSize = [ 48, 24 ];
                 } else {
-                    textY = 32;
                     fontSize = [ 32, 16 ];
                 }
-                textY = 0 - textY;
                 ctx.textAlign = 'center';
                 ctx.fillStyle = 'white';
                 ctx.font = `400 ${fontSize[0]}px Dekar`;
@@ -731,7 +730,8 @@
     class App {
         constructor() {
             CVS.width = $(window).width();
-            CVS.height = $(window).height() / 2;
+            CVS.height = Math.floor( $(window).height() * 2 / ( 3 * 80 ) ) * 80;
+            extendCTX( CTX );
 
             this.images = [];
             this.loadImages().then( () => {
@@ -747,8 +747,12 @@
                 CTX.fillRect( 0, 0, CVS.width, CVS.height );
 
                 if ( DEBUG_DRAW ) {
+                    let lSDemo = 80
                     CTX.strokeStyle = 'red';
                     CTX.line( 0, CVS.height / 2, CVS.width, CVS.height / 2 );
+                    CTX.line( 0, CVS.height / 2 - lSDemo, CVS.width, CVS.height / 2 - lSDemo );
+                    CTX.line( 0, CVS.height / 2 - lSDemo * 2, CVS.width, CVS.height / 2 - lSDemo * 2 );
+                    CTX.line( 0, CVS.height / 2 - lSDemo * 3, CVS.width, CVS.height / 2 - lSDemo * 3 );
                 }
 
                 sun = new Star( 696340, SOLAR_MASS, {
