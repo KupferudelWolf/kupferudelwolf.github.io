@@ -471,16 +471,34 @@
         set color2(x) { this._colorWater = x; }
         set color3(x) { this._colorIce = x; }
 
+        get clearing() {
+            /// https://en.wikipedia.org/wiki/Clearing_the_neighbourhood
+            let m = this.mass / 1e21,
+                a = this.semi / AU,
+                k = 0.0043,
+                l = k * (m**2) / Math.pow( a, 3/2 );
+            console.log(l);
+            return l > 1;
+        }
+        set clearing(x) { console.error( 'Planet.clearing is read-only.' ); }
+
         get class() {
-            let parentClass;
+            let parentClass = '', pre = '';
+
             if ( this.isIceGiant ) return 'ice giant';
             if ( this.isGasGiant ) return 'gas giant';
 
-            if ( !this.parent ) return 'rogue planet';
-            parentClass = this.parent.class;
-            if ( parentClass.includes('planet') ) return 'moon';
+            if ( !this.clearing ) pre += 'dwarf ';
+
+            if ( this.parent ) {
+                parentClass = this.parent.class;
+            } else {
+                return pre += 'rogue ';
+            }
+            if ( parentClass.includes('planet') ) return pre + 'moon';
+            if ( parentClass.includes('giant') ) return pre + 'moon';
             if ( parentClass.includes('moon') ) return parentClass + 'moon';
-            return 'planet';
+            return pre + 'planet';
         }
 
         get subClass() {
