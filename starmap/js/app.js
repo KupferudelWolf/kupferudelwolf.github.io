@@ -2,17 +2,45 @@
     const CVS = $('#output').get(0);
     const CTX = CVS.getContext('2d');
 
+    const PAD = 80;
+
     const AU = 149597870.7;
     const SOLAR_MASS = 1.989e30;
     const GC = 6.6743015e-11; //m3kg-1s-2
 
     const STAR_COLOR_LIST = [];
 
+    const DEBUG_DRAW = true;
+
     const isClose = function ( a, b, perc = 0.01 ) {
         let c = Math.abs( a - b ),
             d = ( a + b ) / 2;
         return c / d < perc;
     };
+    const extendCTX = ( ctx ) => {
+        Object.getPrototypeOf( ctx ).circ = function ( x, y, r ) {
+            this.arc( x, y, r, 0, 2 * Math.PI );
+        };
+        Object.getPrototypeOf( ctx ).fillCirc = function ( x, y, r ) {
+            this.beginPath();
+            this.arc( x, y, r, 0, 2 * Math.PI );
+            this.closePath();
+            this.fill();
+        };
+        Object.getPrototypeOf( ctx ).strokeCirc = function ( x, y, r ) {
+            this.beginPath();
+            this.arc( x, y, r, 0, 2 * Math.PI );
+            this.closePath();
+            this.stroke();
+        };
+        Object.getPrototypeOf( ctx ).line = function ( x1, y1, x2, y2 ) {
+            this.beginPath();
+            this.moveTo( x1, y1 );
+            this.lineTo( x2, y2 );
+            this.stroke();
+        };
+    };
+    extendCTX( CTX );
 
     const COLOR = {
         aquatic: {
@@ -85,21 +113,7 @@
 
             this.cvsBody = $('<canvas>').get(0);
             this.ctxBody = this.cvsBody.getContext('2d');
-            Object.getPrototypeOf(this.ctxBody).circ = function ( x, y, r ) {
-                this.arc( x, y, r, 0, 2 * Math.PI );
-            }
-            Object.getPrototypeOf(this.ctxBody).fillCirc = function ( x, y, r ) {
-                this.beginPath();
-                this.arc( x, y, r, 0, 2 * Math.PI );
-                this.closePath();
-                this.fill();
-            }
-            Object.getPrototypeOf(this.ctxBody).strokeCirc = function ( x, y, r ) {
-                this.beginPath();
-                this.arc( x, y, r, 0, 2 * Math.PI );
-                this.closePath();
-                this.stroke();
-            }
+            extendCTX( this.ctxBody );
         }
 
         get parent() { return this._parent; }
@@ -186,7 +200,7 @@
             this.children.push( obj );
         }
 
-        draw( x, y, centerX, centerY ) {}
+        update( leftAlign ) {}
     }
 
 
@@ -322,12 +336,12 @@
         //
         // }
 
-        draw( x, y, centerX = false, centerY = true ) {
+        update() {
             let cvs = this.cvsBody,
                 ctx = this.ctxBody,
                 rad = Math.floor( Math.pow( this.radius * 2, 0.4 ) / 2 ),
-                dX = x, dY = y;
-            cvs.width = cvs.height = rad * 2;
+                diam = rad * 2;
+            cvs.width = cvs.height = diam;
 
             if ( this.temp < 550 ) {
                 ctx.fillStyle = COLOR.aquatic.water;
@@ -348,20 +362,19 @@
             ctx.fillText( this.name.toUpperCase(), textX, textY - 48/2 );
             ctx.fillText( this.class.toUpperCase(), textX, textY + 48/2 );
 
-            // ctx.strokeStyle = 'red';
-            // ctx.lineWidth = '2';
-            // ctx.beginPath();
-            // ctx.moveTo( 0,       rad - 48/2 );
-            // ctx.lineTo( rad * 2, rad - 48/2 );
-            // ctx.moveTo( 0,       rad + 48/2 );
-            // ctx.lineTo( rad * 2, rad + 48/2 );
-            // ctx.stroke();
-
-            if ( centerX ) dX -= rad;
-            if ( centerY ) dY -= rad;
-            CTX.drawImage( cvs, dX, dY );
-
-            return x + rad * 2;
+            return {
+                img: cvs,
+                x: 0, y: 0,
+                width: diam,
+                height: diam,
+                planetX: 0,
+                planetY: 0,
+                planetWidth: diam,
+                planetHeight: diam,
+                draw: ( ctx, x, y ) => {
+                    ctx.drawImage( cvs, x, y );
+                }
+            };
         }
     }
 
@@ -374,24 +387,24 @@
             this.isIceGiant = prop.isIceGiant || false;
             this.isGasGiant = prop.isGasGiant || this.isIceGiant;
 
-            this.hasRings = prop.hasRings;
+            this.rings = prop.rings;
 
-            if ( this.isGasGiant ) {
-                if ( !prop.color || !Array.isArray(prop.color) ) {
-                    if ( this.isIceGiant ) {
-                        prop.color = [  ];
-                    } else {
-                        prop.color = [  ];
-                    }
-                }
-            } else {
-                this.land = prop.land || 1;
-                this.iceCap = prop.iceCap;
-                this.color = prop.color;
-                this.atmosphere = prop.atmosphere;
-                if ( this.atmosphere ) {
-                    this.liquid = prop.liquid;
-                }
+            if ( Array.isArray(prop.color) ) {
+                prop.color1 = prop.color[0];
+                prop.color2 = prop.color[1];
+                prop.color3 = prop.color[2];
+                prop.color = null;
+            }
+            this.land = prop.land || 1;
+            this.iceCap = prop.iceCap;
+            this.color = prop.color || prop.color1 || prop.colorLand;
+            this._colorWater = prop.colorWater || prop.color2;
+            this._colorIce = prop.colorIce || prop.color3;
+            this._colorRings = prop.colorRings;
+            this.atmosphere = prop.atmosphere;
+            if ( this.atmosphere ) {
+                this.liquid = prop.liquid;
+                this._colorAtmosphere = prop.colorAtmosphere;
             }
         }
 
@@ -402,25 +415,60 @@
         set temp(x) { this._temp = x; }
 
         get colorLand() {
+            if ( this.isGasGiant ) return this.color1;
+            if ( this._colorLand ) return this._colorLand;
             if ( this.color ) return this.color;
             if ( !this.life ) return COLOR.planet.red;
             if ( parent instanceof Star ) return parent.colorPlants;
             return COLOR.planet.verdant;
         }
         get colorWater() {
-            if ( this.isGasGiant ) {
-                return;
-            }
+            if ( this.isGasGiant ) return this.color2;
+            if ( this._colorWater ) return this._colorWater;
             if ( !this.liquid ) return COLOR.aquatic.water;
-            return COLOR.aquatic[ this.liquid ];
+            let liq = COLOR.aquatic[ this.liquid ];
+            return liq || COLOR.aquatic.water;
         }
         get colorIce() {
-            if ( this.isGasGiant ) {
-                return;
-            }
+            if ( this.isGasGiant ) return this.color3;
+            if ( this._colorIce ) return this._colorIce;
             if ( !this.liquid ) return COLOR.ice.water;
             return COLOR.ice[ this.liquid ];
         }
+        get colorAtmosphere() {
+            if ( this._colorAtmosphere ) return this._colorAtmosphere;
+            if ( this.liquid && this.land < 0.8 ) return this.colorWater;
+            return this.colorLand;
+        }
+        get colorRings() {
+            if ( this._colorRings ) return this._colorRings;
+            if ( !this.rings ) return undefined;
+            if ( this.rings === 'rocky' ) return COLOR.planet.mud;
+            if ( this.rings === 'icy' ) return COLOR.ice.water;
+            console.error( `${this.name || 'Planet'}.rings is defined but does not equal 'rocky' or 'icy'.` );
+            return undefined;
+        }
+        get color1() {
+            if ( this.isGasGiant ) return this.color;
+            return this.colorLand;
+        }
+        get color2() {
+            if ( this.isGasGiant ) return this._colorWater;
+            return this.colorWater;
+        }
+        get color3() {
+            if ( this.isGasGiant ) return this._colorIce;
+            return this.colorIce;
+        }
+
+        set colorLand(x) { this._color = x; }
+        set colorWater(x) { this._colorWater = x; }
+        set colorIce(x) { this._colorIce = x; }
+        set colorAtmosphere(x) { this._colorAtmosphere = x; }
+        set colorRings(x) { this._colorRings = x; }
+        set color1(x) { this._color = x; }
+        set color2(x) { this._colorWater = x; }
+        set color3(x) { this._colorIce = x; }
 
         get class() {
             let parentClass;
@@ -476,18 +524,18 @@
 
         }
 
-        draw( x, y, centerX = false, centerY = true ) {
+        update( leftAlign ) {
             let cvs = this.cvsBody,
                 ctx = this.ctxBody,
                 rad = Math.floor( Math.sqrt( this.radius ) / 2 ),
-                dX = x, dY = y,
-                radOut, diam;
-            // rad = Math.max( rad, 8 );
+                top = 0, bottom = 0, left = 0, right = 0,
+                radOut, diam, textX, textY;
+
             if ( rad < 12 ) {
                 rad = 8;
             } else if ( rad < 24 ) {
                 rad = 16;
-            } else if ( rad < 48 ) {
+            } else if ( rad < 64 ) {
                 rad = 32;
             } else {
                 rad = Math.round( rad / 16 ) * 16;
@@ -501,16 +549,50 @@
                 }
             }
             diam = radOut * 2;
-            cvs.width = cvs.height = diam;
+            if ( leftAlign ) {
+                right = 96;
+                top = PAD / 4;
+                if ( rad === 8 ) {
+                    top = bottom = PAD / 8;
+                }
+            } else {
+                top = 80;
+                left = right = PAD / 2;
+            }
+
+            cvs.width = diam + left + right;
+            cvs.height = diam + top + bottom;
             ctx.lineCap = ctx.lineJoin = 'round';
 
-            if ( this.atmosphere ) {
+            ctx.translate( left, top );
+
+            if ( this.isGasGiant ) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.circ( radOut, radOut, rad );
+                ctx.clip();
+
+                ctx.fillStyle = this.color1;
+                ctx.fillRect( 0, 0, diam, diam );
+
+                ctx.lineWidth = Math.round( diam * 0.125 );
+
+                ctx.strokeStyle = this.color3;
+                ctx.line( 0, diam * 0.3, diam * 0.55, diam * 0.3 );
+                ctx.line( diam * 0.563, diam * 0.47, diam, diam * 0.47 );
+                ctx.line( 0, diam * 0.58, diam * 0.26, diam * 0.58 );
+                ctx.line( diam * 0.234, diam * 0.77, diam * 0.77, diam * 0.77 );
+
+                ctx.strokeStyle = this.color2;
+                ctx.line( diam * 0.35, diam * 0.19, diam, diam * 0.19 );
+                ctx.line( 0, diam * 0.41, diam * 0.69, diam * 0.41 );
+                ctx.line( diam * 0.54, diam * 2/3, diam, diam * 2/3 );
+                ctx.line( 0, diam * 0.86, diam * 0.4375, diam * 0.86 );
+
+                ctx.restore();
+            } else if ( this.atmosphere ) {
                 ctx.globalAlpha = 0.5;
-                if ( this.liquid ) {
-                    ctx.fillStyle = this.colorWater;
-                } else {
-                    ctx.fillStyle = this.colorLand;
-                }
+                ctx.fillStyle = this.colorAtmosphere;
                 ctx.fillCirc( radOut, radOut, radOut );
                 ctx.globalAlpha = 1;
 
@@ -533,59 +615,29 @@
                         ctx.fillRect( 0, 0, diam, diam );
                         ctx.lineWidth = Math.round( diam / 6 );
                         ctx.strokeStyle = this.colorWater;
-                        ctx.beginPath();
-                        ctx.moveTo( 0, 0.6 * diam );
-                        ctx.lineTo( 0.25 * diam, 0.6 * diam );
-                        ctx.stroke();
-                        ctx.beginPath();
-                        ctx.moveTo( 0.7 * diam, 0.425 * diam );
-                        ctx.lineTo( 0.7 * diam, 0.425 * diam );
-                        ctx.stroke();
+                        ctx.line( 0, diam * 0.6, diam * 0.25, diam * 0.6 );
+                        ctx.line( diam * 0.7, diam * 0.425, diam * 0.7, diam * 0.425 );
                         break;
                     case 'continental':
                         ctx.fillStyle = this.colorWater;
                         ctx.fillRect( 0, 0, diam, diam );
                         ctx.strokeStyle = this.colorLand;
                         ctx.lineWidth = Math.round( diam * 0.4 );
-                        ctx.beginPath();
-                        ctx.moveTo( 0, 0.3625 * diam );
-                        ctx.lineTo( 0.425 * diam, 0.3625 * diam );
-                        ctx.stroke();
+                        ctx.line( 0, diam * 0.3625, diam * 0.425, diam * 0.3625 );
                         ctx.lineWidth = Math.round( diam * 0.1 );
-                        ctx.beginPath();
-                        ctx.moveTo( 0.775 * diam, 0.6125 * diam );
-                        ctx.lineTo( diam, 0.6125 * diam );
-                        ctx.stroke();
-                        ctx.beginPath();
-                        ctx.moveTo( 0.475 * diam, 0.7125 * diam );
-                        ctx.lineTo( 0.575 * diam, 0.7125 * diam );
-                        ctx.stroke();
+                        ctx.line( diam * 0.775, diam * 0.6125, diam, diam * 0.6125 );
+                        ctx.line( diam * 0.475, diam * 0.7125, diam * 0.575, diam * 0.7125 );
                         break;
                     case 'insular':
                         ctx.fillStyle = this.colorWater;
                         ctx.fillRect( 0, 0, diam, diam );
                         ctx.lineWidth = Math.round( diam * 0.1 );
                         ctx.strokeStyle = this.colorLand;
-                        ctx.beginPath();
-                        ctx.moveTo( 0, 0.3 * diam );
-                        ctx.lineTo( 0.25 * diam, 0.3 * diam );
-                        ctx.stroke();
-                        ctx.beginPath();
-                        ctx.moveTo( 0.575 * diam, 0.6 * diam );
-                        ctx.lineTo( 0.675 * diam, 0.6 * diam );
-                        ctx.stroke();
-                        ctx.beginPath();
-                        ctx.moveTo( 0.3125 * diam, 0.475 * diam );
-                        ctx.lineTo( 0.3125 * diam, 0.475 * diam );
-                        ctx.stroke();
-                        ctx.beginPath();
-                        ctx.moveTo( 0.45 * diam, 0.7 * diam );
-                        ctx.lineTo( 0.45 * diam, 0.7 * diam );
-                        ctx.stroke();
-                        ctx.beginPath();
-                        ctx.moveTo( 0.775 * diam, 0.35 * diam );
-                        ctx.lineTo( 0.775 * diam, 0.35 * diam );
-                        ctx.stroke();
+                        ctx.line( 0, diam * 0.3, diam * 0.25, diam * 0.3 );
+                        ctx.line( diam * 0.575, diam * 0.6, diam * 0.675, diam * 0.6 );
+                        ctx.line( diam * 0.3125, diam * 0.475, diam * 0.3125, diam * 0.475 );
+                        ctx.line( diam * 0.45, diam * 0.7, diam * 0.45, diam * 0.7 );
+                        ctx.line( diam * 0.775, diam * 0.35, diam * 0.775, diam * 0.35 );
                         break;
                     case 'oceanic':
                         ctx.fillStyle = this.colorWater;
@@ -608,48 +660,55 @@
                 ctx.fillCirc( radOut, radOut, rad );
             }
 
-            if ( centerX ) dX -= radOut;
-            if ( centerY ) dY -= radOut;
-            CTX.drawImage( cvs, dX, dY );
-
-            let textX, textY;
-
-            if ( centerY ) {
-                textX = x + radOut;
-                textY = 92;
-                if ( this.isGasGiant ) textY = 128;
-                textY = y - textY;
-                CTX.textAlign = 'center';
-                CTX.fillStyle = 'white';
-                CTX.font = '400 32px Dekar';
-                console.log(this.name.toUpperCase());
-                console.log(this.subClass.toUpperCase());
-                CTX.fillText( this.name.toUpperCase(), textX, textY );
-                CTX.font = '300 16px Dekar';
-                CTX.fillText( this.subClass.toUpperCase(), textX, textY + 16 );
-            } else if ( centerX ) {
-                let fontSize;
+            let fontSize;
+            if ( leftAlign ) {
                 switch (rad) {
                     case 8:  fontSize = [ 12, 8 ];  break;
                     case 16: fontSize = [ 18, 12 ]; break;
                     case 32: fontSize = [ 24, 14 ]; break;
                     default: fontSize = [ 32, 16 ]; break;
                 }
-                textX = x + radOut * 1.5;
-                textY = y + radOut;
-                CTX.textAlign = 'left';
-                CTX.fillStyle = 'white';
-                CTX.font = `400 ${fontSize[0]}px Dekar`;
-                console.log(this.name.toUpperCase());
-                console.log(this.subClass.toUpperCase());
-                CTX.fillText( this.name.toUpperCase(), textX, textY );
-                CTX.font = `300 ${fontSize[1]}px Dekar`;
+                textX = diam + rad / 2;
+                textY = radOut;
+                ctx.textAlign = 'left';
+                ctx.fillStyle = 'white';
+                ctx.font = `400 ${fontSize[0]}px Dekar`;
+                ctx.fillText( this.name.toUpperCase(), textX, textY );
+                ctx.font = `300 ${fontSize[1]}px Dekar`;
                 textX += fontSize[1] / 2;
-                textY += fontSize[0] * 2/3;
-                CTX.fillText( this.subClass.toUpperCase(), textX, textY );
+                textY += fontSize[0] * 2 / 3;
+                ctx.fillText( this.subClass.toUpperCase(), textX, textY );
+            } else {
+                textX = radOut;
+                if ( this.isGasGiant ) {
+                    textY = 36;
+                    fontSize = [ 48, 24 ];
+                } else {
+                    textY = 32;
+                    fontSize = [ 32, 16 ];
+                }
+                textY = 0 - textY;
+                ctx.textAlign = 'center';
+                ctx.fillStyle = 'white';
+                ctx.font = `400 ${fontSize[0]}px Dekar`;
+                ctx.fillText( this.name.toUpperCase(), textX, textY );
+                ctx.font = `300 ${fontSize[1]}px Dekar`;
+                ctx.fillText( this.subClass.toUpperCase(), textX, textY + fontSize[1] );
             }
 
-            return x + diam;
+            return {
+                img: cvs,
+                x: 0, y: 0,
+                width: left + diam + right,
+                height: top + diam + bottom,
+                planetX: left,
+                planetY: top,
+                planetWidth: diam,
+                planetHeight: diam,
+                draw: ( ctx, x, y ) => {
+                    ctx.drawImage( cvs, x, y );
+                }
+            };
         }
     }
 
@@ -676,15 +735,21 @@
 
             this.images = [];
             this.loadImages().then( () => {
-                let pad = 80,
+                let pad = PAD,
                     x = pad / 2,
+                    y = CVS.height/2,
                     pos = {},
-                    sun, earth, mars;
+                    sun, earth, mars, jupiter, saturn;
 
                 this.initGrad( 256 );
 
                 CTX.fillStyle = '#1f1f24';
                 CTX.fillRect( 0, 0, CVS.width, CVS.height );
+
+                if ( DEBUG_DRAW ) {
+                    CTX.strokeStyle = 'red';
+                    CTX.line( 0, CVS.height / 2, CVS.width, CVS.height / 2 );
+                }
 
                 sun = new Star( 696340, SOLAR_MASS, {
                     name: 'Sol',
@@ -716,6 +781,16 @@
                     color: COLOR.planet.red,
                     iceCap: 0.1
                 });
+                jupiter = new Planet( 69911, 1.8982e+27, {
+                    name: 'Jupiter',
+                    parent: sun,
+                    semi: 778570000,
+                    isGasGiant: true,
+                    color1: COLOR.planet.clay,
+                    color2: COLOR.planet.red,
+                    color3: COLOR.planet.bright,
+                    rings: 'rocky'
+                })
 
                 let planets = [
                     /// Mercury
@@ -757,32 +832,81 @@
                         semi: 23463.2,
                         day: 30.312,
                         color: COLOR.planet.bright
+                    }),
+                    jupiter,
+                    saturn,
+                    new Planet( 2574.73, 1.3452e+23, {
+                        name: 'Titan',
+                        parent: saturn,
+                        semi: 1221870,
+                        day: 382.68,
+                        color: COLOR.planet.dry,
+                        liquid: 'carbon',
+                        land: 0.9,
+                        atmosphere: 1.45
                     })
                 ];
+                let draws = [ ...planets ],
+                    drawsTemp = [];
 
                 planets.sort( function ( a, b ) {
-                    return a.semi - b.semi
+                    return a.semi - b.semi;
                 });
 
-                x = sun.draw( x, CVS.height/2 ) + pad;
+                let sunDraw = sun.update();
+                sunDraw.draw( CTX, x, y - sunDraw.planetHeight / 2 );
+                x += sunDraw.width;
+
                 planets.forEach( ( planet ) => {
-                    if ( !planet.parent || planet.parent.name !== 'Sol' ) return;
-                    let pX = planet.draw( x, CVS.height / 2 ),
-                        w = pX - x;
-                    pos[ planet.name ] = [ x + w / 2, ( CVS.height + w + pad / 2 ) / 2 ];
-                    x = pX + pad;
+                    if ( !planet ) return;
+                    if ( !planet.parent || planet.parent.name !== 'Sol' ) {
+                        if ( planet.parent ) drawsTemp.push( planet );
+                        return;
+                    }
+                    let upd = planet.update(),
+                        pX = x,
+                        pY = y + upd.planetHeight / 2 - upd.height;
+                    if ( DEBUG_DRAW ) {
+                        CTX.strokeStyle = 'red';
+                        CTX.line( pX + upd.width/2, 0, pX + upd.width/2, CVS.height );
+                        CTX.strokeStyle = 'lime';
+                        CTX.strokeRect( pX, pY, upd.width, upd.height );
+                    }
+                    upd.draw( CTX, pX, pY );
+                    pos[ planet.name ] = [ pX + upd.width / 2, pY + upd.height ];
+                    x += upd.width;
                 });
-                planets.forEach( ( planet ) => {
-                    if ( !planet.parent ) return;
-                    let name = planet.parent.name;
-                    let p = pos[ name ];
-                    if ( !p ) return;
-                    let x = p[0],
-                        y = p[1],
-                        pX = planet.draw( x, y, true, false ),
-                        w = pX - x;
-                    p[1] += w + pad / 4;
-                });
+
+                draws = [ ...drawsTemp ];
+                drawsTemp = [];
+
+                while ( draws.length ) {
+                    let cont = false;
+                    draws.forEach( ( planet ) => {
+                        if ( !planet ) return;
+                        let name = planet.parent.name,
+                            p = pos[ name ],
+                            pX, pY, upd;
+                        if ( !p ) {
+                            drawsTemp.push( p );
+                            return;
+                        }
+                        cont = true;
+                        upd = planet.update( true );
+                        pX = p[0] - upd.planetWidth / 2;
+                        pY = p[1];
+                        upd.draw( CTX, pX, pY );
+                        p[1] += upd.height;
+                        if ( DEBUG_DRAW ) {
+                            CTX.strokeStyle = 'lime';
+                            CTX.strokeRect( pX, pY, upd.width, upd.height );
+                        }
+                    });
+                    draws = [ ...drawsTemp ];
+                    drawsTemp = [];
+                    if ( !cont ) break;
+                }
+
 
                 console.log(planets);
             });
