@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'Dekar';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Dekar'), url('https://fonts.cdnfonts.com/s/13296/Dekar.woff') format('woff');
+}
+@font-face {
+    font-family: 'Dekar Light';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Dekar Light'), url('https://fonts.cdnfonts.com/s/13297/Dekar Light.woff') format('woff');
+}
+
+body {
+    background-color: #0f0f12;
+}
+canvas {
+    /* border: 1px solid #e2e3e4; */
+}
