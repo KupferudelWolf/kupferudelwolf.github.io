@@ -77,10 +77,14 @@
 
             prop = prop || {};
 
-            this.name = prop.name;
+            this.name = prop.name || '';
             this.parent = prop.parent;
             this.temp = prop.temp;
             this.semi = prop.semi;
+
+            if ( !this.name && this.parent ) {
+                this.name = this.parent.name + ' ' + this.parent.children.length;
+            }
 
             this.periodRotational = prop.day; // hours
 
@@ -454,7 +458,7 @@
             return this.colorWater;
         }
         get color3() {
-            if ( this.isGasGiant ) return this._colorIce;
+            if ( this.isGasGiant ) return this._colorIce || COLOR.planet.bright;
             return this.colorIce;
         }
 
@@ -752,7 +756,7 @@
                     x = pad / 2,
                     y = CVS.height/2,
                     pos = {},
-                    sun, earth, mars, jupiter, saturn, neptune, uranus;
+                    sun, mercury, venus, earth, mars, jupiter, saturn, neptune, uranus;
 
                 this.initGrad( 256 );
 
@@ -772,6 +776,21 @@
                     name: 'Sol',
                     temp: 5780,
                     luma: 1
+                });
+                mercury = new Planet( 2439.7, 3.3011e23, {
+                    name: 'Mercury',
+                    parent: sun,
+                    semi: 57909.05,
+                    day: 1407.5,
+                    color: COLOR.planet.bright
+                });
+                venus = new Planet( 6051.8, 4.8675e+24, {
+                    name: 'Venus',
+                    parent: sun,
+                    semi: 108208000,
+                    atmosphere: 92,
+                    day: -5832.5424,
+                    color: COLOR.planet.sand
                 });
                 earth = new Planet( 6371, 5.972e24, {
                     name: 'Earth',
@@ -808,6 +827,16 @@
                     color3: COLOR.planet.bright,
                     rings: 'rocky'
                 });
+                saturn = new Planet( 58232, 5.6834e+26, {
+                    name: 'Saturn',
+                    parent: sun,
+                    semi: 1433530000,
+                    isGasGiant: true,
+                    color1: COLOR.planet.sand,
+                    color2: COLOR.planet.clay,
+                    color3: COLOR.planet.bright,
+                    rings: true
+                });
                 neptune = new Planet( 24622, 1.02413e+26, {
                     name: 'Neptune',
                     parent: sun,
@@ -820,25 +849,8 @@
                 });
 
                 let planets = [
-                    /// Mercury
-                    new Planet( 2439.7, 3.3011e23, {
-                        name: 'Mercury',
-                        parent: sun,
-                        semi: 57909.05,
-                        day: 1407.5,
-                        color: COLOR.planet.bright
-                    }),
-                    /// Venus
-                    new Planet( 6051.8, 4.8675e+24, {
-                        name: 'Venus',
-                        parent: sun,
-                        semi: 108208000,
-                        atmosphere: 92,
-                        day: -5832.5424,
-                        color: COLOR.planet.sand
-                    }),
-                    earth,
-                    mars,
+                    mercury, venus, earth, mars,
+                    jupiter, saturn, neptune, uranus,
                     new Planet( 1737.4, 7.342e+22, {
                         name: 'Luna',
                         parent: earth,
@@ -860,10 +872,6 @@
                         day: 30.312,
                         color: COLOR.planet.bright
                     }),
-                    jupiter,
-                    saturn,
-                    neptune,
-                    uranus,
                     new Planet( 2574.73, 1.3452e+23, {
                         name: 'Titan',
                         parent: saturn,
@@ -875,8 +883,7 @@
                         atmosphere: 1.45
                     })
                 ];
-                let draws = [ ...planets ],
-                    drawsTemp = [];
+                let draws = [ ...planets ], drawsTemp = [];
 
                 planets.sort( function ( a, b ) {
                     return a.semi - b.semi;
