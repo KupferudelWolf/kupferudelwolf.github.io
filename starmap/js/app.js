@@ -42,7 +42,7 @@
     };
 
     const COLOR = {
-        aquatic: {
+        liquid: {
             'ammonia': '#557353',
             'carbon':  '#47363c',
             'water':   '#507282'
@@ -64,11 +64,8 @@
             'forest':  '#406325',
             'clay':    '#bd8264',
             'carbon':  '#bab6ba',
-            'mauve':   '#7e6b71'
-        },
-        ring: {
-            'icy':     '#dad7c5',
-            'rocky':   '#665026'
+            'mauve':   '#7e6b71',
+            'pale':    '#7895a4'
         }
     };
 
@@ -344,7 +341,7 @@
             cvs.width = cvs.height = diam;
 
             if ( this.temp < 550 ) {
-                ctx.fillStyle = COLOR.aquatic.water;
+                ctx.fillStyle = COLOR.liquid.water;
                 ctx.fillCirc( rad, rad, rad );
                 ctx.fillStyle = 'black';
                 ctx.fillCirc( rad, rad, rad - 8 );
@@ -425,9 +422,9 @@
         get colorWater() {
             if ( this.isGasGiant ) return this.color2;
             if ( this._colorWater ) return this._colorWater;
-            if ( !this.liquid ) return COLOR.aquatic.water;
-            let liq = COLOR.aquatic[ this.liquid ];
-            return liq || COLOR.aquatic.water;
+            if ( !this.liquid ) return COLOR.liquid.water;
+            let liq = COLOR.liquid[ this.liquid ];
+            return liq || COLOR.liquid.water;
         }
         get colorIce() {
             if ( this.isGasGiant ) return this.color3;
@@ -444,9 +441,9 @@
             if ( this._colorRings ) return this._colorRings;
             if ( !this.rings ) return undefined;
             if ( this.rings === 'rocky' ) return COLOR.planet.mud;
-            if ( this.rings === 'icy' ) return COLOR.ice.water;
-            console.error( `${this.name || 'Planet'}.rings is defined but does not equal 'rocky' or 'icy'.` );
-            return undefined;
+            if ( this.rings === 'icy' ) return COLOR.planet.bright;
+            if ( this.isGasGiant && !this.isIceGiant ) return COLOR.planet.mud;
+            return COLOR.planet.bright;
         }
         get color1() {
             if ( this.isGasGiant ) return this.color;
@@ -484,6 +481,8 @@
 
         get subClass() {
             let land = this.land;
+            if ( this.isIceGiant ) return 'ice giant';
+            if ( this.isGasGiant ) return 'gas giant';
             if ( !this.atmosphere ) return 'selenic';
             if ( land === 1 ) return 'atmospheric';
             if ( land >= 0.8 ) return 'lacustrine';
@@ -529,7 +528,7 @@
                 ctx = this.ctxBody,
                 rad = Math.floor( Math.sqrt( this.radius ) / 2 ),
                 top = 0, bottom = 0, left = 0, right = 0,
-                radOut, diam, textX, textY;
+                radAtm, diam, textX, textY;
 
             if ( rad < 12 ) {
                 rad = 8;
@@ -540,15 +539,15 @@
             } else {
                 rad = Math.round( rad / 16 ) * 16;
             }
-            radOut = rad;
+            radAtm = rad;
             if ( this.atmosphere ) {
                 if ( this.atmosphere > 0.5 ) {
-                    radOut = Math.floor( rad * 1.25 );
+                    radAtm = Math.floor( rad * 1.25 );
                 } else {
-                    radOut = Math.floor( rad * 1.125 );
+                    radAtm = Math.floor( rad * 1.125 );
                 }
             }
-            diam = radOut * 2;
+            diam = radAtm * 2;
 
             if ( leftAlign ) {
                 right = 96;
@@ -557,7 +556,7 @@
                     top = bottom = PAD / 8;
                 }
             } else {
-                top = 80 + 80 - ( radOut % 80 );
+                top = 80 + 80 - ( radAtm % 80 );
                 left = right = PAD / 2;
             }
 
@@ -570,7 +569,7 @@
             if ( this.isGasGiant ) {
                 ctx.save();
                 ctx.beginPath();
-                ctx.circ( radOut, radOut, rad );
+                ctx.circ( radAtm, radAtm, rad );
                 ctx.clip();
 
                 ctx.fillStyle = this.color1;
@@ -578,28 +577,36 @@
 
                 ctx.lineWidth = Math.round( diam * 0.125 );
 
-                ctx.strokeStyle = this.color3;
-                ctx.line( 0, diam * 0.3, diam * 0.55, diam * 0.3 );
-                ctx.line( diam * 0.563, diam * 0.47, diam, diam * 0.47 );
-                ctx.line( 0, diam * 0.58, diam * 0.26, diam * 0.58 );
-                ctx.line( diam * 0.234, diam * 0.77, diam * 0.77, diam * 0.77 );
+                if ( this.isIceGiant ) {
+                    ctx.strokeStyle = this.color3;
+                    ctx.line( diam * 0.54, diam * 0.33, diam, diam * 0.33 );
+                    ctx.line( 0, diam * 0.86, diam * 0.4375, diam * 0.86 );
+                    ctx.strokeStyle = this.color2;
+                    ctx.line( diam * 0.74, diam * 0.42, diam, diam * 0.42 );
+                } else {
+                    ctx.strokeStyle = this.color3;
+                    ctx.line( 0, diam * 0.3, diam * 0.55, diam * 0.3 );
+                    ctx.line( diam * 0.563, diam * 0.47, diam, diam * 0.47 );
+                    ctx.line( 0, diam * 0.58, diam * 0.26, diam * 0.58 );
+                    ctx.line( diam * 0.234, diam * 0.77, diam * 0.77, diam * 0.77 );
 
-                ctx.strokeStyle = this.color2;
-                ctx.line( diam * 0.35, diam * 0.19, diam, diam * 0.19 );
-                ctx.line( 0, diam * 0.41, diam * 0.69, diam * 0.41 );
-                ctx.line( diam * 0.54, diam * 2/3, diam, diam * 2/3 );
-                ctx.line( 0, diam * 0.86, diam * 0.4375, diam * 0.86 );
+                    ctx.strokeStyle = this.color2;
+                    ctx.line( diam * 0.35, diam * 0.19, diam, diam * 0.19 );
+                    ctx.line( 0, diam * 0.41, diam * 0.69, diam * 0.41 );
+                    ctx.line( diam * 0.54, diam * 2/3, diam, diam * 2/3 );
+                    ctx.line( 0, diam * 0.86, diam * 0.4375, diam * 0.86 );
+                }
 
                 ctx.restore();
             } else if ( this.atmosphere ) {
                 ctx.globalAlpha = 0.5;
                 ctx.fillStyle = this.colorAtmosphere;
-                ctx.fillCirc( radOut, radOut, radOut );
+                ctx.fillCirc( radAtm, radAtm, radAtm );
                 ctx.globalAlpha = 1;
 
                 ctx.save();
                 ctx.beginPath();
-                ctx.circ( radOut, radOut, rad );
+                ctx.circ( radAtm, radAtm, rad );
                 ctx.clip();
 
                 switch ( this.subClass ) {
@@ -649,7 +656,7 @@
 
                 if ( this.iceCap ) {
                     let ice = Math.sqrt( this.iceCap ),
-                        diff = radOut - rad;
+                        diff = radAtm - rad;
                     ctx.fillStyle = this.colorIce;
                     ctx.fillRect( 0, 0, diam, diff + rad * ice );
                     ctx.fillRect( 0, diam - diff - rad * ice, diam, diam );
@@ -658,7 +665,13 @@
                 ctx.restore();
             } else {
                 ctx.fillStyle = this.colorLand;
-                ctx.fillCirc( radOut, radOut, rad );
+                ctx.fillCirc( radAtm, radAtm, rad );
+            }
+
+            if ( this.rings ) {
+                ctx.strokeStyle = this.colorRings;
+                ctx.lineWidth = diam * 0.04;
+                ctx.line( -left * 2/3, radAtm, diam + right * 2/3, radAtm );
             }
 
             let fontSize;
@@ -670,7 +683,7 @@
                     default: fontSize = [ 32, 16 ]; break;
                 }
                 textX = diam + rad / 2;
-                textY = radOut;
+                textY = radAtm;
                 ctx.textAlign = 'left';
                 ctx.fillStyle = 'white';
                 ctx.font = `400 ${fontSize[0]}px Dekar`;
@@ -680,7 +693,7 @@
                 textY += fontSize[0] * 2 / 3;
                 ctx.fillText( this.subClass.toUpperCase(), textX, textY );
             } else {
-                textX = radOut;
+                textX = radAtm;
                 textY = 80 - top;
                 if ( this.isGasGiant ) {
                     fontSize = [ 48, 24 ];
@@ -739,7 +752,7 @@
                     x = pad / 2,
                     y = CVS.height/2,
                     pos = {},
-                    sun, earth, mars, jupiter, saturn;
+                    sun, earth, mars, jupiter, saturn, neptune, uranus;
 
                 this.initGrad( 256 );
 
@@ -794,7 +807,17 @@
                     color2: COLOR.planet.red,
                     color3: COLOR.planet.bright,
                     rings: 'rocky'
-                })
+                });
+                neptune = new Planet( 24622, 1.02413e+26, {
+                    name: 'Neptune',
+                    parent: sun,
+                    semi: 4500000000,
+                    isIceGiant: true,
+                    color1: COLOR.liquid.water,
+                    color2: COLOR.liquid.carbon,
+                    color3: COLOR.planet.pale,
+                    rings: 'icy'
+                });
 
                 let planets = [
                     /// Mercury
@@ -839,6 +862,8 @@
                     }),
                     jupiter,
                     saturn,
+                    neptune,
+                    uranus,
                     new Planet( 2574.73, 1.3452e+23, {
                         name: 'Titan',
                         parent: saturn,
