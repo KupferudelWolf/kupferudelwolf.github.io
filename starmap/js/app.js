@@ -340,13 +340,22 @@
             }
 
             let textX = rad,
-                textY = rad;
+                textY = rad + 4;
             ctx.fillStyle = 'black';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.font = '400 48px Dekar';
             ctx.fillText( this.name.toUpperCase(), textX, textY - 48/2 );
             ctx.fillText( this.class.toUpperCase(), textX, textY + 48/2 );
+
+            // ctx.strokeStyle = 'red';
+            // ctx.lineWidth = '2';
+            // ctx.beginPath();
+            // ctx.moveTo( 0,       rad - 48/2 );
+            // ctx.lineTo( rad * 2, rad - 48/2 );
+            // ctx.moveTo( 0,       rad + 48/2 );
+            // ctx.lineTo( rad * 2, rad + 48/2 );
+            // ctx.stroke();
 
             if ( centerX ) dX -= rad;
             if ( centerY ) dY -= rad;
@@ -470,7 +479,7 @@
         draw( x, y, centerX = false, centerY = true ) {
             let cvs = this.cvsBody,
                 ctx = this.ctxBody,
-                rad = Math.floor( Math.sqrt( this.radius * 2 ) / 2 ),
+                rad = Math.floor( Math.sqrt( this.radius ) / 2 ),
                 dX = x, dY = y,
                 radOut, diam;
             // rad = Math.max( rad, 8 );
@@ -480,6 +489,8 @@
                 rad = 16;
             } else if ( rad < 48 ) {
                 rad = 32;
+            } else {
+                rad = Math.round( rad / 16 ) * 16;
             }
             radOut = rad;
             if ( this.atmosphere ) {
@@ -665,7 +676,10 @@
 
             this.images = [];
             this.loadImages().then( () => {
-                let sun, earth, mars;
+                let pad = 80,
+                    x = pad / 2,
+                    pos = {},
+                    sun, earth, mars;
 
                 this.initGrad( 256 );
 
@@ -750,16 +764,12 @@
                     return a.semi - b.semi
                 });
 
-                let pad = 40,
-                    x = pad,
-                    pos = {};
-
                 x = sun.draw( x, CVS.height/2 ) + pad;
                 planets.forEach( ( planet ) => {
                     if ( !planet.parent || planet.parent.name !== 'Sol' ) return;
                     let pX = planet.draw( x, CVS.height / 2 ),
                         w = pX - x;
-                    pos[ planet.name ] = [ x + w / 2, ( CVS.height + w + pad ) / 2 ];
+                    pos[ planet.name ] = [ x + w / 2, ( CVS.height + w + pad / 2 ) / 2 ];
                     x = pX + pad;
                 });
                 planets.forEach( ( planet ) => {
@@ -771,7 +781,7 @@
                         y = p[1],
                         pX = planet.draw( x, y, true, false ),
                         w = pX - x;
-                    p[1] += w + pad / 2;
+                    p[1] += w + pad / 4;
                 });
 
                 console.log(planets);
