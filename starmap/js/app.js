@@ -754,18 +754,12 @@
 
             this.images = [];
             this.loadImages().then( () => {
-                let pad = PAD,
-                    x = pad / 2,
-                    y = 320,
-                    width = 0,
-                    pos = {},
-                    sun, sunDraw,
+                let sun,
                     mercury, venus, earth, mars,
                     jupiter, saturn, neptune, uranus,
-                    draws = [], drawsTemp = [],
-                    planets = [];
+                    ceres, eris, pluto;
 
-                this.initGrad( 256 );
+                this.initGrad( 512 );
 
                 sun = new Star( 696340, SOLAR_MASS, {
                     name: 'Sol',
@@ -832,6 +826,16 @@
                     color3: COLOR.planet.bright,
                     rings: true
                 });
+                uranus = new Planet( 25362, 8.6810e+25, {
+                    name: 'Uranus',
+                    parent: sun,
+                    semi: 2875040000,
+                    isIceGiant: true,
+                    color1: COLOR.planet.pale,
+                    color2: COLOR.liquid.water,
+                    color3: COLOR.ice.water,
+                    rings: 'icy'
+                });
                 neptune = new Planet( 24622, 1.02413e+26, {
                     name: 'Neptune',
                     parent: sun,
@@ -840,12 +844,32 @@
                     color1: COLOR.liquid.water,
                     color2: COLOR.liquid.carbon,
                     color3: COLOR.planet.pale,
-                    rings: 'icy'
+                    rings: false
                 });
 
-                planets = [
+                pluto = new Planet( 1188.3, 1.303e+22, {
+                    name: 'Pluto',
+                    parent: sun,
+                    semi: 5.90638e+9,
+                    color: COLOR.planet.mauve
+                });
+                eris = new Planet( 1163, 1.6466e+22, {
+                    name: 'Eris',
+                    parent: sun,
+                    semi: 1.015231e+10,
+                    color: COLOR.planet.bright
+                });
+                ceres = new Planet( 469.73, 9.3835e+20, {
+                    name: 'Ceres',
+                    parent: sun,
+                    semi: 414261000,
+                    color: COLOR.planet.rocky
+                });
+
+                this.planets = [
                     mercury, venus, earth, mars,
                     jupiter, saturn, neptune, uranus,
+                    ceres, eris, pluto,
                     new Planet( 1737.4, 7.342e+22, {
                         name: 'Luna',
                         parent: earth,
@@ -876,92 +900,21 @@
                         liquid: 'carbon',
                         land: 0.9,
                         atmosphere: 1.45
+                    }),
+                    new Planet( 606, 1.586e+21, {
+                        name: 'Charon',
+                        parent: pluto,
+                        semi: 17181.0, // from barycenter
+                        day: 153.2935296,
+                        color: COLOR.planet.rocky
                     })
                 ];
 
-                planets.sort( function ( a, b ) {
-                    return a.semi - b.semi;
-                });
+                this.star = sun;
 
-                sunDraw = sun.update();
-                width += sunDraw.width;
+                this.updateAll();
 
-                for ( let i = 0, l = planets.length; i < l; ++i ) {
-                    if ( !planets[i] ) continue;
-                    let leftAlign = planets[i].parent.name !== 'Sol',
-                        upd = planets[i].update( leftAlign );
-                    draws.push( upd );
-                    if ( !leftAlign ) {
-                        width += upd.width;
-                    }
-                }
-
-                CVS.width = width + PAD;
-                CTX.fillStyle = '#1f1f24';
-                CTX.fillRect( 0, 0, CVS.width, CVS.height );
-
-                if ( DEBUG_DRAW ) {
-                    let lSDemo = 80
-                    CTX.strokeStyle = 'red';
-                    CTX.line( 0, CVS.height / 2, CVS.width, CVS.height / 2 );
-                    CTX.line( 0, CVS.height / 2 - lSDemo, CVS.width, CVS.height / 2 - lSDemo );
-                    CTX.line( 0, CVS.height / 2 - lSDemo * 2, CVS.width, CVS.height / 2 - lSDemo * 2 );
-                    CTX.line( 0, CVS.height / 2 - lSDemo * 3, CVS.width, CVS.height / 2 - lSDemo * 3 );
-                }
-
-                sunDraw.draw( CTX, x, y - sunDraw.planetHeight / 2 );
-                x += sunDraw.width;
-
-                draws.forEach( ( planet ) => {
-                    if ( !planet.parent || planet.parent.name !== 'Sol' ) {
-                        if ( planet.parent ) drawsTemp.push( planet );
-                        return;
-                    }
-                    let upd = planet,
-                        pX = x,
-                        pY = y + upd.planetHeight / 2 - upd.height;
-                    if ( DEBUG_DRAW ) {
-                        CTX.strokeStyle = 'red';
-                        CTX.line( pX + upd.width/2, 0, pX + upd.width/2, CVS.height );
-                        CTX.strokeStyle = 'lime';
-                        CTX.strokeRect( pX, pY, upd.width, upd.height );
-                    }
-                    upd.draw( CTX, pX, pY );
-                    pos[ planet.self.name ] = [ pX + upd.width / 2, pY + upd.height ];
-                    x += upd.width;
-                });
-
-                draws = [ ...drawsTemp ];
-                drawsTemp = [];
-
-                while ( draws.length ) {
-                    let cont = false;
-                    draws.forEach( ( planet ) => {
-                        let parent = planet.parent.name,
-                            p = pos[ parent ],
-                            pX, pY, upd;
-                        if ( !p ) {
-                            drawsTemp.push( p );
-                            return;
-                        }
-                        cont = true;
-                        upd = planet;
-                        pX = p[0] - upd.planetWidth / 2;
-                        pY = p[1];
-                        upd.draw( CTX, pX, pY );
-                        p[1] += upd.height;
-                        if ( DEBUG_DRAW ) {
-                            CTX.strokeStyle = 'lime';
-                            CTX.strokeRect( pX, pY, upd.width, upd.height );
-                        }
-                    });
-                    draws = [ ...drawsTemp ];
-                    drawsTemp = [];
-                    if ( !cont ) break;
-                }
-
-
-                console.log(planets);
+                console.log(this.planets);
             });
         }
 
@@ -1046,6 +999,99 @@
                     }, '#' );
                 STAR_COLOR_LIST.push( hex );
             }
+        }
+
+        updateAll() {
+            let canvasWidth = PAD;
+
+            this.planets.sort( ( a, b ) => a.semi - b.semi );
+
+            this.starDraw = this.star.update();
+            canvasWidth += this.starDraw.width;
+
+            this.planetDraws = [];
+            for ( let i = 0, l = this.planets.length; i < l; ++i ) {
+                if ( !this.planets[i] ) continue;
+                let leftAlign = this.planets[i].parent.name !== 'Sol',
+                    draw = this.planets[i].update( leftAlign );
+                this.planetDraws.push( draw );
+                if ( !leftAlign ) {
+                    canvasWidth += draw.width;
+                }
+            }
+
+            CVS.width = canvasWidth;
+            this.drawAll();
+        }
+
+        drawAll() {
+            let x = PAD / 2,
+                y = 320,
+                pos = {}, drawsTemp = [];
+
+            CTX.fillStyle = '#1f1f24';
+            CTX.fillRect( 0, 0, CVS.width, CVS.height );
+
+            if ( DEBUG_DRAW ) {
+                CTX.strokeStyle = 'red';
+                for ( let i = 1; i < 5; ++i ) {
+                    let y = 80 * i;
+                    CTX.line( 0, y, CVS.width, y );
+                }
+            }
+
+            this.starDraw.draw( CTX, x, y - this.starDraw.planetHeight / 2 );
+            x += this.starDraw.width;
+
+            this.planetDraws.forEach( ( planet ) => {
+                if ( !planet.parent || planet.parent.name !== 'Sol' ) {
+                    if ( planet.parent ) drawsTemp.push( planet );
+                    return;
+                }
+                let upd = planet,
+                    pX = x,
+                    pY = y + upd.planetHeight / 2 - upd.height;
+                if ( DEBUG_DRAW ) {
+                    CTX.strokeStyle = 'red';
+                    CTX.line( pX + upd.width / 2, 0, pX + upd.width / 2, CVS.height );
+                    CTX.strokeStyle = 'lime';
+                    CTX.strokeRect( pX, pY, upd.width, upd.height );
+                }
+                upd.draw( CTX, pX, pY );
+                pos[ planet.self.name ] = [ pX + upd.width / 2, pY + upd.height ];
+                x += upd.width;
+            });
+
+            this.planetDraws = [ ...drawsTemp ];
+            drawsTemp = [];
+
+            while ( this.planetDraws.length > 0 ) {
+                let cont = false;
+                this.planetDraws.forEach( ( planet ) => {
+                    let parent = planet.parent.name,
+                        p = pos[ parent ],
+                        pX, pY, upd;
+                    if ( !p ) {
+                        drawsTemp.push( p );
+                        return;
+                    }
+                    cont = true;
+                    upd = planet;
+                    pX = p[0] - upd.planetWidth / 2;
+                    pY = p[1];
+                    upd.draw( CTX, pX, pY );
+                    p[1] += upd.height;
+                    if ( DEBUG_DRAW ) {
+                        CTX.strokeStyle = 'lime';
+                        CTX.strokeRect( pX, pY, upd.width, upd.height );
+                    }
+                });
+                this.planetDraws = [ ...drawsTemp ];
+                drawsTemp = [];
+                if ( !cont ) break;
+            }
+
+            this.planetDraws = [];
         }
     }
 
