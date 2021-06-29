@@ -50,9 +50,9 @@
             'water':   '#507282'
         },
         ice: {
-            'ammonia': '#e2e3e4',
+            'ammonia': '#cae8cb',
             'carbon':  '#bab6ba',
-            'water':   '#cae8cb'
+            'water':   '#e2e3e4'
         },
         planet: {
             'bright':  '#dad7c5',
