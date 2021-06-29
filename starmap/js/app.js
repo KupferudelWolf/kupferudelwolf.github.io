@@ -342,34 +342,71 @@
             let cvs = this.cvsBody,
                 ctx = this.ctxBody,
                 rad = this.getDrawRadius(),
+                x = PAD / 2,
+                y = 0,
                 diam = rad * 2,
-                fontSize = 72;
-            cvs.width = cvs.height = diam;
+                fontSize = [],
+                textX = rad + x,
+                textY,
+                color = 'black',
+                baseline = 'middle',
+                textW, circX, circY;
+
+            fontSize[0] = Math.max( Math.ceil( fontSize / 16 ) * 16, 48 );
+            fontSize[1] = fontSize[0];
+            textY = rad + 4 - fontSize[0] / 2;
+            ctx.font = `400 ${fontSize[0]}px Dekar`;
+            textW = ctx.measureText( this.name.toUpperCase() ).width;
+
+            cvs.width = diam + x;
+            cvs.height = diam + y;
+            console.log(diam, textW);
+            circX = rad + x;
+
+            if ( rad > 80 * 3 ) {
+                x = 0;
+                circX = 0;
+                textX = rad / 2;
+                cvs.width = rad;
+            } else if ( diam < textW + PAD ) {
+                fontSize[1] = 24;
+                y = fontSize[0] + fontSize[1] + 80;
+                cvs.height = Math.ceil( ( y + rad ) / 80 ) * 80 + rad;
+                // y = 160 - ( ( y - rad ) % 80 );
+                y = cvs.height - diam;
+                // textY = fontSize[1] + 32;
+                textY = 92;
+                cvs.width = Math.max( textW, diam ) + x;
+                // cvs.height = diam + y;
+                color = 'white';
+                baseline = 'bottom';
+            }
+            circY = rad + y;
 
             if ( this.temp < 550 ) {
                 ctx.fillStyle = COLOR.liquid.water;
-                ctx.fillCirc( rad, rad, rad );
+                ctx.fillCirc( circX, circY, rad );
                 ctx.fillStyle = 'black';
-                ctx.fillCirc( rad, rad, rad - 8 );
+                ctx.fillCirc( circX, circY, rad - 8 );
+                color = 'white';
             } else {
                 ctx.fillStyle = this.color;
-                ctx.fillCirc( rad, rad, rad );
+                ctx.fillCirc( circX, circY, rad );
             }
 
-            let textX = rad,
-                textY = rad + 4;
-            ctx.fillStyle = 'black';
+            ctx.fillStyle = color;
             ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.font = `400 ${fontSize}px Dekar`;
-            ctx.fillText( this.name.toUpperCase(), textX, textY - fontSize/2 );
-            ctx.fillText( this.class.toUpperCase(), textX, textY + fontSize/2 );
+            ctx.textBaseline = baseline;
+            ctx.font = `400 ${fontSize[0]}px Dekar`;
+            ctx.fillText( this.name.toUpperCase(), textX, textY );
+            ctx.font = `300 ${fontSize[1]}px Dekar`;
+            ctx.fillText( this.class.toUpperCase(), textX, textY + fontSize[1] );
 
             return {
                 img: cvs,
-                x: 0, y: 0,
-                width: diam,
-                height: diam,
+                left: x, right: 0, top: y, bottom: 0,
+                width: cvs.width,
+                height: cvs.height,
                 planetX: 0,
                 planetY: 0,
                 planetWidth: diam,
@@ -590,7 +627,6 @@
         update( leftAlign ) {
             let cvs = this.cvsBody,
                 ctx = this.ctxBody,
-                // rad = Math.floor( Math.sqrt( this.radius ) / 2 ),
                 rad = this.getDrawRadius(),
                 top = 0, bottom = 0, left = 0, right = 0,
                 nameTest, textEdge, textX, textY, fontSize,
@@ -792,10 +828,9 @@
 
             return {
                 img: cvs,
-                x: 0, y: 0,
                 left: left, top: top, bottom: bottom, right: right,
-                width: left + diam + right,
-                height: top + diam + bottom,
+                width: cvs.width,
+                height: cvs.height,
                 planetX: left,
                 planetY: top,
                 planetWidth: diam,
@@ -1106,7 +1141,7 @@
         }
 
         drawAll() {
-            let x = PAD / 2,
+            let x = 0,
                 y = 320,
                 pos = {}, drawsTemp = [];
 
@@ -1121,7 +1156,13 @@
                 }
             }
 
-            this.starDraw.draw( CTX, x, y - this.starDraw.planetHeight / 2 );
+            this.starDraw.draw( CTX, x, y - this.starDraw.height + this.starDraw.planetHeight / 2 );
+            if ( DEBUG_DRAW ) {
+                CTX.strokeStyle = 'lime';
+                CTX.strokeRect(
+                    x, y - this.starDraw.height + this.starDraw.planetHeight / 2,
+                    this.starDraw.width, this.starDraw.height );
+            }
             x += this.starDraw.width;
 
             this.planetDraws.forEach( ( planet ) => {
