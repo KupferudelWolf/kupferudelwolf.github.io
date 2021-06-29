@@ -352,7 +352,7 @@
                 baseline = 'middle',
                 textW, circX, circY;
 
-            fontSize[0] = Math.max( Math.ceil( fontSize / 16 ) * 16, 48 );
+            fontSize[0] = Math.max( Math.ceil( rad / 64 ) * 16, 48 );
             fontSize[1] = fontSize[0];
             textY = rad + 4 - fontSize[0] / 2;
             ctx.font = `400 ${fontSize[0]}px Dekar`;
