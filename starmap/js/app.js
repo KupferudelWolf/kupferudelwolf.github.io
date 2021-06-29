@@ -192,6 +192,12 @@
             //
         }
 
+        getDrawRadius() {
+            let rad = Math.round( Math.sqrt( this.radius * 2 ) / 32 ) * 8;
+            rad = Math.max( rad, 8 );
+            return rad;
+        }
+
         addChild( obj ) {
             this.children.push( obj );
         }
@@ -238,8 +244,8 @@
         set isStar(x) { console.error( 'Star.isStar is read-only.' ); }
 
         get color() {
-            let min = 2399,
-                max = 25000,
+            let min = 550,
+                max = 20000,
                 temp = Math.min( Math.max( this.temp, min ), max ) - min,
                 perc = temp / ( 1 + max - min ),
                 ind = Math.floor( perc * STAR_COLOR_LIST.length );
@@ -335,8 +341,9 @@
         update() {
             let cvs = this.cvsBody,
                 ctx = this.ctxBody,
-                rad = Math.floor( Math.pow( this.radius * 2, 0.4 ) / 2 ),
-                diam = rad * 2;
+                rad = this.getDrawRadius(),
+                diam = rad * 2,
+                fontSize = 72;
             cvs.width = cvs.height = diam;
 
             if ( this.temp < 550 ) {
@@ -354,9 +361,9 @@
             ctx.fillStyle = 'black';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.font = '400 48px Dekar';
-            ctx.fillText( this.name.toUpperCase(), textX, textY - 48/2 );
-            ctx.fillText( this.class.toUpperCase(), textX, textY + 48/2 );
+            ctx.font = `400 ${fontSize}px Dekar`;
+            ctx.fillText( this.name.toUpperCase(), textX, textY - fontSize/2 );
+            ctx.fillText( this.class.toUpperCase(), textX, textY + fontSize/2 );
 
             return {
                 img: cvs,
@@ -583,19 +590,12 @@
         update( leftAlign ) {
             let cvs = this.cvsBody,
                 ctx = this.ctxBody,
-                rad = Math.floor( Math.sqrt( this.radius ) / 2 ),
+                // rad = Math.floor( Math.sqrt( this.radius ) / 2 ),
+                rad = this.getDrawRadius(),
                 top = 0, bottom = 0, left = 0, right = 0,
-                radAtm, diam, textX, textY, fontSize, icons;
+                nameTest, textEdge, textX, textY, fontSize,
+                radAtm, diam, icons;
 
-            if ( rad < 12 ) {
-                rad = 8;
-            } else if ( rad < 24 ) {
-                rad = 16;
-            } else if ( rad < 64 ) {
-                rad = 32;
-            } else {
-                rad = Math.round( rad / 16 ) * 16;
-            }
             radAtm = rad;
             if ( this.atmosphere ) {
                 if ( this.atmosphere > 0.5 ) {
@@ -608,15 +608,38 @@
 
             if ( leftAlign ) {
                 left = 68;
-                right = 96;
+                right = 0*96;
                 top = PAD / 4;
                 if ( rad === 8 ) {
                     top = bottom = PAD / 8;
                 }
+                switch (rad) {
+                    case 8:  fontSize = [ 12, 8 ];  break;
+                    case 16: fontSize = [ 18, 12 ]; break;
+                    case 24: fontSize = [ 18, 12 ]; break;
+                    case 32: fontSize = [ 24, 14 ]; break;
+                    default: fontSize = [ 32, 16 ]; break;
+                }
             } else {
                 top = 80 + 80 - ( radAtm % 80 );
                 left = right = PAD / 2;
+                if ( this.isGasGiant ) {
+                    fontSize = [ 48, 24 ];
+                } else {
+                    fontSize = [ 32, 16 ];
+                }
             }
+
+            ctx.font = `400 ${fontSize[0]}px Dekar`;
+            nameTest = this.name.length < 5 ? 'AAAAA' : this.name.toUpperCase();
+            textEdge = Math.ceil( ctx.measureText( nameTest ).width ) - radAtm;
+            if ( leftAlign ) {
+                right = Math.max( right, textEdge * 2 + diam );
+            } else {
+                left = Math.max( left, textEdge / 2 );
+                right = Math.max( right, textEdge / 2 );
+            }
+
 
             cvs.width = diam + left + right;
             cvs.height = diam + top + bottom;
@@ -734,12 +757,6 @@
                 icW = icL * 24 + ( icL - 1 ) * 8;
 
             if ( leftAlign ) {
-                switch (rad) {
-                    case 8:  fontSize = [ 12, 8 ];  break;
-                    case 16: fontSize = [ 18, 12 ]; break;
-                    case 32: fontSize = [ 24, 14 ]; break;
-                    default: fontSize = [ 32, 16 ]; break;
-                }
                 textX = diam + rad / 2;
                 textY = radAtm;
                 ctx.textAlign = 'left';
@@ -759,11 +776,6 @@
             } else {
                 textX = radAtm;
                 textY = 80 - top;
-                if ( this.isGasGiant ) {
-                    fontSize = [ 48, 24 ];
-                } else {
-                    fontSize = [ 32, 16 ];
-                }
                 ctx.textAlign = 'center';
                 ctx.fillStyle = 'white';
                 ctx.font = `400 ${fontSize[0]}px Dekar`;
@@ -881,7 +893,7 @@
                     color1: COLOR.planet.clay,
                     color2: COLOR.planet.red,
                     color3: COLOR.planet.bright,
-                    rings: 'rocky'
+                    rings: false
                 });
                 saturn = new Planet( 58232, 5.6834e+26, {
                     name: 'Saturn',
