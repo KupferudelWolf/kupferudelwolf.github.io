@@ -10,6 +10,7 @@
     const GC = 6.6743015e-11; //m3kg-1s-2
 
     const STAR_COLOR_LIST = [];
+    const ICONS = {};
 
     const DEBUG_DRAW = true;
 
@@ -174,13 +175,6 @@
         }
         set isTidallyLocked(x) {
             console.error( 'Object.isTidallyLocked is read-only.' );
-        }
-
-        get rotationIsRetrograde() {
-            return this.periodRotational < 0;
-        }
-        set rotationIsRetrograde(x) {
-            this.periodRotational = Math.abs(this.periodRotational) * x ? -1 : 1;
         }
 
         get resonance() {
@@ -553,12 +547,45 @@
 
         }
 
+        determineIcons() {
+            let out = [];
+            if ( this.life ) {
+                out.push( ICONS.life );
+                /*if ( this.life.intelligent ) {
+                    out.push( ICONS.intelligent );
+                } else*/ if ( this.life.multicellular ) {
+                    out.push( ICONS.multicellular );
+                } else if ( this.life.unicellular ) {
+                    out.push( ICONS.unicellular );
+                }
+
+            }
+            switch ( this.liquid ) {
+                case 'ammonia': out.push( ICONS.ammonia ); break;
+                case 'carbon': out.push( ICONS.hydrocarbon ); break;
+                case 'water': out.push( ICONS.water ); break;
+            }
+            // if ( this.tilt > 0.25 ) out.push( ICONS.sig_tilt );
+            if ( this.parent instanceof Barycenter ) out.push( ICONS.multi_system );
+            if ( this.periodRotational < 0 ) out.push( ICONS.retro_rot );
+            if ( this.resonance ) {
+                if ( this.resonance === '1:1' ) {
+                    if ( this.parent && this.parent.isStar ) {
+                        out.push( ICONS.res_1_1 );
+                    }
+                } else {
+                    out.push( ICONS[ 'res_' + this.resonance.replace( /:/g, '_' ) ] );
+                }
+            }
+            return out;
+        }
+
         update( leftAlign ) {
             let cvs = this.cvsBody,
                 ctx = this.ctxBody,
                 rad = Math.floor( Math.sqrt( this.radius ) / 2 ),
                 top = 0, bottom = 0, left = 0, right = 0,
-                radAtm, diam, textX, textY;
+                radAtm, diam, textX, textY, fontSize, icons;
 
             if ( rad < 12 ) {
                 rad = 8;
@@ -580,6 +607,7 @@
             diam = radAtm * 2;
 
             if ( leftAlign ) {
+                left = 68;
                 right = 96;
                 top = PAD / 4;
                 if ( rad === 8 ) {
@@ -596,8 +624,8 @@
 
             ctx.translate( left, top );
 
+            ctx.save();
             if ( this.isGasGiant ) {
-                ctx.save();
                 ctx.beginPath();
                 ctx.circ( radAtm, radAtm, rad );
                 ctx.clip();
@@ -627,14 +655,12 @@
                     ctx.line( 0, diam * 0.86, diam * 0.4375, diam * 0.86 );
                 }
 
-                ctx.restore();
             } else if ( this.atmosphere ) {
                 ctx.globalAlpha = 0.5;
                 ctx.fillStyle = this.colorAtmosphere;
                 ctx.fillCirc( radAtm, radAtm, radAtm );
                 ctx.globalAlpha = 1;
 
-                ctx.save();
                 ctx.beginPath();
                 ctx.circ( radAtm, radAtm, rad );
                 ctx.clip();
@@ -683,20 +709,19 @@
                         break;
                     default: break;
                 }
-
-                if ( this.iceCap ) {
-                    let ice = Math.sqrt( this.iceCap ),
-                        diff = radAtm - rad;
-                    ctx.fillStyle = this.colorIce;
-                    ctx.fillRect( 0, 0, diam, diff + rad * ice );
-                    ctx.fillRect( 0, diam - diff - rad * ice, diam, diam );
-                }
-
-                ctx.restore();
             } else {
                 ctx.fillStyle = this.colorLand;
                 ctx.fillCirc( radAtm, radAtm, rad );
             }
+
+            if ( this.iceCap ) {
+                let ice = Math.sqrt( this.iceCap ),
+                    diff = radAtm - rad;
+                ctx.fillStyle = this.colorIce;
+                ctx.fillRect( 0, 0, diam, diff + rad * ice );
+                ctx.fillRect( 0, diam - diff - rad * ice, diam, diam );
+            }
+            ctx.restore();
 
             if ( this.rings ) {
                 ctx.strokeStyle = this.colorRings;
@@ -704,7 +729,10 @@
                 ctx.line( -left * 2/3, radAtm, diam + right * 2/3, radAtm );
             }
 
-            let fontSize;
+            icons = this.determineIcons();
+            let icL = icons.length,
+                icW = icL * 24 + ( icL - 1 ) * 8;
+
             if ( leftAlign ) {
                 switch (rad) {
                     case 8:  fontSize = [ 12, 8 ];  break;
@@ -722,6 +750,12 @@
                 textX += fontSize[1] / 2;
                 textY += fontSize[0] * 2 / 3;
                 ctx.fillText( this.subClass.toUpperCase(), textX, textY );
+                let icX = -icW - 8,
+                    icY = radAtm - 12;
+                for ( let i = 0; i < icL; ++i ) {
+                    ctx.drawImage( icons[i], icX, icY );
+                    icX += 32;
+                }
             } else {
                 textX = radAtm;
                 textY = 80 - top;
@@ -736,11 +770,18 @@
                 ctx.fillText( this.name.toUpperCase(), textX, textY );
                 ctx.font = `300 ${fontSize[1]}px Dekar`;
                 ctx.fillText( this.subClass.toUpperCase(), textX, textY + fontSize[1] );
+                let icX = ( diam - icW ) / 2,
+                    icY = textY - 60;
+                for ( let i = 0; i < icL; ++i ) {
+                    ctx.drawImage( icons[i], icX, icY );
+                    icX += 32;
+                }
             }
 
             return {
                 img: cvs,
                 x: 0, y: 0,
+                left: left, top: top, bottom: bottom, right: right,
                 width: left + diam + right,
                 height: top + diam + bottom,
                 planetX: left,
@@ -985,6 +1026,8 @@
                 defers.push( defer );
                 img.onload = defer.resolve;
                 img.src = 'img/' + val;
+                let name = val.slice( 5, -4 );
+                ICONS[name] = img;
             });
 
             defers[0].resolve();
@@ -1103,7 +1146,7 @@
                     }
                     cont = true;
                     upd = planet;
-                    pX = p[0] - upd.planetWidth / 2;
+                    pX = p[0] - upd.planetWidth / 2 - upd.left;
                     pY = p[1];
                     upd.draw( CTX, pX, pY );
                     p[1] += upd.height;
