@@ -6,6 +6,7 @@
 
     const AU = 149597870.7;
     const SOLAR_MASS = 1.989e30;
+    const EARTH_MASS = 5.972e24;
     const GC = 6.6743015e-11; //m3kg-1s-2
 
     const STAR_COLOR_LIST = [];
@@ -471,16 +472,23 @@
         set color2(x) { this._colorWater = x; }
         set color3(x) { this._colorIce = x; }
 
-        get clearing() {
+        get isDwarf() {
             /// https://en.wikipedia.org/wiki/Clearing_the_neighbourhood
-            let m = this.mass / 1e21,
+            // let m = this.mass / 1e21,
+            //     a = this.semi / AU,
+            //     k = 0.0043,
+            //     l = k * (m**2) / Math.pow( a, 3/2 );
+            // console.log(l);
+            // return l > 1;
+            if ( !this.parent ) return true;
+            let mP = this.mass / EARTH_MASS,
+                mS = this.parent.mass / SOLAR_MASS,
                 a = this.semi / AU,
-                k = 0.0043,
-                l = k * (m**2) / Math.pow( a, 3/2 );
-            console.log(l);
-            return l > 1;
+                k = 807,
+                p = k * mP / ( Math.pow( mS, 2.5 ) * Math.pow( a, 9/8 ) );
+            return p <= 1;
         }
-        set clearing(x) { console.error( 'Planet.clearing is read-only.' ); }
+        set isDwarf(x) { console.error( 'Planet.isDwarf is read-only.' ); }
 
         get class() {
             let parentClass = '', pre = '';
@@ -488,12 +496,12 @@
             if ( this.isIceGiant ) return 'ice giant';
             if ( this.isGasGiant ) return 'gas giant';
 
-            if ( !this.clearing ) pre += 'dwarf ';
+            if ( this.isDwarf ) pre += 'dwarf ';
 
             if ( this.parent ) {
                 parentClass = this.parent.class;
             } else {
-                return pre += 'rogue ';
+                pre += 'rogue ';
             }
             if ( parentClass.includes('planet') ) return pre + 'moon';
             if ( parentClass.includes('giant') ) return pre + 'moon';
@@ -799,7 +807,7 @@
                     day: -5832.5424,
                     color: COLOR.planet.sand
                 });
-                earth = new Planet( 6371, 5.972e24, {
+                earth = new Planet( 6371, EARTH_MASS, {
                     name: 'Earth',
                     parent: sun,
                     semi: AU,
