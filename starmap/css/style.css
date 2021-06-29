@@ -13,14 +13,83 @@
 
 body {
     background-color: #0f0f12;
+    font-family: Raleway, sans-serif;
 }
-canvas {
-    /* border: 1px solid #e2e3e4; */
+body * {
+    font-family: Raleway, sans-serif;
+}
+p {
+    font-size: inherit;
+    margin-top: 18px;
+    margin-bottom: 0;
 }
 
-.container {
+.output {
     display: block;
     width: 100vw;
     height: auto;
     overflow-x: auto;
+}
+
+
+
+.options {
+    width: min-content;
+    position: absolute;
+    min-height: 40px;
+    margin: 16px;
+    left: 0;
+    top: 0;
+}
+.options > .collapsible.active {
+    width: 512px;
+}
+
+
+
+.collapsible {
+    background-color: var(--color-planet-deep);
+    color: var(--color-ice-water);
+    cursor: pointer;
+    padding: 8px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.collapsible.active, .collapsible:hover {
+    background-color: var(--color-liquid-water);
+}
+
+.collapsible-content {
+    display: none;
+    overflow: hidden;
+    white-space: normal;
+    background-color: var(--color-ice-water);
+    font-size: 14px;
+}
+.collapsible-content:not(:empty) {
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-bottom: 18px;
+}
+.collapsible.active + .collapsible-content {
+    display: block;
+}
+
+.collapsible:after {
+    content: '\2295';
+    float: right;
+    text-align: right;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-weight: 400;
+}
+
+.collapsible.active:after {
+    content: "\2296";
 }

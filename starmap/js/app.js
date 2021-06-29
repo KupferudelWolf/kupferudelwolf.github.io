@@ -67,9 +67,17 @@
             'clay':    '#bd8264',
             'carbon':  '#bab6ba',
             'mauve':   '#7e6b71',
-            'pale':    '#7895a4'
+            'pale':    '#7895a4',
+            'deep':    '#375c70'
         }
     };
+    for ( let cat in COLOR ) {
+        for ( let sub in COLOR[cat] ) {
+            let prop = `--color-${cat}-${sub}`,
+                val = COLOR[cat][sub];
+            $( ':root' ).get(0).style.setProperty( prop, val );
+        }
+    }
 
     class Body {
         constructor( radius, mass, prop ) {
@@ -360,7 +368,6 @@
 
             cvs.width = diam + x;
             cvs.height = diam + y;
-            console.log(diam, textW);
             circX = rad + x;
 
             if ( rad > 80 * 3 ) {
@@ -516,7 +523,6 @@
             //     a = this.semi / AU,
             //     k = 0.0043,
             //     l = k * (m**2) / Math.pow( a, 3/2 );
-            // console.log(l);
             // return l > 1;
             if ( !this.parent ) return true;
             let mP = this.mass / EARTH_MASS,
@@ -867,6 +873,10 @@
             extendCTX( CTX );
 
             this.images = [];
+
+            /// Collapsible menus.
+            this.controlCollapsible( $('.collapsible') );
+
             this.loadImages().then( () => {
                 let sun,
                     mercury, venus, earth, mars,
@@ -1026,9 +1036,21 @@
 
                 this.star = sun;
 
+                this.planets.forEach( ( pl ) => {
+                    this.addCollapsible( pl, pl.parent );
+                });
+
                 this.updateAll();
 
-                console.log(this.planets);
+                console.log( this.planets );
+            });
+        }
+
+        controlCollapsible( jObj ) {
+            jObj.each( function () {
+                $(this).click( function () {
+                    $(this).toggleClass( 'active' );
+                });
             });
         }
 
@@ -1117,10 +1139,63 @@
             }
         }
 
+        sortPlanets() {
+            this.planets.sort( ( a, b ) => a.semi - b.semi );
+        }
+
+        addCollapsible( planet, parent ) {
+            let container, button, content;
+
+            if ( parent && parent.parent ) {
+                parent = parent.menu;
+            } else {
+                parent = $( '.options-content' );
+            }
+
+            container = $('<div>')
+                .addClass( 'planet-menu' )
+                .attr( 'id', `planet-${ planet.name }` )
+                .appendTo( parent );
+            button = $('<button>')
+                .addClass( 'collapsible' )
+                .attr( 'type', 'button' )
+                .html( planet.name )
+                .appendTo( container );
+            content = $( '<div>' )
+                .addClass( 'collapsible-content' )
+                .appendTo( container );
+
+
+            $('<p>')
+                .html( 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' )
+                .appendTo( content );
+
+            planet.menu = content;
+
+            this.controlCollapsible( button );
+            button.click( function () {
+                let self = $(this);
+                if ( self.is( '.active' ) ) {
+                    self.parent()
+                        .siblings( '.planet-menu' )
+                        .find( '.collapsible' )
+                        .removeClass( 'active' );
+                }
+            });
+
+            $( '.collapsible-content > .planet-menu' ).sort( ( a, b ) => {
+                let idA = $(a).attr('id').replace( 'planet-', '' ),
+                    idB = $(b).attr('id').replace( 'planet-', '' ),
+                    planetA = this.planets.find( elem => elem.name === idA ),
+                    planetB = this.planets.find( elem => elem.name === idB );
+                return planetA.semi - planetB.semi;
+            });
+        }
+
         updateAll() {
             let canvasWidth = PAD;
 
-            this.planets.sort( ( a, b ) => a.semi - b.semi );
+            this.sortPlanets();
 
             this.starDraw = this.star.update();
             canvasWidth += this.starDraw.width;
