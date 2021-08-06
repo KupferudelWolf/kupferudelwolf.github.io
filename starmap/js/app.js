@@ -1042,6 +1042,9 @@
 
                 this.updateAll();
 
+                $( '.options > button' ).click();
+                $( '#planet-Mars' ).children('button').click();
+
                 console.log( this.planets );
             });
         }
@@ -1144,7 +1147,55 @@
         }
 
         addCollapsible( planet, parent ) {
-            let container, button, content;
+            let container, button, content, controls, details, textContainer,
+                valInput, textInput, unitInput,
+                redraw = () => {
+                    this.updateAll();
+                },
+                addCtrl = ( id, key, unit, prop ) => {
+                    prop = prop || {
+                        type: 'range',
+                        min: 0,
+                        max: 1,
+                        step: 0.0001,
+                        value: planet[key]
+                    };
+                    unit = unit || '';
+                    $('<p>').html( id ).appendTo( controls );
+                    valInput = $('<input>')
+                        .addClass( 'control-input' )
+                        .attr( prop )
+                        .appendTo( controls );
+                    textContainer = $('<div>')
+                        .addClass( 'control-text' )
+                        .appendTo( controls );
+                    textInput = $('<input>')
+                        .attr({
+                            type: 'text',
+                            size: 10,
+                            value: valInput.val()
+                        })
+                        .appendTo( textContainer );
+                    $('<p>')
+                        .addClass( 'control-unit' )
+                        .html( unit )
+                        .appendTo( textContainer );
+                    return {
+                        valInput: valInput,
+                        textInput: textInput,
+                        unitInput: unitInput
+                    };
+                },
+                addElem = ( text ) => {
+                    return $('<p>')
+                        .html( text )
+                        .appendTo( details );
+                },
+                sentCase = ( text ) => {
+                    return text.split(' ').map( ( str ) => {
+                        return str[0].toUpperCase() + str.substring(1);
+                    }).join(' ');
+                };
 
             if ( parent && parent.parent ) {
                 parent = parent.menu;
@@ -1164,13 +1215,75 @@
             content = $( '<div>' )
                 .addClass( 'collapsible-content' )
                 .appendTo( container );
-
-
-            $('<p>')
-                .html( 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' )
+            controls = $('<div>')
+                .addClass( 'planet-controls' )
+                .appendTo( content );
+            details = $('<div>')
+                .addClass( 'planet-details' )
                 .appendTo( content );
 
+            let nameCtrl = addCtrl( 'Name', 'name', '', {
+                type: 'text',
+                value: planet.name
+            });
+            nameCtrl.valInput.on( 'input change', function () {
+                radCtrl.valInput.val( val ).change();
+            });
+            nameCtrl.textInput.on( 'change', function () {
+                let val = $(this).val();
+                planet.name = $(this).val();
+            });
+
+            let radCtrl = addCtrl( 'Radius', 'radius', 'km', {
+                type: 'range',
+                min: 0, max: 250000, step: 0.1,
+                value: planet.radius
+            });
+            radCtrl.valInput.on( 'input change', function () {
+                let r = $(this).val();
+                planet.radius = r;
+                radCtrl.textInput.val( r );
+                planet.update();
+                redraw();
+            });
+            radCtrl.textInput.on( 'change', function () {
+                let val = Number( $(this).val() );
+                if ( isNaN(val) ) val = planet.radius;
+                radCtrl.valInput.val( val ).change();
+            });
+
+            let massCtrl = addCtrl( 'Mass', 'mass', 'kg', {
+                type: 'range',
+                min: 0.0001, max: 100, step: 0.0001,
+                value: Math.log10( planet.mass )
+            });
+            massCtrl.valInput.on( 'input change', function () {
+                let m = Math.pow( 10, $(this).val() );
+                planet.mass = m;
+                if ( m >= 10000 ) {
+                    m = m.toExponential( 4 );
+                } else {
+                    m = m.toFixed( 4 );
+                }
+                massCtrl.textInput.val( m );
+            });
+            massCtrl.textInput
+                .val( planet.mass.toExponential( 4 ) )
+                .on( 'change', function () {
+                    let val = Number( $(this).val() );
+                    if ( isNaN(val) ) val = planet.mass;
+                    massCtrl.valInput.val( Math.log10( val ) ).change();
+                });
+
+            addElem( 'Class' );
+            addElem( sentCase( planet.class ) );
+            addElem( 'Subclass' );
+            addElem( sentCase( planet.subClass ) );
+
             planet.menu = content;
+
+            let update = () => {};
+            planet.updateMenu = update;
 
             this.controlCollapsible( button );
             button.click( function () {
@@ -1219,6 +1332,10 @@
             let x = 0,
                 y = 320,
                 pos = {}, drawsTemp = [];
+
+            if ( !this.planetDraws ) {
+                this.planetDraws = [ ...planets ];
+            }
 
             CTX.fillStyle = '#1f1f24';
             CTX.fillRect( 0, 0, CVS.width, CVS.height );
@@ -1288,7 +1405,7 @@
                 if ( !cont ) break;
             }
 
-            this.planetDraws = [];
+            this.planetDraws = null;
         }
     }
 
