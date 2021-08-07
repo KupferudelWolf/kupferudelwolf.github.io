@@ -116,6 +116,13 @@ h1.ui-bar {
     top: 0;
     right: 0;
 }
+.events {
+    height: 100%;
+    overflow-y: scroll;
+}
+.events::-webkit-scrollbar {
+    width: 0;
+}
 .single-event {
     margin-bottom: 1em;
     padding-top: 1em;

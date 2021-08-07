@@ -1,14 +1,17 @@
 [
     {
         "name": "beginningg",
-        "day": 2143
+        "day": 143,
+        "desc": "Somebody once told me the world is gonna roll me; I ain't the sharpest tool in the shed."
     },
     {
         "name": "zero",
-        "day": 0
+        "day": 0,
+        "desc": "This is the start."
     },
     {
         "name": "end",
-        "day": 1000
+        "day": 1000,
+        "desc": "This is the end."
     }
 ]

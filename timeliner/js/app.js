@@ -19,6 +19,9 @@
             // this.initMapCtrl();
 
             this.loadData().then( () => {
+                // this.data.forEach( ( v ) => {
+                //     this.createEvent( v );
+                // });
                 /// Temporary: fill the map with a checkerboard pattern.
                 let ckbd = 32;
                 CTX.fillStyle = 'black';
@@ -32,6 +35,43 @@
                     }
                 }
             });
+        }
+
+        createEvent( data ) {
+            console.log(data);
+            let name = data.name,
+                date = data.day,
+                desc = data.desc || 'No description.',
+                container;
+            container = $( '<div>' )
+                .addClass( 'ui-bar ui-body-a single-event' )
+                .attr( 'data-date', date )
+                .appendTo( '.events' );
+            data.div = container;
+
+            $( '<div>' )
+                .addClass( 'dragger' )
+                .appendTo( container );
+            $( '<div>' )
+                .addClass( 'event-title ui-bar ui-bar-a' )
+                .html( name )
+                .appendTo( container );
+            $( '<input>' )
+                .addClass( 'event-date ui-bar ui-body-a' )
+                .attr( 'type', 'text' )
+                .val( this.printDate( date ) )
+                .appendTo( container );
+            $( '<textarea>' )
+                .addClass( 'event-desc ui-bar ui-body-a' )
+                .html( desc )
+                .appendTo( container );
+
+            ///
+            let all = $( '.events' ).children().sort( function ( a, b ) {
+                return a.getAttribute( 'data-date' ) - b.getAttribute( 'data-date' );
+            });
+            $( '.events' ).html('').append( all );
+            $( '.events input, .events textarea' ).textinput();
         }
 
         initBubbleCtrl() {
@@ -154,10 +194,14 @@
         loadData() {
             let deferred = $.Deferred()
             $.getJSON( 'ajax/record.json', ( data ) => {
-                this.data = data.sort( ( a, b ) => {
-                    this.timeEnd = Math.max( a.day, b.day, this.timeBegin + 1, this.timeEnd );
-                    return a.day - b.day;
+                // this.data = data.sort( ( a, b ) => {
+                //     this.timeEnd = Math.max( a.day, b.day, this.timeBegin + 1, this.timeEnd );
+                //     return a.day - b.day;
+                // });
+                data.forEach( v => {
+                    this.createEvent( v );
                 });
+            }).then(() => {
                 deferred.resolve();
             });
             return deferred;
