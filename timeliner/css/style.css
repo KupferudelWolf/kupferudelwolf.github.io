@@ -1,16 +1,52 @@
 body {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+body * {
+    box-sizing: border-box;
 }
 
 .spacer {
     visibility: hidden;
 }
 
+h1.ui-bar {
+    width: 100%;
+    text-align: center;
+}
+
 .container {
+    width: 80vw;
+}
+
+.sidebar {
+    width: 20vw;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.container-options {
     position: relative;
     margin: 0 5vw;
-    padding-top: 5vh;
+    padding-top: 2vh;
+}
+
+.container-canvas {
+    display: flex;
+    justify-content: center;
+    margin: 0 7vw;
+    margin-top: 2vw;
+    width: 66vw;
+    height: 33vw;
+    overflow: auto;
+}
+.container-canvas canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .slider-date {
@@ -22,6 +58,7 @@ body {
 
 .options {
     /* display: flex; */
+    width: 20vw;
 }
 .options .control {
     display: flex;
