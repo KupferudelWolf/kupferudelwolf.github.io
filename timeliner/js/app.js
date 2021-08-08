@@ -46,7 +46,7 @@
                     return $( this ).attr( 'data-id' );
                 }).get(),
                 id,
-                container, placeholder, dragger, header, footer,
+                container, placeholder, dragger, header, footerButtons, footerColor,
                 color_button, color_picker, color_text,
                 dragging, offX, offY;
 
@@ -149,13 +149,27 @@
                 .html( desc )
                 .appendTo( container );
 
-            footer = $( '<div>' )
+            footerButtons = $( '<div>' )
                 .addClass( 'event-footer' )
                 .appendTo( container );
-            // $( '<button>' )
-            //     .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-crosshair' )
-            //     .attr( 'title', 'Mark on Map' )
-            //     .appendTo( footer );
+            $( '<button>' )
+                .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-location' )
+                .attr( 'title', 'Mark on Map' )
+                .appendTo( footerButtons );
+            $( '<button>' )
+                .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-delete' )
+                .attr( 'title', 'Delete Event' )
+                .on( 'click', function () {
+                    if ( confirm( `Are you sure you want to delete "${ name }"?` )) {
+                        container.remove();
+                    }
+                })
+                .appendTo( footerButtons );
+
+            footerColor = $( '<div>' )
+                .addClass( 'event-footer' )
+                .appendTo( container );
+
             color_button = $( '<input>' )
                 .addClass( 'event-color-button' )
                 .attr( 'type', 'color' )
@@ -167,7 +181,7 @@
                     color_picker.val( color );
                     color_picker.toggleClass( 'hidden' );
                 })
-                .appendTo( footer );
+                .appendTo( footerColor );
             color_text = $( '<input>' )
                 .attr( 'type', 'text' )
                 .val( color )
@@ -179,7 +193,7 @@
                     color_picker.colorpicker( 'val', color );
                     document.documentElement.style.setProperty( `--color-${ id }`, color );
                 })
-                .appendTo( footer );
+                .appendTo( footerColor );
 
             color_picker = $( '<span>' )
                 .addClass( 'event-colorpicker hidden' )
@@ -453,8 +467,20 @@
 
         updateEvent( e ) {
             let elem = $( e ),
-                date = elem.attr( 'data-date' );
+                date = elem.attr( 'data-date' ),
+                slider = $( '#time-selection' ),
+                sliderMin = 0,
+                sliderMax = 0;
             elem.find( '.event-date' ).val( this.printDate( date ) );
+            $( '.single-event' ).each( function () {
+                let date = $( this ).attr( 'data-date' );
+                sliderMin = Math.min( sliderMin, date );
+                sliderMax = Math.max( sliderMax, date );
+            });
+            slider
+                .attr( 'min', sliderMin )
+                .attr( 'max', sliderMax )
+                .trigger( 'change' );
         }
     }
 
