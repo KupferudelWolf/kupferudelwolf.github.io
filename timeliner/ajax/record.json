@@ -7,7 +7,8 @@
     {
         "name": "zero",
         "day": 0,
-        "desc": "This is the start."
+        "desc": "This is the start.",
+        "color": "#ffcccc"
     },
     {
         "name": "end",

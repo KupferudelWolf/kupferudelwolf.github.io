@@ -41,12 +41,25 @@
                 name = data.name,
                 date = data.day,
                 desc = data.desc || 'No description.',
-                container, placeholder, dragger, header,
+                color = data.color || '#ffffff',
+                idAll = $( '.single-event' ).map( function () {
+                    return $( this ).attr( 'data-id' );
+                }).get(),
+                id,
+                container, placeholder, dragger, header, footer,
+                color_button, color_picker, color_text,
                 dragging, offX, offY;
+
+            while ( !id || idAll.includes( id ) ) {
+                id = Math.floor( Math.random() * Math.max( 2*10, idAll.length + 1 ) );
+            }
+            document.documentElement.style.setProperty( `--color-${ id }`, color );
 
             container = $( '<div>' )
                 .addClass( 'ui-bar ui-body-a single-event' )
                 .attr( 'data-date', date )
+                .attr( 'data-id', id )
+                .css( 'background-color', `var(--color-${ id })` )
                 .appendTo( '.events' );
             placeholder = $( '<div>' )
                 .addClass( 'single-event placeholder' );
@@ -134,6 +147,51 @@
             $( '<textarea>' )
                 .addClass( 'event-desc ui-bar ui-body-a' )
                 .html( desc )
+                .appendTo( container );
+
+            footer = $( '<div>' )
+                .addClass( 'event-footer' )
+                .appendTo( container );
+            // $( '<button>' )
+            //     .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-crosshair' )
+            //     .attr( 'title', 'Mark on Map' )
+            //     .appendTo( footer );
+            color_button = $( '<input>' )
+                .addClass( 'event-color-button' )
+                .attr( 'type', 'color' )
+                .val( color )
+                .attr( 'title', 'Change Color' )
+                // .css( 'background-color', color )
+                .on( 'click', function ( e ) {
+                    e.preventDefault();
+                    color_picker.val( color );
+                    color_picker.toggleClass( 'hidden' );
+                })
+                .appendTo( footer );
+            color_text = $( '<input>' )
+                .attr( 'type', 'text' )
+                .val( color )
+                .on ( 'change input', function () {
+                    color = $( this ).val().replace( /[^A-Fa-f0-9]/g, '' );
+                    color = '#' + color.substring( 0, 6 );
+                    $( this ).val( color );
+                    color_button.val( color );
+                    color_picker.colorpicker( 'val', color );
+                    document.documentElement.style.setProperty( `--color-${ id }`, color );
+                })
+                .appendTo( footer );
+
+            color_picker = $( '<span>' )
+                .addClass( 'event-colorpicker hidden' )
+                .colorpicker({
+                    defaultPalette: 'web'
+                })
+                .on( 'change.color', function ( e, val ) {
+                    color = val;
+                    color_button.val( val );
+                    color_text.val( val );
+                    document.documentElement.style.setProperty( `--color-${ id }`, color );
+                })
                 .appendTo( container );
 
             container.on( 'mousemove', function ( e ) {

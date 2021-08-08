@@ -10,6 +10,23 @@ textarea {
     min-height: 2rem;
 }
 
+
+/* .ui-icon-color:after {
+    background-image: url("../img/jmobile/color.png");
+    /* Make your icon fit */
+    background-size: 18px 18px;
+} */
+.ui-icon-crosshair:after {
+    background-image: url("../img/jmobile/crosshair.png");
+    /* Make your icon fit */
+    background-size: 18px 18px;
+}
+
+.hidden {
+    display: none;
+}
+
+
 .spacer {
     visibility: hidden;
 }
@@ -103,9 +120,11 @@ h1.ui-bar {
 .dragger {
     height: 1.5em;
     transform: translateY(-0.5em);
-    background-image: linear-gradient(lightgray 50%, transparent 50%);
+    background-image: linear-gradient(white 50%, transparent 50%);
     background-size: 100% 0.25em;
     background-repeat: repeat-y;
+    mix-blend-mode: difference;
+    opacity: 0.75;
     cursor: pointer;
 }
 .dragger.dragging {
@@ -164,4 +183,14 @@ h1.ui-bar {
 .collapsed .event-date,
 .collapsed .event-desc {
     display: none;
+}
+.event-footer {
+    display: flex;
+    grid-gap: 0.5em;
+}
+.event-color-button {
+    width: 2.2em !important;
+}
+.event-colorpicker > .evo-pop {
+    width: 100%;
 }
