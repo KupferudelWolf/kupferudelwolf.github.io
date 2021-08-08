@@ -156,6 +156,21 @@ h1.ui-bar {
     margin-bottom: 1em;
     padding-top: 1em;
     padding-bottom: 0.6em;
+    border-color: var(--color);
+    border-style: solid;
+    border-width: 0.5em;
+}
+.single-event:after {
+    content: '';
+    pointer-events: none;
+    border-color: var(--color);
+    border-style: ridge;
+    border-width: 4px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
 }
 .single-event:last-of-type {
     margin-bottom: 80vh;

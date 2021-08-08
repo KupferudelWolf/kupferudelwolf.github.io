@@ -56,16 +56,16 @@
                     break;
                 }
             }
-            document.documentElement.style.setProperty( `--color-${ id }`, color );
 
             container = $( '<div>' )
                 .addClass( 'ui-bar ui-body-a single-event' )
                 .attr( 'data-date', date )
                 .attr( 'data-id', id )
-                .css( 'background-color', `var(--color-${ id })` )
                 .appendTo( '.events' );
             placeholder = $( '<div>' )
                 .addClass( 'single-event placeholder' );
+
+            container.get(0).style.setProperty( '--color', color );
 
             data.div = container;
 
@@ -109,7 +109,7 @@
                         .toggleClass( 'ui-icon-carat-d' );
                     container.toggleClass( 'collapsed' );
                 })
-                .bind( 'contextmenu', function ( e ) {
+                .on( 'contextmenu', function ( e ) {
                     e.preventDefault();
                     if ( lockButton.attr( 'data-lock' ) === 'on' ) return;
                     let self = $( this );
@@ -217,7 +217,7 @@
                     $( this ).val( color );
                     color_button.val( color );
                     color_picker.colorpicker( 'val', color );
-                    document.documentElement.style.setProperty( `--color-${ id }`, color );
+                    container.get(0).style.setProperty( '--color', color );
                 })
                 .appendTo( footerColor );
 
@@ -230,7 +230,7 @@
                     color = val;
                     color_button.val( val );
                     color_text.val( val );
-                    document.documentElement.style.setProperty( `--color-${ id }`, color );
+                    container.get(0).style.setProperty( '--color', color );
                 })
                 .appendTo( container );
 
