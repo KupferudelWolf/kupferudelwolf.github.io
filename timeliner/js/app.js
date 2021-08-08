@@ -406,14 +406,17 @@
 
         initDayCtrl() {
             let app = this;
-            $( '#enable-days' ).on( 'change', function () {
-                $( '#days-max' ).prop( 'disabled', !$(this).is( ':checked' ) );
+            $( '#enable-years' ).on( 'change', function () {
+                let enableYears = $( this ).is( ':checked' );
+                $( '#days-max' ).textinput( enableYears ? 'enable' : 'disable' );
+                app.updateEvent();
             });
             /// Set daysMax.
             $( '#days-max' ).on( 'change input', function () {
                 let self = $( this );
                 app.daysMax = Math.max( self.val(), self.attr( 'min' ) );
                 $( '#time-range-min, #time-range-max, #time-selection' ).trigger( 'change' );
+                app.updateEvent();
             }).trigger( 'change' );
         }
 
@@ -501,12 +504,24 @@
         }
 
         printDate( val ) {
-            const year = Math.floor( val / this.daysMax ) + 1,
+            const year = Math.floor( val / this.daysMax ),
                   day = Math.floor( val % this.daysMax ) + 1;
-            return `Year ${ year }, Day ${ day }`;
+
+            if ( !$( '#enable-years' ).is( ':checked' ) ) {
+                return `Day ${ Math.floor( year * this.daysMax ) + day }`;
+            } else {
+                return `Year ${ year + 1 }, Day ${ day }`;
+            }
         }
 
         updateEvent( e ) {
+            let app = this;
+            if ( !e ) {
+                $( '.single-event' ).each( function () {
+                    app.updateEvent( this );
+                });
+                return;
+            }
             let elem = $( e ),
                 date = elem.attr( 'data-date' ),
                 slider = $( '#time-selection' ),
