@@ -17,8 +17,10 @@
             this.initDayCtrl();
             this.initBubbleCtrl();
             // this.initMapCtrl();
+            this.initMiscCtrl();
 
             this.loadData().then( () => {
+                this.sortEvents();
                 // this.data.forEach( ( v ) => {
                 //     this.createEvent( v );
                 // });
@@ -38,19 +40,48 @@
         }
 
         createEvent( data ) {
-            console.log(data);
-            let name = data.name,
+            let app = this,
+                name = data.name,
                 date = data.day,
                 desc = data.desc || 'No description.',
-                container;
+                container, placeholder, dragger,
+                dragging, offX, offY;
+
             container = $( '<div>' )
                 .addClass( 'ui-bar ui-body-a single-event' )
                 .attr( 'data-date', date )
                 .appendTo( '.events' );
+            placeholder = $( '<div>' )
+                .addClass( 'single-event placeholder' );
+
             data.div = container;
 
-            $( '<div>' )
+            dragger = $( '<div>' )
                 .addClass( 'dragger' )
+                .on( 'mousedown', function ( e ) {
+                    let self = $( this ),
+                        mX = e.pageX,
+                        mY = e.pageY,
+                        posSelf = self.position(),
+                        offset = container.offset();
+                    offX = -posSelf.left - self.width()/2;
+                    offY = -posSelf.top - self.height()/2;
+                    // offX = offset.left - e.pageX;
+                    // offY = offset.top - e.pageY;
+                    dragging = true;
+                    placeholder
+                        .height( `${ container.outerHeight() }px` )
+                        .detach()
+                        .insertAfter( container );
+                    container
+                        .width( `${ container.outerWidth() }px` )
+                        .detach()
+                        .appendTo( 'body' )
+                        .addClass( 'dragging' )
+                        .css( 'left', `${ mX + offX }px` )
+                        .css( 'top', `${ mY + offY }px` );
+                    self.addClass( 'dragging' );
+                })
                 .appendTo( container );
             $( '<div>' )
                 .addClass( 'event-title ui-bar ui-bar-a' )
@@ -60,17 +91,96 @@
                 .addClass( 'event-date ui-bar ui-body-a' )
                 .attr( 'type', 'text' )
                 .val( this.printDate( date ) )
+                .on( 'change', function () {
+                    let self = $( this ),
+                        val = app.interpretDate( self.val() );
+                    if ( val ) {
+                        container.attr( 'data-date', val );
+                    }
+                    app.updateEvent( container );
+                })
                 .appendTo( container );
             $( '<textarea>' )
                 .addClass( 'event-desc ui-bar ui-body-a' )
                 .html( desc )
                 .appendTo( container );
 
-            ///
+            container.on( 'mousemove', function ( e ) {
+                if ( !dragging ) return;
+                e.preventDefault();
+                let mX = e.pageX,
+                    mY = e.pageY,
+                    y = mY,
+                    left = mX + offX,
+                    top = mY + offY,
+                    height = container.outerHeight(),
+                    found;
+                container.css({
+                    'left': `${ left }px`,
+                    'top': `${ top }px`
+                });
+                /// Place the placeholder between the nearest event elements.
+                $( '.events .single-event:not(".placeholder")' ).each( function () {
+                    if ( found ) return;
+                    let self = $( this ),
+                        h = self.innerHeight(),
+                        y1 = self.offset().top + h / 2;
+                    if ( y <= y1 ) {
+                        placeholder.detach().insertBefore( this );
+                        found = true;
+                        return;
+                    }
+                });
+                /// The following is true if the container is at the bottom of the list.
+                if ( !found ) {
+                    placeholder.detach().appendTo( '.events' );
+                }
+            });
+            container.on( 'mouseup mouseleave', () => {
+                dragger.removeClass( 'dragging' );
+                if ( !dragging ) return;
+                let date = +container.attr( 'data-date' ),
+                    allDates = $( '.single-event' ).map( function () {
+                        return this.getAttribute( 'data-date' );
+                    }).get(),
+                    prevDate, nextDate;
+                dragging = false;
+                /// Replace the placeholder with the container.
+                container
+                    .width('')
+                    .css({ left: '', top: '' })
+                    .removeClass( 'dragging' )
+                    .detach()
+                    .insertAfter( placeholder );
+                placeholder.detach();
+
+                /// Set the date to a date between the neighboring containers (if necessary).
+                if ( container.prev().length > 0 ) {
+                    prevDate = +container.prev().attr( 'data-date' );
+                } else {
+                    prevDate = Math.min( ...allDates );
+                }
+                if ( container.next().length > 0 ) {
+                    nextDate = +container.next().attr( 'data-date' );
+                } else {
+                    nextDate = Math.max( ...allDates );
+                }
+
+                console.log(prevDate,date,nextDate);
+                if ( date < prevDate || date > nextDate ) {
+                    let newDate = prevDate + ( nextDate - prevDate ) / 2;
+                    container.attr( 'data-date', Math.floor( newDate ) );
+                }
+                this.updateEvent( container );
+            });
+        }
+
+        sortEvents() {
             let all = $( '.events' ).children().sort( function ( a, b ) {
                 return a.getAttribute( 'data-date' ) - b.getAttribute( 'data-date' );
             });
-            $( '.events' ).html('').append( all );
+            $( '.events' ).children().detach();
+            $( '.events' ).append( all );
             $( '.events input, .events textarea' ).textinput();
         }
 
@@ -191,6 +301,41 @@
             });
         }
 
+        initMiscCtrl() {
+            $( '.sort-events' ).on( 'click', () => {
+                this.sortEvents();
+            });
+        }
+
+        interpretDate( d ) {
+            if ( !isNaN( d * 1 ) ) {
+                return Math.floor( d * 1 );
+            }
+            let reducer = ( a, b ) => a.length > b.length ? a : b,
+                val = d
+                    .toLowerCase()
+                    .replace(/(year)/g, 'y')
+                    .replace(/(day)/g, 'd')
+                    .replace(/[^dy0-9.]/g, ''),
+                year = val.match( /y[0-9]+/g ),
+                day = val.match( /d[0-9]+/g );
+            if ( year ) {
+                year = year.reduce(reducer).substring(1) - 1;
+                if ( !day ) {
+                    day = ['d2'];
+                }
+            } else {
+                year = 0;
+            }
+            if ( day ) {
+                day = day.reduce( reducer ).substring( 1 ) * 1;
+                console.log( year, day );
+                return Math.floor( year * this.daysMax ) + day - 1;
+            } else {
+                return null;
+            }
+        }
+
         loadData() {
             let deferred = $.Deferred()
             $.getJSON( 'ajax/record.json', ( data ) => {
@@ -211,6 +356,12 @@
             const year = Math.floor( val / this.daysMax ) + 1,
                   day = Math.floor( val % this.daysMax ) + 1;
             return `Year ${ year }, Day ${ day }`;
+        }
+
+        updateEvent( e ) {
+            let elem = $( e ),
+                date = elem.attr( 'data-date' );
+            elem.find( '.event-date' ).val( this.printDate( date ) );
         }
     }
 

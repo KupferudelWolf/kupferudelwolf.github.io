@@ -101,11 +101,15 @@ h1.ui-bar {
 
 
 .dragger {
-    height: 1em;
+    height: 1.5em;
     transform: translateY(-0.5em);
     background-image: linear-gradient(lightgray 50%, transparent 50%);
     background-size: 100% 0.25em;
     background-repeat: repeat-y;
+    cursor: pointer;
+}
+.dragger.dragging {
+    cursor: move;
 }
 
 
@@ -130,6 +134,13 @@ h1.ui-bar {
 }
 .single-event:last-of-type {
     margin-bottom: 80vh;
+}
+.single-event.dragging {
+    position: absolute;
+}
+.single-event.placeholder {
+    width: 100%;
+    border: 1px dashed darkgray;
 }
 .event-title {
     text-align: center;
