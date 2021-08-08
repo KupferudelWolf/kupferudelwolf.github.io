@@ -9,6 +9,12 @@ body * {
 textarea {
     min-height: 2rem;
 }
+textarea:disabled {
+    opacity: 1;
+    background-color: transparent !important;
+    border: none;
+    box-shadow: none;
+}
 
 
 /* .ui-icon-color:after {
@@ -179,9 +185,7 @@ h1.ui-bar {
     font-size: 90%;
     white-space: normal;
 }
-.collapsed .ui-input-text,
-.collapsed .event-date,
-.collapsed .event-desc {
+.collapsed > *:not(.dragger, .event-title) {
     display: none;
 }
 .event-footer {

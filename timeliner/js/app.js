@@ -42,16 +42,19 @@
                 date = data.day,
                 desc = data.desc || 'No description.',
                 color = data.color || '#ffffff',
-                idAll = $( '.single-event' ).map( function () {
-                    return $( this ).attr( 'data-id' );
+                idAll = $( '.single-event' ).not( this ).map( function () {
+                    return $( this ).attr( 'data-id' ) * 1;
                 }).get(),
                 id,
                 container, placeholder, dragger, header, footerButtons, footerColor,
-                color_button, color_picker, color_text,
+                color_button, color_picker, color_text, lockButton,
                 dragging, offX, offY;
 
-            while ( !id || idAll.includes( id ) ) {
-                id = Math.floor( Math.random() * Math.max( 2*10, idAll.length + 1 ) );
+            for ( let i = 0, l = idAll.length + 1; i < l; ++i ) {
+                if ( !idAll.includes( i ) ) {
+                    id = i;
+                    break;
+                }
             }
             document.documentElement.style.setProperty( `--color-${ id }`, color );
 
@@ -108,6 +111,7 @@
                 })
                 .bind( 'contextmenu', function ( e ) {
                     e.preventDefault();
+                    if ( lockButton.attr( 'data-lock' ) === 'on' ) return;
                     let self = $( this );
                     self.addClass( 'editting' );
                     self.children( 'span' ).hide();
@@ -154,10 +158,30 @@
                 .appendTo( container );
             $( '<button>' )
                 .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-location' )
+                .attr( 'name', 'Mark' )
                 .attr( 'title', 'Mark on Map' )
+                .appendTo( footerButtons );
+            lockButton = $( '<button>' )
+                .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-lock' )
+                .attr( 'name', 'Lock' )
+                .attr( 'title', 'Lock / Unlock' )
+                .attr( 'data-lock', 'off' )
+                .on( 'click', function () {
+                    if ( this.getAttribute( 'data-lock' ) === 'on' ) {
+                        this.setAttribute( 'data-lock', 'off' );
+                        container.find( 'input, textarea' ).textinput( 'enable' );
+                        container.find( 'button' ).attr('disabled', false );
+                    } else {
+                        this.setAttribute( 'data-lock', 'on' );
+                        container.find( 'input, textarea' ).textinput( 'disable' );
+                        container.find( 'button' ).not( this ).attr( 'disabled', true );
+                        header.attr( 'disabled', false ).find( 'input' ).textinput( 'enable' );
+                    }
+                })
                 .appendTo( footerButtons );
             $( '<button>' )
                 .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-delete' )
+                .attr( 'name', 'Delete' )
                 .attr( 'title', 'Delete Event' )
                 .on( 'click', function () {
                     if ( confirm( `Are you sure you want to delete "${ name }"?` )) {
@@ -172,6 +196,8 @@
 
             color_button = $( '<input>' )
                 .addClass( 'event-color-button' )
+                .attr( 'name', 'Color' )
+                .attr( 'title', 'Color Picker' )
                 .attr( 'type', 'color' )
                 .val( color )
                 .attr( 'title', 'Change Color' )
