@@ -427,7 +427,7 @@
             }
             if ( day ) {
                 day = day.reduce( reducer ).substring( 1 ) * 1;
-                return Math.floor( year * this.daysMax ) + day - 1;
+                return Math.ceil( year * this.daysMax ) + day - 1;
             } else {
                 return null;
             }
