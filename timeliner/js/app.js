@@ -21,9 +21,6 @@
 
             this.loadData().then( () => {
                 this.sortEvents();
-                // this.data.forEach( ( v ) => {
-                //     this.createEvent( v );
-                // });
                 /// Temporary: fill the map with a checkerboard pattern.
                 let ckbd = 32;
                 CTX.fillStyle = 'black';
@@ -44,7 +41,7 @@
                 name = data.name,
                 date = data.day,
                 desc = data.desc || 'No description.',
-                container, placeholder, dragger,
+                container, placeholder, dragger, header,
                 dragging, offX, offY;
 
             container = $( '<div>' )
@@ -83,10 +80,44 @@
                     self.addClass( 'dragging' );
                 })
                 .appendTo( container );
-            $( '<div>' )
-                .addClass( 'event-title ui-bar ui-bar-a' )
-                .html( name )
+            header = $( '<button>' )
+                .addClass( 'event-title ui-btn ui-shadow ui-corner-all ui-btn-icon-right ui-icon-carat-u' )
+                .attr( 'title', 'Expand / Collapse' )
+                .attr( 'name', name )
+                .html( `<span>${ name }</span>` )
+                .on( 'click', function ( e ) {
+                    e.preventDefault();
+                    let self = $( this );
+                    if ( self.is( '.editting' ) ) return;
+                    self.toggleClass( 'ui-icon-carat-u' )
+                        .toggleClass( 'ui-icon-carat-d' );
+                    container.toggleClass( 'collapsed' );
+                })
+                .bind( 'contextmenu', function ( e ) {
+                    e.preventDefault();
+                    let self = $( this );
+                    self.addClass( 'editting' );
+                    self.children( 'span' ).hide();
+                    self.children( 'input' ).show().focus();
+                })
                 .appendTo( container );
+            $( '<input>' )
+                .attr( 'type', 'text' )
+                .val( name )
+                .on( 'change focusout', function () {
+                    let self = $( this );
+                    name = self.val() || 'Unnamed Event';
+                    header
+                        .attr( 'name', name )
+                        .removeClass( 'editting' )
+                        .children( 'span' )
+                            .html( name )
+                            .show();
+                    self.hide();
+                })
+                .textinput()
+                .hide()
+                .prependTo( header );
             $( '<input>' )
                 .addClass( 'event-date ui-bar ui-body-a' )
                 .attr( 'type', 'text' )
@@ -166,13 +197,16 @@
                     nextDate = Math.max( ...allDates );
                 }
 
-                console.log(prevDate,date,nextDate);
                 if ( date < prevDate || date > nextDate ) {
                     let newDate = prevDate + ( nextDate - prevDate ) / 2;
                     container.attr( 'data-date', Math.floor( newDate ) );
                 }
                 this.updateEvent( container );
             });
+
+            container.children( 'input, textarea' ).textinput();
+
+            return container;
         }
 
         sortEvents() {
@@ -305,6 +339,12 @@
             $( '.sort-events' ).on( 'click', () => {
                 this.sortEvents();
             });
+            $( '.add-new-event' ).on( 'click', () => {
+                this.createEvent({
+                    name: 'New Event',
+                    day: $( '#time-selection' ).val()
+                }).children( '.event-title' ).trigger( 'contextmenu' );
+            });
         }
 
         interpretDate( d ) {
@@ -329,7 +369,6 @@
             }
             if ( day ) {
                 day = day.reduce( reducer ).substring( 1 ) * 1;
-                console.log( year, day );
                 return Math.floor( year * this.daysMax ) + day - 1;
             } else {
                 return null;
@@ -339,14 +378,10 @@
         loadData() {
             let deferred = $.Deferred()
             $.getJSON( 'ajax/record.json', ( data ) => {
-                // this.data = data.sort( ( a, b ) => {
-                //     this.timeEnd = Math.max( a.day, b.day, this.timeBegin + 1, this.timeEnd );
-                //     return a.day - b.day;
-                // });
                 data.forEach( v => {
                     this.createEvent( v );
                 });
-            }).then(() => {
+            }).then( () => {
                 deferred.resolve();
             });
             return deferred;

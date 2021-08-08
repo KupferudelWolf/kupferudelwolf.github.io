@@ -144,6 +144,11 @@ h1.ui-bar {
 }
 .event-title {
     text-align: center;
+    white-space: normal;
+    margin-top: 0;
+}
+.event-title.editting:after {
+    display: none;
 }
 .event-date {
     font-size: 80%;
@@ -154,4 +159,9 @@ h1.ui-bar {
     font-weight: 300;
     font-size: 90%;
     white-space: normal;
+}
+.collapsed .ui-input-text,
+.collapsed .event-date,
+.collapsed .event-desc {
+    display: none;
 }
