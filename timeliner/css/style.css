@@ -130,7 +130,7 @@ h1.ui-bar {
     background-size: 100% 0.25em;
     background-repeat: repeat-y;
     mix-blend-mode: difference;
-    opacity: 0.75;
+    opacity: 0.333;
     cursor: pointer;
 }
 .dragger.dragging {
@@ -212,4 +212,7 @@ h1.ui-bar {
 }
 .event-colorpicker > .evo-pop {
     width: 100%;
+}
+.event-colorpicker .evo-color {
+    display: none;
 }

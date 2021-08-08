@@ -69,6 +69,7 @@
 
             data.div = container;
 
+            /// Drag Bar
             dragger = $( '<div>' )
                 .addClass( 'dragger' )
                 .on( 'mousedown', function ( e ) {
@@ -87,7 +88,7 @@
                         .detach()
                         .insertAfter( container );
                     container
-                        .width( `${ container.outerWidth() }px` )
+                        .width( `${ container.width() }px` )
                         .detach()
                         .appendTo( 'body' )
                         .addClass( 'dragging' )
@@ -96,6 +97,7 @@
                     self.addClass( 'dragging' );
                 })
                 .appendTo( container );
+            /// Title Button
             header = $( '<button>' )
                 .addClass( 'event-title ui-btn ui-shadow ui-corner-all ui-btn-icon-right ui-icon-carat-u' )
                 .attr( 'title', 'Expand / Collapse' )
@@ -118,6 +120,7 @@
                     self.children( 'input' ).show().focus();
                 })
                 .appendTo( container );
+            /// Header Name Changer
             $( '<input>' )
                 .attr( 'type', 'text' )
                 .val( name )
@@ -135,6 +138,7 @@
                 .textinput()
                 .hide()
                 .prependTo( header );
+            /// Date
             $( '<input>' )
                 .addClass( 'event-date ui-bar ui-body-a' )
                 .attr( 'type', 'text' )
@@ -148,19 +152,22 @@
                     app.updateEvent( container );
                 })
                 .appendTo( container );
+            /// Description
             $( '<textarea>' )
                 .addClass( 'event-desc ui-bar ui-body-a' )
                 .html( desc )
                 .appendTo( container );
-
+            /// Button Container
             footerButtons = $( '<div>' )
                 .addClass( 'event-footer' )
                 .appendTo( container );
+            /// Marker Button
             $( '<button>' )
                 .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-location' )
                 .attr( 'name', 'Mark' )
                 .attr( 'title', 'Mark on Map' )
                 .appendTo( footerButtons );
+            /// Lock Button
             lockButton = $( '<button>' )
                 .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-lock' )
                 .attr( 'name', 'Lock' )
@@ -179,6 +186,7 @@
                     }
                 })
                 .appendTo( footerButtons );
+            /// Delete Button
             $( '<button>' )
                 .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-delete' )
                 .attr( 'name', 'Delete' )
@@ -189,11 +197,11 @@
                     }
                 })
                 .appendTo( footerButtons );
-
+            /// Color Container
             footerColor = $( '<div>' )
                 .addClass( 'event-footer' )
                 .appendTo( container );
-
+            /// Color Button
             color_button = $( '<input>' )
                 .addClass( 'event-color-button' )
                 .attr( 'name', 'Color' )
@@ -205,22 +213,27 @@
                 .on( 'click', function ( e ) {
                     e.preventDefault();
                     color_picker.val( color );
+                    color_picker.colorpicker( 'val', color );
                     color_picker.toggleClass( 'hidden' );
                 })
                 .appendTo( footerColor );
+            /// Color Text
             color_text = $( '<input>' )
                 .attr( 'type', 'text' )
                 .val( color )
-                .on ( 'change input', function () {
+                .on( 'focus change input', function () {
+                    color_picker.addClass( 'hidden' );
+                })
+                .on( 'change input', function () {
                     color = $( this ).val().replace( /[^A-Fa-f0-9]/g, '' );
                     color = '#' + color.substring( 0, 6 );
                     $( this ).val( color );
                     color_button.val( color );
-                    color_picker.colorpicker( 'val', color );
+                    // color_picker.colorpicker( 'val', color );
                     container.get(0).style.setProperty( '--color', color );
                 })
                 .appendTo( footerColor );
-
+            /// Color Picker
             color_picker = $( '<span>' )
                 .addClass( 'event-colorpicker hidden' )
                 .colorpicker({
@@ -234,6 +247,7 @@
                 })
                 .appendTo( container );
 
+            /// Click-and-Drag Functionality
             container.on( 'mousemove', function ( e ) {
                 if ( !dragging ) return;
                 e.preventDefault();
@@ -302,6 +316,7 @@
                 this.updateEvent( container );
             });
 
+            /// Mobile-ize the inputs.
             container.children( 'input, textarea' ).textinput();
 
             return container;
