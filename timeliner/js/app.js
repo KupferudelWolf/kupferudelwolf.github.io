@@ -40,8 +40,11 @@
                 this.sortEvents();
                 this.startAnims();
                 setTimeout( () => {
-                    this.saveData();
+                    this.saveData( true );
                 }, 1000 );
+                // setTimeout( () => {
+                //     this.loadData();
+                // }, 5000 );
                 /// Temporary: fill the map with a checkerboard pattern.
                 let ckbd = 32;
                 CTX.fillStyle = 'black';
@@ -496,9 +499,6 @@
                         $( this ).val( 0 );
                         tag = app.tags[ 0 ];
                     }
-                    // name = tag.name;
-                    // color = tag.color;
-                    // desc = tag.desc;
                     tagRenamer.val( tag.name );
                     colorInput.val( tag.color );
                     descInput.val( tag.desc );
@@ -621,19 +621,84 @@
         }
 
         loadData( url ) {
-            let deferred = $.Deferred()
-            $.getJSON( url, ( data ) => {
-                data.forEach( v => {
-                    if ( v.type === 'event' ) {
-                        this.createEvent( v );
-                    } else if ( v.type === 'tag' ) {
-                        this.createTag( v );
+            let app = this,
+                deferred = $.Deferred(),
+                semicolon = String.fromCharCode( 0x37e ),
+                valid = [], elem;
+            const parseData = function ( data ) {
+                if ( !data ) return;
+                let events = data.filter( a => a.type === 'event' ),
+                    tags = data.filter( a => a.type === 'tag' );
+                /// Load tags FIRST (in case an event relies on a new tag).
+                app.tags = [ app.tags[0] ];
+                tags.forEach( ( tag ) => {
+                    /// Create a new tag.
+                    app.createTag( tag );
+                });
+                app.updateTags();
+                /// Load events. Replace existing ones to save memory.
+                events.forEach( ( event ) => {
+                    elem = $( `.single-event` ).filter( function () {
+                        let name = $( this ).find( '.event-title > span' ).html();
+                        return name === event.name;
+                    });
+                    if ( elem.length > 0 ) {
+                        /// Update the existing event.
+                        event.tags = event.tags || '0';
+                        elem.attr( 'data-date', event.day || 0 );
+                        elem.attr( 'data-tags', event.tags.join( ' ' ) );
+                        elem.find( '.event-desc' ).val( event.desc || '' );
+                        app.updateEvent( elem );
+                    } else {
+                        /// Create a new event.
+                        elem = app.createEvent( event );
+                    }
+                    valid.push( event.name );
+                });
+                $( '.single-event' ).each( function () {
+                    let self = $( this ),
+                        name = self.find( '.event-title > span' ).html();
+                    if ( !valid.includes( name ) ) {
+                        self.remove();
                     }
                 });
-                this.updateEvent();
-            }).then( () => {
+                console.log( 'loaded:', data );
+                app.updateTags();
+            };
+
+            if ( url ) {
+                /// Load from JSON.
+                $.getJSON( url, ( data ) => {
+                    parseData( data );
+                    this.updateEvent();
+                }).then( () => {
+                    deferred.resolve();
+                });
+            } else {
+                /// Load from cookies.
+                let data = document.cookie.split( ';' );
+                data.forEach( ( cookie, ind ) => {
+                    if ( !cookie.includes( '=' ) ) return;
+                    let pair = cookie.split( '=' ),
+                        key = pair[ 0 ],
+                        val = pair[ 1 ];
+                    if ( !key.includes('TL_') ) {
+                        data[ ind ] = undefined;
+                        return;
+                    }
+                    val = JSON.parse( val );
+                    /// Revert Greek question marks back to semicolons.
+                    if ( val.hasOwnProperty( key ) ) {
+                        if ( typeof( val[ key ]) === 'string' ) {
+                            val[ key ] = val[ key ].replace( new RegExp( semicolon, 'g' ), ';' )
+                        }
+                    }
+                    data[ ind ] = val;
+                });
+                data = data.filter( e => e !== undefined );
+                parseData( data );
                 deferred.resolve();
-            });
+            }
             return deferred;
         }
 
@@ -649,6 +714,7 @@
         }
 
         sanitize( str, reverse ) {
+            if ( typeof( str ) !== 'string' ) str = '';
             if ( reverse ) {
                 /// Unsanitize.
                 return str
@@ -668,8 +734,10 @@
             }
         }
 
-        saveData() {
-            let out = [];
+        saveData( asCookies ) {
+            let app = this,
+                out = [],
+                semicolon = String.fromCharCode( 0x37e );
             /// Record all events.
             $( '.single-event:not(.placeholder)' ).each( function () {
                 let self = $( this );
@@ -677,7 +745,7 @@
                     'type': 'event',
                     'name': self.find( '.event-title' ).children( 'span' ).html(),
                     'day':  self.attr( 'data-date' ),
-                    'desc': self.find( '.event-desc' ).html(),
+                    'desc': self.find( '.event-desc' ).val(),
                     'tags': self.attr( 'data-tags' ).split( ' ' )
                 });
             });
@@ -694,7 +762,31 @@
                     });
                 }
             }
-            console.log( out );
+            if ( asCookies ) {
+                let cookie, key, val;
+                /// Clear TL cookies.
+                document.cookie.split( ';' ).forEach( cookie => {
+                    if ( !cookie.includes( '=' ) ) return;
+                    key = cookie.split( '=' )[0];
+                    if ( !key.includes('TL_') ) return;
+                    document.cookie = `${ key }=;expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+                });
+                out.forEach( obj => {
+                    for ( const key in obj ) {
+                        /// Replace semicolons with the similar Greek question mark.
+                        if ( obj.hasOwnProperty( key ) && typeof( obj[ key ]) === 'string' ) {
+                            obj[ key ] = obj[ key ].replace( /;/g, semicolon );
+                        }
+                    }
+                    key = `TL_${ obj.type }_${ obj.id || obj.name }`;
+                    val = JSON.stringify( obj );
+                    document.cookie = `${ key }=${ val }`;
+                });
+                // console.log( document.cookie );
+            } else {
+                //
+            }
+            console.log( 'saved:', out );
         }
 
         sortEvents() {
@@ -762,6 +854,8 @@
                 .attr( 'min', sliderMin )
                 .attr( 'max', sliderMax )
                 .trigger( 'change' );
+
+            return elem;
         }
 
         updateTags( e ) {
