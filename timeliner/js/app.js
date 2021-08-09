@@ -32,10 +32,13 @@
                 defaultPalette: 'web'
             });
 
-            this.loadData().then( () => {
+            this.loadData( 'ajax/record.json' ).then( () => {
                 this.updateTags();
                 this.sortEvents();
                 this.startAnims();
+                setTimeout( () => {
+                    this.saveData();
+                }, 1000 );
                 /// Temporary: fill the map with a checkerboard pattern.
                 let ckbd = 32;
                 CTX.fillStyle = 'black';
@@ -642,9 +645,9 @@
             }
         }
 
-        loadData() {
+        loadData( url ) {
             let deferred = $.Deferred()
-            $.getJSON( 'ajax/record.json', ( data ) => {
+            $.getJSON( url, ( data ) => {
                 data.forEach( v => {
                     if ( v.type === 'event' ) {
                         this.createEvent( v );
@@ -668,6 +671,33 @@
             } else {
                 return `Year ${ year + 1 }, Day ${ day }`;
             }
+        }
+
+        saveData() {
+            let out = [];
+            $( '.single-event' ).each( function () {
+                let self = $( this );
+                out.push({
+                    'type': 'event',
+                    'name': self.find( '.event-title' ).children( 'span' ).html(),
+                    'day':  self.attr( 'data-date' ),
+                    'desc': self.find( '.event-desc' ).html(),
+                    'tags': self.attr( 'data-tags' ).split( ' ' )
+                });
+            });
+            for ( const key in this.tags ) {
+                if ( this.tags.hasOwnProperty( key ) ) {
+                    let tag = this.tags[ key ];
+                    out.push({
+                        'type':  'tag',
+                        'id':    key,
+                        'name':  tag.name || '',
+                        'desc':  tag.desc || '',
+                        'color': tag.color || '#ffffff'
+                    });
+                }
+            }
+            console.log( out );
         }
 
         sortEvents() {

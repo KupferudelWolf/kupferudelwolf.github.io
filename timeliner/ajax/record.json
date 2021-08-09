@@ -10,8 +10,7 @@
         "type": "event",
         "name": "zero",
         "day": 0,
-        "desc": "This is the start.",
-        "color": "#ffcccc"
+        "desc": "This is the start."
     },
     {
         "type": "event",
