@@ -672,7 +672,7 @@
         saveData() {
             let out = [];
             /// Record all events.
-            $( '.single-event' ).each( function () {
+            $( '.single-event:not(.placeholder)' ).each( function () {
                 let self = $( this );
                 out.push({
                     'type': 'event',
