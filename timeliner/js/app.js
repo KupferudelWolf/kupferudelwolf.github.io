@@ -294,21 +294,21 @@
                 placeholder.detach();
 
                 /// Set the date to a date between the neighboring containers (if necessary).
-                if ( container.prev().length > 0 ) {
-                    prevDate = +container.prev().attr( 'data-date' );
-                } else {
-                    prevDate = Math.min( ...allDates );
-                }
-                if ( container.next().length > 0 ) {
-                    nextDate = +container.next().attr( 'data-date' );
-                } else {
-                    nextDate = Math.max( ...allDates );
-                }
-
-                if ( date < prevDate || date > nextDate ) {
-                    let newDate = prevDate + ( nextDate - prevDate ) / 2;
-                    container.attr( 'data-date', Math.floor( newDate ) );
-                }
+                // if ( container.prev().length > 0 ) {
+                //     prevDate = +container.prev().attr( 'data-date' );
+                // } else {
+                //     prevDate = Math.min( ...allDates );
+                // }
+                // if ( container.next().length > 0 ) {
+                //     nextDate = +container.next().attr( 'data-date' );
+                // } else {
+                //     nextDate = Math.max( ...allDates );
+                // }
+                //
+                // if ( date < prevDate || date > nextDate ) {
+                //     let newDate = prevDate + ( nextDate - prevDate ) / 2;
+                //     container.attr( 'data-date', Math.floor( newDate ) );
+                // }
                 this.updateEvent( container );
             });
 
