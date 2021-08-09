@@ -14,6 +14,7 @@
         timeBegin = 0
         timeEnd = 1
         loops = []
+        placeholder = $( '<div>' ).addClass( 'single-event placeholder' )
 
         constructor() {
             CVS = $( '#map' ).get( 0 );
@@ -67,7 +68,7 @@
                 }).get(),
                 eventsPanel = $( '.events' ),
                 colors = [], id,
-                container, placeholder, dragbar, header, footerButtons, footerColor,
+                container, dragbar, header, footerButtons, footerColor,
                 color_button, color_picker, color_text, lockButton, tagSelect,
                 dragging, offX, offY, mXP, mYP;
 
@@ -84,9 +85,6 @@
                 .attr( 'data-date', date )
                 .attr( 'data-id', id )
                 .appendTo( eventsPanel );
-            /// Create the placeholder that shows when dragging the event.
-            placeholder = $( '<div>' )
-                .addClass( 'single-event placeholder' );
 
             data.div = container;
 
@@ -105,7 +103,7 @@
                     offX = -posSelf.left - self.width() / 2;
                     offY = -posSelf.top - self.height() * 2;
                     dragging = true;
-                    placeholder
+                    app.placeholder
                         .height( `${ container.outerHeight() }px` )
                         .detach()
                         .insertAfter( container );
@@ -257,7 +255,7 @@
             container.attr( 'data-tags', tags.join(' ') );
 
             /// Click-and-Drag Functionality
-            container.on( 'mousemove', function ( e ) {
+            container.on( 'mousemove', ( e ) => {
                 if ( !dragging ) return;
                 e.preventDefault();
                 let mX = e.pageX,
@@ -281,14 +279,14 @@
                         h = self.innerHeight(),
                         y1 = self.offset().top + h / 2;
                     if ( y <= y1 ) {
-                        placeholder.detach().insertBefore( this );
+                        app.placeholder.detach().insertBefore( this );
                         found = true;
                         return;
                     }
                 });
                 /// The following is true if the container is at the bottom of the list.
                 if ( !found ) {
-                    placeholder.detach().appendTo( eventsPanel );
+                    this.placeholder.detach().appendTo( eventsPanel );
                 }
             });
             container.on( 'mouseup mouseleave', () => {
@@ -305,8 +303,8 @@
                     .css({ left: '', top: '' })
                     .removeClass( 'dragging' )
                     .detach()
-                    .insertAfter( placeholder );
-                placeholder.detach();
+                    .insertAfter( this.placeholder );
+                this.placeholder.detach();
                 this.updateEvent( container );
             });
 
