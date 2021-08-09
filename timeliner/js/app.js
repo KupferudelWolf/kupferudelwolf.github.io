@@ -63,7 +63,7 @@
                 }).get(),
                 eventsPanel = $( '.events' ),
                 colors = [], id,
-                container, placeholder, dragger, header, footerButtons, footerColor,
+                container, placeholder, dragbar, header, footerButtons, footerColor,
                 color_button, color_picker, color_text, lockButton, tagSelect,
                 dragging, offX, offY, mXP, mYP;
 
@@ -82,13 +82,11 @@
             placeholder = $( '<div>' )
                 .addClass( 'single-event placeholder' );
 
-            // container.get(0).style.setProperty( '--color', color );
-
             data.div = container;
 
             /// Drag Bar
-            dragger = $( '<div>' )
-                .addClass( 'dragger' )
+            dragbar = $( '<div>' )
+                .addClass( 'dragbar' )
                 .on( 'mousedown', function ( e ) {
                     let self = $( this ),
                         mX = e.pageX,
@@ -332,15 +330,6 @@
             data.name = data.name || 'Unnamed Tag';
             data.color = data.color || '#ffffff';
             this.tags[ ind + '' ] = data;
-        }
-
-        sortEvents() {
-            let all = $( '.events' ).children().sort( function ( a, b ) {
-                return a.getAttribute( 'data-date' ) - b.getAttribute( 'data-date' );
-            });
-            $( '.events' ).children().detach();
-            $( '.events' ).append( all );
-            $( '.events input, .events textarea' ).textinput();
         }
 
         initBubbleCtrl() {
@@ -655,6 +644,15 @@
             } else {
                 return `Year ${ year + 1 }, Day ${ day }`;
             }
+        }
+
+        sortEvents() {
+            let all = $( '.events' ).children().sort( function ( a, b ) {
+                return a.getAttribute( 'data-date' ) - b.getAttribute( 'data-date' );
+            });
+            $( '.events' ).children().detach();
+            $( '.events' ).append( all );
+            $( '.events input, .events textarea' ).textinput();
         }
 
         startAnims() {

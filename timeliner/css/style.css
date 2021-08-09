@@ -152,9 +152,9 @@ h1.ui-bar {
 }
 
 
-.dragger {
+.dragbar {
     height: 1.5em;
-    transform: translateY(-0.5em);
+    transform: translateY(-0.4em);
     background-image: linear-gradient(white 50%, transparent 50%);
     background-size: 100% 0.25em;
     background-repeat: repeat-y;
@@ -236,7 +236,7 @@ h1.ui-bar {
     font-size: 90%;
     white-space: normal;
 }
-.collapsed > *:not(.dragger, .event-title) {
+.collapsed > *:not(.dragbar, .event-title) {
     display: none;
 }
 .event-footer {
