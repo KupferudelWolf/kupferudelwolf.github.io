@@ -146,7 +146,7 @@
                 .on( 'change', function () {
                     let self = $( this ),
                         val = app.interpretDate( self.val() );
-                    if ( val ) {
+                    if ( val || val === 0 ) {
                         container.attr( 'data-date', val );
                     }
                     app.updateEvent( container );
@@ -465,7 +465,7 @@
 
         interpretDate( d ) {
             if ( !isNaN( d * 1 ) ) {
-                return Math.floor( d * 1 );
+                return Math.floor( d * 1 ) - 1;
             }
             let reducer = ( a, b ) => a.length > b.length ? a : b,
                 val = d
@@ -478,7 +478,7 @@
             if ( year ) {
                 year = year.reduce(reducer).substring(1) - 1;
                 if ( !day ) {
-                    day = ['d2'];
+                    day = ['d1'];
                 }
             } else {
                 year = 0;
