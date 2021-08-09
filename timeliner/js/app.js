@@ -454,9 +454,12 @@
         }
 
         initMiscCtrl() {
+            let app = this;
+
             $( '.sort-events' ).on( 'click', () => {
                 this.sortEvents();
             });
+
             $( '.add-new-event' ).on( 'click', () => {
                 let newEvent = this.createEvent({
                     name: 'New Event',
@@ -465,6 +468,26 @@
                 });
                 this.updateTags( newEvent );
                 newEvent.children( '.event-title' ).trigger( 'contextmenu' );
+            });
+
+            $( '.filter-events' ).on( 'click', () => {
+                let select = $( 'select.select-filter' ),
+                    selectButton = select.parent().toggle();
+                if ( selectButton.is( ':visible' ) ) {
+                    select.trigger( 'change' );
+                } else {
+                    $( '.single-event' ).show();
+                }
+            }).trigger( 'click' );
+            $( 'select.select-filter' ).on( 'change', function () {
+                if ( !$( this ).parent().is( ':visible' ) ) return;
+                let val = this.value;
+                $( '.single-event' ).show().each( function () {
+                    let self = $( this );
+                    if ( !self.attr( 'data-tags' ).includes( val ) ) {
+                        self.hide();
+                    }
+                });
             });
         }
 
@@ -711,7 +734,7 @@
         updateTags( e ) {
             if ( !e ) {
                 let app = this;
-                $( '.single-event, .section-tags' ).each( function () {
+                $( 'select.lists-tags' ).each( function () {
                     app.updateTags( this );
                 });
                 return;
@@ -719,12 +742,17 @@
                 e.forEach( this.updateTags );
             }
 
-            let elem = $( e ),
-                elemSelect = elem.find( 'select.lists-tags' ),
-                elemSelTagged = elemSelect.is( 'select.event-tags' ),
-                tags = elem.attr( 'data-tags' ) || elemSelect.val() || '0',
-                newTags = [];
+            let elemSelect = $( e ),
+                elemHasTags = elemSelect.is( '.event-tags' ),
+                tags = elemSelect.val() || '0',
+                newTags = [], elem;
+            if ( elemHasTags ) {
+                elem = elemSelect.parents( '[data-tags]' ).first();
+                tags = elem.attr( 'data-tags' ) || tags;
+            }
             tags = tags.split(' ');
+
+            if ( !elemSelect.length ) return;
 
             elemSelect.find( 'option' ).remove();
             for ( const key in this.tags ) {
@@ -741,15 +769,15 @@
                 }
             }
 
-            elemSelect.val( tags[0] );
-            
-            if ( elemSelTagged ) {
-                if ( !newTags.length ) {
+            elemSelect.val( newTags[0] );
+
+            if ( elemHasTags ) {
+                if ( newTags.length ) {
+                    elem.attr( 'data-tags', newTags.join(' ') );
+                } else {
                     elemSelect.val( 0 );
                     elem.attr( 'data-tags', '0' );
-                    this.updateEvent( e );
-                } else {
-                    elem.attr( 'data-tags', newTags.join(' ') );
+                    this.updateEvent( elem );
                 }
             }
             elemSelect.trigger( 'change' );
