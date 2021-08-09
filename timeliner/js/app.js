@@ -780,6 +780,14 @@
             let elemSelect = $( e ),
                 elemHasTags = elemSelect.is( '.event-tags' ),
                 tags = elemSelect.val() || '0',
+                keys = Object.keys( this.tags ).sort( ( a, b ) => {
+                    /// Alphabetize the tag IDs by their names.
+                    let aN = this.tags[ a ].name.toLowerCase(),
+                        bN = this.tags[ b ].name.toLowerCase();
+                    if ( aN < bN ) return -1;
+                    if ( aN > bN ) return 1;
+                    return 0;
+                }),
                 newTags = [],
                 elem;
             if ( !elemSelect.length ) return;
@@ -791,20 +799,20 @@
             }
             tags = tags.split(' ');
 
+            /// Remove all of the options.
             elemSelect.find( 'option' ).remove();
-            for ( const key in this.tags ) {
-                if ( this.tags.hasOwnProperty( key ) ) {
-                    let obj = this.tags[ key ],
-                        opt = $( '<option>' )
-                            .attr( 'value', '' + obj.id )
-                            .html( obj.name )
-                            .appendTo( elemSelect );
-                    if ( tags.includes( '' + obj.id ) ) {
-                        /// This tag is valid and should be kept.
-                        newTags.push( obj.id );
-                    }
+            /// Make a new option for each tag in alphabetical order.
+            keys.forEach( key => {
+                let obj = this.tags[ key ],
+                    opt = $( '<option>' )
+                        .attr( 'value', '' + obj.id )
+                        .html( obj.name )
+                        .appendTo( elemSelect );
+                if ( tags.includes( '' + obj.id ) ) {
+                    /// This tag is valid and should be kept.
+                    newTags.push( obj.id );
                 }
-            }
+            });
 
             elemSelect.val( newTags[0] );
 
