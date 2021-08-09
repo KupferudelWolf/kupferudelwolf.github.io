@@ -32,25 +32,49 @@
 					<div class="ui-bar ui-bar-a slider-bubble" id="time-selection-bubble"></div>
 				</div>
 				<div class="ui-bar ui-bar-a spacer"><p>spacer</p></div>
-				<div class="ui-bar ui-body-a options">
-					<h1 class="ui-bar ui-bar-a">Options</h3>
-					<div class="control">
-						<label for="days-max">Days in a Year:</label>
-						<input name="days-max" id="days-max" type="number" min="1" value="365.25" />
+				<div class="options">
+					<div>
+						<div class="ui-bar ui-body-a section section-time">
+							<h1 class="ui-bar ui-bar-a">Date</h3>
+							<div class="control">
+								<label for="days-max">Days in a Year:</label>
+								<input name="days-max" id="days-max" type="number" min="1" value="365.25" />
+							</div>
+							<div class="control">
+								<label for="enable-years">Enable Years</label>
+								<input name="enable-years" id="enable-years" type="checkbox" checked />
+							</div>
+						</div>
 					</div>
-					<div class="control">
-						<label for="enable-years">Enable Years</label>
-						<input name="enable-years" id="enable-years" type="checkbox" checked />
+					<div>
+						<div class="ui-bar ui-body-a section section-tags">
+							<h1 class="ui-bar ui-bar-a">Tags</h3>
+						    <select name="select-tag" id="select-tag" name="Tag"></select>
+							<div class="colorpicker tag-colorpicker"></div>
+							<div class="tag-color-controls">
+								<input id="tag-color-input" type="text" name="Tag Color" title="Tag Color"></input>
+								<button class="add-tag ui-btn ui-btn-icon-notext ui-shadow ui-icon-plus" title="Add Tag" name="Add Tag"></button>
+								<button class="delete-tag ui-btn ui-btn-icon-notext ui-shadow ui-icon-delete" title="Delete Tag" name="Delete Tag"></button>
+							</div>
+							<!-- <div class=""> -->
+								<textarea class="tag-desc" name="Tag Description" title="Tag Description"></textarea>
+							<!-- </div> -->
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<div class="ui-bar ui-bar-a sidebar">
-			<div data-role="header">
+			<div class="events-header" data-role="header">
+				<span>
+					<button class="add-new-event ui-btn ui-btn-icon-notext ui-shadow ui-corner-all ui-icon-plus" title="Add New Event" name="Add New Event"></button>
+				</span>
 				<h1>Events</h1>
-				<button class="sort-events ui-btn ui-btn-icon-notext ui-shadow ui-corner-all ui-icon-recycle" title="Sort" name="Sort"></button>
-				<button class="add-new-event ui-btn ui-btn-icon-notext ui-shadow ui-corner-all ui-icon-plus" title="Add New Event" name="Add New Event"></button>
+				<span>
+					<button class="filter-events ui-btn ui-btn-icon-notext ui-shadow ui-corner-all ui-icon-tag" title="Filter Events" name="Filter Events"></button>
+					<button class="sort-events ui-btn ui-btn-icon-notext ui-shadow ui-corner-all ui-icon-recycle" title="Sort Events" name="Sort Events"></button>
+				</span>
 			</div>
 			<div class="events"></div>
 		</div>

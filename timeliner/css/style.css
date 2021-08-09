@@ -17,16 +17,19 @@ textarea:disabled {
 }
 
 
-/* .ui-icon-color:after {
-    background-image: url("../img/jmobile/color.png");
-    /* Make your icon fit */
-    background-size: 18px 18px;
-} */
 .ui-icon-crosshair:after {
-    background-image: url("../img/jmobile/crosshair.png");
-    /* Make your icon fit */
-    background-size: 18px 18px;
+    background-image: url("../lib/images/jmobile/crosshair-white.png");
+    background-size: 18px 18px;
 }
+.ui-icon-filter:after {
+    background-image: url("../lib/images/jmobile/filter-white.png");
+    background-size: 18px 18px;
+}
+/* .ui-icon-color:after {
+    background-image: url("../lib/images/jmobile/palette-white.png");
+    background-size: 18px 18px;
+} */
+
 
 .hidden {
     display: none;
@@ -75,8 +78,12 @@ h1.ui-bar {
 }
 
 .options {
-    /* display: flex; */
-    width: 20vw;
+    display: flex;
+    grid-gap: 0.5em;
+    /* width: 20vw; */
+}
+.options > div:first-child {
+    flex-grow: 1;
 }
 .options .control {
     display: flex;
@@ -94,6 +101,25 @@ h1.ui-bar {
 .options .control .ui-input-text {
     flex-grow: 1;
 }
+.tag-colorpicker {
+    float: left;
+    margin-right: 0.5em;
+}
+.section-tags > .ui-input-text,
+#tag-color-input {
+    display: inline-block;
+}
+.tag-color-controls {
+    display: inline-flex;
+    grid-gap: 0.5em;
+    align-items: center;
+}
+.tag-desc {
+    display: block !important;
+    width: auto !important;
+    width: -webkit-fill-available !important;
+}
+
 
 .slider-bubble {
     /* background: red; */
@@ -151,6 +177,14 @@ h1.ui-bar {
 }
 .events::-webkit-scrollbar {
     width: 0;
+}
+.events-header {
+    display: flex;
+}
+.events-header h1 {
+    flex-grow: 1;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 .single-event {
     margin-bottom: 1em;
@@ -210,9 +244,17 @@ h1.ui-bar {
 .event-color-button {
     width: 2.2em !important;
 }
-.event-colorpicker > .evo-pop {
+/* .event-tags {
+    width: 100%;
+} */
+.single-event .ui-select {
     width: 100%;
 }
-.event-colorpicker .evo-color {
+
+
+.colorpicker > .evo-pop {
+    width: 100%;
+}
+.colorpicker .evo-color {
     display: none;
 }

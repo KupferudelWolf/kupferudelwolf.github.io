@@ -1,18 +1,29 @@
 [
     {
+        "type": "event",
         "name": "beginningg",
         "day": 143,
-        "desc": "Somebody once told me the world is gonna roll me; I ain't the sharpest tool in the shed."
+        "desc": "Somebody once told me the world is gonna roll me; I ain't the sharpest tool in the shed.",
+        "tags": [1]
     },
     {
+        "type": "event",
         "name": "zero",
         "day": 0,
         "desc": "This is the start.",
         "color": "#ffcccc"
     },
     {
+        "type": "event",
         "name": "end",
         "day": 1000,
         "desc": "This is the end."
+    },
+    {
+        "type": "tag",
+        "color": "#ffcccc",
+        "name": "My First Tag",
+        "desc": "This is a tag!",
+        "id": 1
     }
 ]

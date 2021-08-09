@@ -3,6 +3,13 @@
 
     class App {
         data = []
+        tags = [
+            {
+                name: '&lt;default&gt;',
+                color: '#ffffff',
+                id: 0
+            }
+        ]
         cvsZoom = 1
         timeBegin = 0
         timeEnd = 1
@@ -16,10 +23,16 @@
 
             this.initDayCtrl();
             this.initBubbleCtrl();
+            this.initTagCtrl();
             // this.initMapCtrl();
             this.initMiscCtrl();
 
+            $( '.colorpicker' ).colorpicker({
+                defaultPalette: 'web'
+            });
+
             this.loadData().then( () => {
+                this.updateTags();
                 this.sortEvents();
                 /// Temporary: fill the map with a checkerboard pattern.
                 let ckbd = 32;
@@ -41,13 +54,14 @@
                 name = data.name,
                 date = data.day,
                 desc = data.desc || 'No description.',
-                color = data.color || '#ffffff',
+                // color = data.color || '#ffffff',
+                tags = data.tags || [0],
                 idAll = $( '.single-event' ).not( this ).map( function () {
                     return $( this ).attr( 'data-id' ) * 1;
                 }).get(),
-                id,
+                colors = [], id,
                 container, placeholder, dragger, header, footerButtons, footerColor,
-                color_button, color_picker, color_text, lockButton,
+                color_button, color_picker, color_text, lockButton, tagSelect,
                 dragging, offX, offY;
 
             for ( let i = 0, l = idAll.length + 1; i < l; ++i ) {
@@ -65,7 +79,7 @@
             placeholder = $( '<div>' )
                 .addClass( 'single-event placeholder' );
 
-            container.get(0).style.setProperty( '--color', color );
+            // container.get(0).style.setProperty( '--color', color );
 
             data.div = container;
 
@@ -201,51 +215,33 @@
             footerColor = $( '<div>' )
                 .addClass( 'event-footer' )
                 .appendTo( container );
-            /// Color Button
-            color_button = $( '<input>' )
-                .addClass( 'event-color-button' )
-                .attr( 'name', 'Color' )
-                .attr( 'title', 'Color Picker' )
-                .attr( 'type', 'color' )
-                .val( color )
-                .attr( 'title', 'Change Color' )
-                // .css( 'background-color', color )
-                .on( 'click', function ( e ) {
-                    e.preventDefault();
-                    color_picker.val( color );
-                    color_picker.colorpicker( 'val', color );
-                    color_picker.toggleClass( 'hidden' );
+            /// Tag Selection
+            tagSelect = $( '<select>' )
+                // .attr( 'multiple', 'multiple' )
+                // .attr( 'data-native-menu', 'false' )
+                .addClass( 'event-tags' )
+                .attr( 'value', tags.join(' ') )
+                .on( 'change', function () {
+                    let val = this.value;
+                    tags = [ val ];
+                    container.attr( 'data-tags', tags.join(' ') );
+                    app.updateEvent( container );
                 })
                 .appendTo( footerColor );
-            /// Color Text
-            color_text = $( '<input>' )
-                .attr( 'type', 'text' )
-                .val( color )
-                .on( 'focus change input', function () {
-                    color_picker.addClass( 'hidden' );
-                })
-                .on( 'change input', function () {
-                    color = $( this ).val().replace( /[^A-Fa-f0-9]/g, '' );
-                    color = '#' + color.substring( 0, 6 );
-                    $( this ).val( color );
-                    color_button.val( color );
-                    // color_picker.colorpicker( 'val', color );
-                    container.get(0).style.setProperty( '--color', color );
-                })
-                .appendTo( footerColor );
-            /// Color Picker
-            color_picker = $( '<span>' )
-                .addClass( 'event-colorpicker hidden' )
-                .colorpicker({
-                    defaultPalette: 'web'
-                })
-                .on( 'change.color', function ( e, val ) {
-                    color = val;
-                    color_button.val( val );
-                    color_text.val( val );
-                    container.get(0).style.setProperty( '--color', color );
-                })
-                .appendTo( container );
+            tagSelect.selectmenu({
+                'icon': 'tag'
+            });
+            // this.tags.forEach( obj => {
+            //     let opt = $( '<option>' )
+            //         .attr( 'value', obj.id )
+            //         .html( obj.name )
+            //         .appendTo( tagSelect );
+            //     if ( tags.includes( '' + obj.id ) ) {
+            //         opt.attr( 'selected', 'selected' );
+            //         colors.push( obj.color );
+            //     }
+            // });
+            container.attr( 'data-tags', tags.join(' ') );
 
             /// Click-and-Drag Functionality
             container.on( 'mousemove', function ( e ) {
@@ -319,7 +315,16 @@
             /// Mobile-ize the inputs.
             container.children( 'input, textarea' ).textinput();
 
+            // this.updateEvent( container );
+
             return container;
+        }
+
+        createTag( data ) {
+            let ind = data.id;
+            data.name = data.name || 'Unnamed Tag';
+            data.color = data.color || '#ffffff';
+            this.tags[ ind ] = data;
         }
 
         sortEvents() {
@@ -456,11 +461,67 @@
                 this.sortEvents();
             });
             $( '.add-new-event' ).on( 'click', () => {
-                this.createEvent({
+                let newEvent = this.createEvent({
                     name: 'New Event',
-                    day: $( '#time-selection' ).val()
-                }).children( '.event-title' ).trigger( 'contextmenu' );
+                    day: $( '#time-selection' ).val(),
+                    tags: 0
+                });
+                this.updateTags( newEvent );
+                newEvent.children( '.event-title' ).trigger( 'contextmenu' );
             });
+        }
+
+        initTagCtrl() {
+            let app = this,
+                color = '#ffffff',
+                desc = '',
+                container = $( '.section-tags' ),
+                tagSelect = $( '#select-tag' ),
+                colorInput = $( '#tag-color-input' ),
+                colorPicker = $( '.tag-colorpicker' ),
+                descInput = $( '.tag-desc' ),
+                deleteButton = $( '.delete-tag' ),
+                setTagColor = () => {
+                    let tag = app.tags[ tagSelect.val() ];
+                    container.get(0).style.setProperty( '--color', color );
+                    colorInput.val( color );
+                    tag.color = color;
+                    tag.desc = desc;
+                    this.updateTags();
+                    this.updateEvent();
+                };
+
+            tagSelect
+                .on( 'change', function () {
+                    let tag = app.tags[ this.value ];
+                    color = tag.color;
+                    desc = tag.desc;
+                    colorInput.val( color );
+                    descInput.val( desc );
+                    deleteButton.attr('disabled', tag.id === 0 );
+                    // colorPicker.colorpicker( 'val', color );
+                    container.get(0).style.setProperty( '--color', color );
+                });
+            colorInput
+                .val( color )
+                .on( 'change input', function () {
+                    color = this.value.replace( /[^A-Fa-f0-9]/g, '' );
+                    color = '#' + color.substring( 0, 6 );
+                    // colorPicker.colorpicker( 'val', color );
+                    setTagColor();
+                });
+            colorPicker
+                .val( color )
+                .on( 'change.color', function ( e, val ) {
+                    color = val;
+                    setTagColor();
+                });
+            descInput
+                .val( desc )
+                .on( 'change input', function () {
+                    let tag = app.tags[ tagSelect.val() ];
+                    tag.desc = this.value;
+                });
         }
 
         interpretDate( d ) {
@@ -495,8 +556,13 @@
             let deferred = $.Deferred()
             $.getJSON( 'ajax/record.json', ( data ) => {
                 data.forEach( v => {
-                    this.createEvent( v );
+                    if ( v.type === 'event' ) {
+                        this.createEvent( v );
+                    } else if ( v.type === 'tag' ) {
+                        this.createTag( v );
+                    }
                 });
+                this.updateEvent();
             }).then( () => {
                 deferred.resolve();
             });
@@ -515,28 +581,72 @@
         }
 
         updateEvent( e ) {
-            let app = this;
             if ( !e ) {
+                let app = this;
                 $( '.single-event' ).each( function () {
                     app.updateEvent( this );
                 });
                 return;
+            } else if ( Array.isArray( e ) ) {
+                e.forEach( this.updateEvent );
             }
+
             let elem = $( e ),
                 date = elem.attr( 'data-date' ),
                 slider = $( '#time-selection' ),
+                // tagSelect = elem.find( '.event-tags' ),
+                tags = elem.attr( 'data-tags' ).split(' '),
                 sliderMin = 0,
-                sliderMax = 0;
+                sliderMax = 0,
+                colors = [];
             elem.find( '.event-date' ).val( this.printDate( date ) );
+
             $( '.single-event' ).each( function () {
                 let date = $( this ).attr( 'data-date' );
                 sliderMin = Math.min( sliderMin, date );
                 sliderMax = Math.max( sliderMax, date );
             });
+            /// Update color.
+            tags.forEach( tag => {
+                colors.push( this.tags[ tag ].color );
+            });
+            elem.get(0).style.setProperty( '--color', colors[0] || '#ffffff' );
+
+            /// Update timeline.
             slider
                 .attr( 'min', sliderMin )
                 .attr( 'max', sliderMax )
                 .trigger( 'change' );
+        }
+
+        updateTags( e ) {
+            if ( !e ) {
+                let app = this;
+                $( '.single-event, .section-tags' ).each( function () {
+                    app.updateTags( this );
+                });
+                return;
+            } else if ( Array.isArray( e ) ) {
+                e.forEach( this.updateTags );
+            }
+
+            let elem = $( e ),
+                elemSelect = elem.find( '.event-tags, #select-tag' ),
+                tags = elem.attr( 'data-tags' ) || elemSelect.val() || '0';
+            tags = tags.split(' ');
+
+            elemSelect.find( 'option' ).remove();
+            this.tags.forEach( obj => {
+                let opt = $( '<option>' )
+                    .attr( 'value', obj.id )
+                    .html( obj.name )
+                    .appendTo( elemSelect );
+                if ( tags.includes( '' + obj.id ) ) {
+                    opt.attr( 'selected', 'selected' );
+                }
+            });
+            elemSelect.trigger( 'change' );
+
         }
     }
 
