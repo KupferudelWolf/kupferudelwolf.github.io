@@ -234,6 +234,7 @@
                 // .attr( 'multiple', 'multiple' )
                 // .attr( 'data-native-menu', 'false' )
                 .addClass( 'event-tags' )
+                .addClass( 'lists-tags' )
                 .attr( 'value', tags.join(' ') )
                 .on( 'change', function () {
                     let val = this.value;
@@ -683,7 +684,6 @@
             let elem = $( e ),
                 date = elem.attr( 'data-date' ),
                 slider = $( '#time-selection' ),
-                // tagSelect = elem.find( '.event-tags' ),
                 tags = elem.attr( 'data-tags' ).split(' '),
                 sliderMin = 0,
                 sliderMax = 0,
@@ -720,8 +720,8 @@
             }
 
             let elem = $( e ),
-                elemSelect = elem.find( '.event-tags, #select-tag' ),
-                ignoreDataTags = elemSelect.is( '#select-tag' ),
+                elemSelect = elem.find( 'select.lists-tags' ),
+                elemSelTagged = elemSelect.is( 'select.event-tags' ),
                 tags = elem.attr( 'data-tags' ) || elemSelect.val() || '0',
                 newTags = [];
             tags = tags.split(' ');
@@ -731,16 +731,19 @@
                 if ( this.tags.hasOwnProperty( key ) ) {
                     let obj = this.tags[ key ],
                         opt = $( '<option>' )
-                            .attr( 'value', obj.id )
+                            .attr( 'value', '' + obj.id )
                             .html( obj.name )
                             .appendTo( elemSelect );
                     if ( tags.includes( '' + obj.id ) ) {
-                        opt.attr( 'selected', 'selected' );
+                        // opt.attr( 'selected', 'selected' );
                         newTags.push( obj.id );
                     }
                 }
             }
-            if ( !ignoreDataTags ) {
+
+            elemSelect.val( tags[0] );
+            
+            if ( elemSelTagged ) {
                 if ( !newTags.length ) {
                     elemSelect.val( 0 );
                     elem.attr( 'data-tags', '0' );
