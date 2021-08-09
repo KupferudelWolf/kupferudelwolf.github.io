@@ -28,10 +28,12 @@
             // this.initMapCtrl();
             this.initMiscCtrl();
 
+            /// Default all colorpickers to the hexagonal "web" palette.
             $( '.colorpicker' ).colorpicker({
                 defaultPalette: 'web'
             });
 
+            /// Load the default JSON.
             this.loadData( 'ajax/record.json' ).then( () => {
                 this.updateTags();
                 this.sortEvents();
@@ -59,9 +61,8 @@
                 name = data.name,
                 date = data.day,
                 desc = data.desc || 'No description.',
-                // color = data.color || '#ffffff',
                 tags = data.tags || [0],
-                idAll = $( '.single-event' ).not( this ).map( function () {
+                idAll = $( '.single-event' ).map( function () {
                     return $( this ).attr( 'data-id' ) * 1;
                 }).get(),
                 eventsPanel = $( '.events' ),
@@ -77,11 +78,13 @@
                 }
             }
 
+            /// Create the container for the single event.
             container = $( '<div>' )
                 .addClass( 'ui-bar ui-body-a single-event' )
                 .attr( 'data-date', date )
                 .attr( 'data-id', id )
                 .appendTo( eventsPanel );
+            /// Create the placeholder that shows when dragging the event.
             placeholder = $( '<div>' )
                 .addClass( 'single-event placeholder' );
 
@@ -96,6 +99,7 @@
                         mY = e.pageY,
                         posSelf = self.position(),
                         offset = container.offset();
+                    /// Persistent mouse values for edge-scrolling.
                     mXP = mX;
                     mYP = mY;
                     offX = -posSelf.left - self.width() / 2;
@@ -135,6 +139,7 @@
                 .attr( 'name', name )
                 .html( `<span>${ name }</span>` )
                 .on( 'click', function ( e ) {
+                    /// Expand / collapse the event's details.
                     e.preventDefault();
                     let self = $( this );
                     if ( self.is( '.editting' ) ) return;
@@ -143,19 +148,20 @@
                     container.toggleClass( 'collapsed' );
                 })
                 .on( 'contextmenu', function ( e ) {
+                    /// Rename the title.
                     e.preventDefault();
                     if ( lockButton.attr( 'data-lock' ) === 'on' ) return;
-                    let self = $( this );
-                    self.addClass( 'editting' );
+                    let self = $( this ).addClass( 'editting' );
                     self.children( 'span' ).hide();
                     self.children( 'input' ).show().focus();
                 })
                 .appendTo( container );
-            /// Header Name Changer
+            /// Title Changer
             $( '<input>' )
                 .attr( 'type', 'text' )
                 .val( name )
                 .on( 'change focusout', function () {
+                    /// Appears while renaming the title.
                     let self = $( this );
                     name = app.sanitize(self.val()) || 'Unnamed Event';
                     header
@@ -175,8 +181,7 @@
                 .attr( 'type', 'text' )
                 .val( this.printDate( date ) )
                 .on( 'change', function () {
-                    let self = $( this ),
-                        val = app.interpretDate( self.val() );
+                    let val = app.interpretDate( this.value );
                     if ( val || val === 0 ) {
                         container.attr( 'data-date', val );
                     }
@@ -262,6 +267,7 @@
                     top = mY + offY,
                     height = container.outerHeight(),
                     found;
+                /// Persistent mouse values for edge-scrolling.
                 mXP = mX;
                 mYP = mY;
                 container.css({
@@ -301,30 +307,11 @@
                     .detach()
                     .insertAfter( placeholder );
                 placeholder.detach();
-
-                /// Set the date to a date between the neighboring containers (if necessary).
-                // if ( container.prev().length > 0 ) {
-                //     prevDate = +container.prev().attr( 'data-date' );
-                // } else {
-                //     prevDate = Math.min( ...allDates );
-                // }
-                // if ( container.next().length > 0 ) {
-                //     nextDate = +container.next().attr( 'data-date' );
-                // } else {
-                //     nextDate = Math.max( ...allDates );
-                // }
-                //
-                // if ( date < prevDate || date > nextDate ) {
-                //     let newDate = prevDate + ( nextDate - prevDate ) / 2;
-                //     container.attr( 'data-date', Math.floor( newDate ) );
-                // }
                 this.updateEvent( container );
             });
 
             /// Mobile-ize the inputs.
             container.children( 'input, textarea' ).textinput();
-
-            // this.updateEvent( container );
 
             return container;
         }
@@ -354,7 +341,7 @@
                 }
 
                 /// Left
-                buttonLeft = $('<button>')
+                buttonLeft = $( '<button>' )
                     .addClass( classes )
                     .addClass( 'ui-icon-carat-l' )
                     .appendTo( self );
@@ -363,17 +350,15 @@
                     .addClass( 'bubble-value' )
                     .appendTo( self );
                 /// Right
-                buttonRight = $('<button>')
+                buttonRight = $( '<button>' )
                     .addClass( classes )
                     .addClass( 'ui-icon-carat-r' )
                     .appendTo( self );
                 buttonLeft.on( 'mousedown', function () {
                     targ.val( targ.val() * 1 - 1 ).trigger( 'change' );
-                    // buttonRight.attr( 'disabled', targ.attr( 'val' ) >= targ.attr( 'max' ) );
                 });
                 buttonRight.on( 'mousedown', function () {
                     targ.val( targ.val() * 1 + 1 ).trigger( 'change' );
-                    // buttonLeft.attr( 'disabled', targ.attr( 'val' ) <= targ.attr( 'min' ) );
                 });
             });
             /// Control bubbles.
@@ -392,25 +377,11 @@
                 bubble.children( '.bubble-value' ).html( app.printDate( val ) );
                 bubble.css( 'left', `${ left }px` );
             }).trigger( 'change' );
-            // $( '#time-range-min, #time-range-max' ).on( 'change input', function () {
-            //     const self = $( this ),
-            //           bubble = $( `#${ self.attr('id') }-bubble` ),
-            //           bar = self.siblings( '.ui-rangeslider-sliders' ).children().first(),
-            //           x = bar.position().left + $( window ).width() * 0.05,
-            //           w = bar.width();
-            //     let val = self.val(),
-            //         min = self.attr( 'min' ),
-            //         max = self.attr( 'max' ),
-            //         perc = ( val - min ) / ( max - min ),
-            //         left = x + w * perc;
-            //     // left = Math.min( Math.max( left, x/2 ), $( window ).width() );
-            //     bubble.children( '.bubble-value' ).html( app.printDate( val ) );
-            //     bubble.css( 'left', `${ left }px` );
-            // }).trigger( 'change' );
         }
 
         initDayCtrl() {
             let app = this;
+            /// Enable Years Button
             $( '#enable-years' ).on( 'change', function () {
                 let enableYears = $( this ).is( ':checked' );
                 $( '#days-max' ).textinput( enableYears ? 'enable' : 'disable' );
@@ -459,10 +430,12 @@
         initMiscCtrl() {
             let app = this;
 
+            /// Sort Events Button
             $( '.sort-events' ).on( 'click', () => {
                 this.sortEvents();
             });
 
+            /// Add New Event Button
             $( '.add-new-event' ).on( 'click', () => {
                 let newEvent = this.createEvent({
                     name: 'New Event',
@@ -473,6 +446,7 @@
                 newEvent.children( '.event-title' ).trigger( 'contextmenu' );
             });
 
+            /// Filter Events Button
             $( '.filter-events' ).on( 'click', () => {
                 let select = $( 'select.select-filter' ),
                     selectButton = select.parent().toggle();
@@ -482,6 +456,8 @@
                     $( '.single-event' ).show();
                 }
             }).trigger( 'click' );
+
+            /// Filter Events Menu
             $( 'select.select-filter' ).on( 'change', function () {
                 if ( !$( this ).parent().is( ':visible' ) ) return;
                 let val = this.value;
@@ -497,9 +473,6 @@
         initTagCtrl() {
             let app = this,
                 tag = this.tags[0],
-                // name = tag.name,
-                // color = tag.color,
-                // desc = tag.desc,
                 container = $( '.section-tags' ),
                 selectTagButton = $( '#select-tag-button' ),
                 tagSelect = $( '#select-tag' ),
@@ -511,13 +484,12 @@
                 setTagColor = ( color ) => {
                     container.get(0).style.setProperty( '--color', color );
                     colorInput.val( color );
-                    // tag.name = name;
                     tag.color = color;
-                    // tag.desc = desc;
                     this.updateTags();
                     this.updateEvent();
                 };
 
+            /// Tag Title
             tagSelect
                 .on( 'change', function () {
                     tag = app.tags[ this.value ];
@@ -543,8 +515,8 @@
                     container.get(0).style.setProperty( '--color', tag.color );
                 })
                 .on( 'contextmenu', function ( e ) {
-                    if ( tag.id == 0 ) return;
                     e.preventDefault();
+                    if ( tag.id == 0 ) return;
                     let self = $( this );
                     if ( !jQuery.contains( document, tagRenamer ) ) {
                         tagRenamer.prependTo( tagSelect.parent() );
@@ -553,33 +525,13 @@
                     selectTagButton.siblings( 'span' ).hide();
                     tagRenamer.val( app.sanitize( tag.name, true ) ).show().focus();
                 });
-            colorInput
-                .val( tag.color )
-                .on( 'change input', function () {
-                    let color = this.value.replace( /[^A-Fa-f0-9]/g, '' );
-                    color = '#' + color.substring( 0, 6 );
-                    // colorPicker.colorpicker( 'val', color );
-                    tag.color = color;
-                    setTagColor( color );
-                });
-            colorPicker
-                .val( tag.color )
-                .on( 'change.color', function ( e, val ) {
-                    if ( tag.id == 0 ) return;
-                    setTagColor( val );
-                });
-            descInput
-                .val( tag.desc )
-                .on( 'change input', function () {
-                    tag.desc = this.value;
-                });
+            /// Tag Renamer
             tagRenamer = $( '<input>' )
                 .attr( 'type', 'text' )
                 .val( tag.name )
                 .on( 'change focusout', function () {
                     let self = $( this );
                     tag.name = app.sanitize(self.val()) || 'Unnamed Tag';
-                    // tag.name = name;
                     tagSelect.children( 'option[selected="selected"]' ).html( tag.name );
                     selectTagButton.removeClass( 'editting' );
                     selectTagButton.siblings( 'span' ).html( tag.name ).show();
@@ -588,6 +540,30 @@
                 })
                 .textinput()
                 .hide();
+            /// Text Field
+            colorInput
+                .val( tag.color )
+                .on( 'change input', function () {
+                    let color = this.value.replace( /[^A-Fa-f0-9]/g, '' );
+                    color = '#' + color.substring( 0, 6 );
+                    tag.color = color;
+                    setTagColor( color );
+                });
+            /// Color Picker
+            colorPicker
+                .val( tag.color )
+                .on( 'change.color', function ( e, val ) {
+                    if ( tag.id == 0 ) return;
+                    setTagColor( val );
+                });
+            /// Tag Description
+            descInput
+                .val( tag.desc )
+                .on( 'change input', function () {
+                    tag.desc = this.value;
+                });
+
+            /// Add New Tag Button
             $( '.add-new-tag' ).on( 'click', () => {
                 let id, idList = [];
                 for ( const key in this.tags ) {
@@ -605,6 +581,7 @@
                 this.updateTags();
                 tagSelect.val( id ).trigger( 'change' ).trigger( 'contextmenu' );
             });
+            /// Delete Tag Button
             $( '.delete-tag' )
                 .on( 'click', () => {
                     if ( tag.id == 0 ) return;
@@ -674,6 +651,7 @@
 
         sanitize( str, reverse ) {
             if ( reverse ) {
+                /// Unsanitize.
                 return str
                     .replace( /&lt;/g, '<' )
                     .replace( /&gt;/g, '>' )
@@ -681,6 +659,7 @@
                     .replace( /&#x27;/g, '\'' )
                     .replace( /&#x2F;/g, '/' );
             } else {
+                /// Sanitize.
                 return str
                     .replace( /</g, '&lt;' )
                     .replace( />/g, '&gt;' )
@@ -692,6 +671,7 @@
 
         saveData() {
             let out = [];
+            /// Record all events.
             $( '.single-event' ).each( function () {
                 let self = $( this );
                 out.push({
@@ -702,8 +682,9 @@
                     'tags': self.attr( 'data-tags' ).split( ' ' )
                 });
             });
+            /// Record all tags (excluding <default>).
             for ( const key in this.tags ) {
-                if ( this.tags.hasOwnProperty( key ) ) {
+                if ( this.tags.hasOwnProperty( key ) && key !== '0' ) {
                     let tag = this.tags[ key ];
                     out.push({
                         'type':  'tag',
@@ -718,6 +699,7 @@
         }
 
         sortEvents() {
+            /// Sort all events chronologically.
             let all = $( '.events' ).children().sort( function ( a, b ) {
                 return a.getAttribute( 'data-date' ) - b.getAttribute( 'data-date' );
             });
@@ -731,6 +713,7 @@
                 step = ( t ) => {
                     window.requestAnimationFrame( step );
                     this.loops.forEach( f => {
+                        /// Loops should return true to be removed.
                         if ( !f( t ) ) newLoops.push( f );
                     });
                     this.loops = newLoops;
@@ -742,12 +725,14 @@
 
         updateEvent( e ) {
             if ( !e ) {
+                /// Update everything that has tags.
                 let app = this;
                 $( '.single-event' ).each( function () {
                     app.updateEvent( this );
                 });
                 return;
             } else if ( Array.isArray( e ) ) {
+                /// Update each individually.
                 e.forEach( this.updateEvent );
             }
 
@@ -758,20 +743,22 @@
                 sliderMin = 0,
                 sliderMax = 0,
                 colors = [];
+
+            /// Update the date.
             elem.find( '.event-date' ).val( this.printDate( date ) );
 
-            $( '.single-event' ).each( function () {
-                let date = $( this ).attr( 'data-date' );
-                sliderMin = Math.min( sliderMin, date );
-                sliderMax = Math.max( sliderMax, date );
-            });
-            /// Update color.
+            /// Update the color.
             tags.forEach( tag => {
                 colors.push( this.tags[ tag ].color );
             });
             elem.get(0).style.setProperty( '--color', colors[0] || '#ffffff' );
 
-            /// Update timeline.
+            /// Update the timeline.
+            $( '.single-event' ).each( function () {
+                let date = $( this ).attr( 'data-date' );
+                sliderMin = Math.min( sliderMin, date );
+                sliderMax = Math.max( sliderMax, date );
+            });
             slider
                 .attr( 'min', sliderMin )
                 .attr( 'max', sliderMax )
@@ -780,26 +767,30 @@
 
         updateTags( e ) {
             if ( !e ) {
+                /// Update everything that has tags.
                 let app = this;
                 $( 'select.lists-tags' ).each( function () {
                     app.updateTags( this );
                 });
                 return;
             } else if ( Array.isArray( e ) ) {
+                /// Update each individually.
                 e.forEach( this.updateTags );
             }
 
             let elemSelect = $( e ),
                 elemHasTags = elemSelect.is( '.event-tags' ),
                 tags = elemSelect.val() || '0',
-                newTags = [], elem;
+                newTags = [],
+                elem;
+            if ( !elemSelect.length ) return;
+
             if ( elemHasTags ) {
+                /// These tags correspond to something.
                 elem = elemSelect.parents( '[data-tags]' ).first();
                 tags = elem.attr( 'data-tags' ) || tags;
             }
             tags = tags.split(' ');
-
-            if ( !elemSelect.length ) return;
 
             elemSelect.find( 'option' ).remove();
             for ( const key in this.tags ) {
@@ -810,7 +801,7 @@
                             .html( obj.name )
                             .appendTo( elemSelect );
                     if ( tags.includes( '' + obj.id ) ) {
-                        // opt.attr( 'selected', 'selected' );
+                        /// This tag is valid and should be kept.
                         newTags.push( obj.id );
                     }
                 }
@@ -820,8 +811,10 @@
 
             if ( elemHasTags ) {
                 if ( newTags.length ) {
+                    /// Replace tags data with list of tags known to be valid.
                     elem.attr( 'data-tags', newTags.join(' ') );
                 } else {
+                    /// Default to <default> if there are no valid tags.
                     elemSelect.val( 0 );
                     elem.attr( 'data-tags', '0' );
                     this.updateEvent( elem );
