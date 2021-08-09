@@ -3,13 +3,13 @@
 
     class App {
         data = []
-        tags = [
-            {
+        tags = {
+            '0': {
                 name: '&lt;default&gt;',
                 color: '#ffffff',
                 id: 0
             }
-        ]
+        }
         cvsZoom = 1
         timeBegin = 0
         timeEnd = 1
@@ -324,7 +324,7 @@
             let ind = data.id;
             data.name = data.name || 'Unnamed Tag';
             data.color = data.color || '#ffffff';
-            this.tags[ ind ] = data;
+            this.tags[ ind + '' ] = data;
         }
 
         sortEvents() {
@@ -473,54 +473,124 @@
 
         initTagCtrl() {
             let app = this,
-                color = '#ffffff',
-                desc = '',
+                tag = this.tags[0],
+                // name = tag.name,
+                // color = tag.color,
+                // desc = tag.desc,
                 container = $( '.section-tags' ),
+                selectTagButton = $( '#select-tag-button' ),
                 tagSelect = $( '#select-tag' ),
                 colorInput = $( '#tag-color-input' ),
                 colorPicker = $( '.tag-colorpicker' ),
                 descInput = $( '.tag-desc' ),
                 deleteButton = $( '.delete-tag' ),
-                setTagColor = () => {
-                    let tag = app.tags[ tagSelect.val() ];
+                tagRenamer,
+                setTagColor = ( color ) => {
                     container.get(0).style.setProperty( '--color', color );
                     colorInput.val( color );
+                    // tag.name = name;
                     tag.color = color;
-                    tag.desc = desc;
+                    // tag.desc = desc;
                     this.updateTags();
                     this.updateEvent();
                 };
 
             tagSelect
                 .on( 'change', function () {
-                    let tag = app.tags[ this.value ];
-                    color = tag.color;
-                    desc = tag.desc;
-                    colorInput.val( color );
-                    descInput.val( desc );
-                    deleteButton.attr('disabled', tag.id === 0 );
+                    tag = app.tags[ this.value ];
+                    if ( !tag ) {
+                        $( this ).val( 0 );
+                        tag = app.tags[ 0 ];
+                    }
+                    // name = tag.name;
+                    // color = tag.color;
+                    // desc = tag.desc;
+                    tagRenamer.val( tag.name );
+                    colorInput.val( tag.color );
+                    descInput.val( tag.desc );
+                    deleteButton.attr('disabled', tag.id == 0 );
+                    if ( tag.id == 0 ) {
+                        colorInput.textinput( 'disable' );
+                        descInput.textinput( 'disable' );
+                    } else {
+                        colorInput.textinput( 'enable' );
+                        descInput.textinput( 'enable' );
+                    }
                     // colorPicker.colorpicker( 'val', color );
-                    container.get(0).style.setProperty( '--color', color );
+                    container.get(0).style.setProperty( '--color', tag.color );
+                })
+                .on( 'contextmenu', function ( e ) {
+                    if ( tag.id == 0 ) return;
+                    e.preventDefault();
+                    let self = $( this );
+                    if ( !jQuery.contains( document, tagRenamer ) ) {
+                        tagRenamer.prependTo( tagSelect.parent() );
+                    }
+                    selectTagButton.addClass( 'editting' );
+                    selectTagButton.siblings( 'span' ).hide();
+                    tagRenamer.show().focus();
                 });
             colorInput
-                .val( color )
+                .val( tag.color )
                 .on( 'change input', function () {
-                    color = this.value.replace( /[^A-Fa-f0-9]/g, '' );
+                    let color = this.value.replace( /[^A-Fa-f0-9]/g, '' );
                     color = '#' + color.substring( 0, 6 );
                     // colorPicker.colorpicker( 'val', color );
-                    setTagColor();
+                    tag.color = color;
+                    setTagColor( color );
                 });
             colorPicker
-                .val( color )
+                .val( tag.color )
                 .on( 'change.color', function ( e, val ) {
-                    color = val;
-                    setTagColor();
+                    if ( tag.id == 0 ) return;
+                    setTagColor( val );
                 });
             descInput
-                .val( desc )
+                .val( tag.desc )
                 .on( 'change input', function () {
-                    let tag = app.tags[ tagSelect.val() ];
                     tag.desc = this.value;
+                });
+            tagRenamer = $( '<input>' )
+                .attr( 'type', 'text' )
+                .val( tag.name )
+                .on( 'change focusout', function () {
+                    let self = $( this );
+                    tag.name = self.val() || 'Unnamed Tag';
+                    // tag.name = name;
+                    tagSelect.children( 'option[selected="selected"]' ).html( tag.name );
+                    selectTagButton.removeClass( 'editting' );
+                    selectTagButton.siblings( 'span' ).html( tag.name ).show();
+                    self.hide();
+                    app.updateTags();
+                })
+                .textinput()
+                .hide();
+            $( '.add-new-tag' ).on( 'click', () => {
+                let id, idList = [];
+                for ( const key in this.tags ) {
+                    if ( this.tags.hasOwnProperty( key ) ) {
+                        idList.push( this.tags[key].id * 1 );
+                    }
+                }
+                for ( let i = 0, l = idList.length + 1; i < l; ++i ) {
+                    if ( !idList.includes( i ) ) {
+                        id = i;
+                        break;
+                    }
+                }
+                let newTag = this.createTag({ 'id': id });
+                this.updateTags();
+                tagSelect.val( id ).trigger( 'change' ).trigger( 'contextmenu' );
+            });
+            $( '.delete-tag' )
+                .on( 'click', () => {
+                    if ( tag.id == 0 ) return;
+                    if ( confirm( `Are you sure you want to delete "${ tag.name }"?` )) {
+                        delete this.tags[ tag.id ];
+                        tagSelect.val( tag.id - 1 ).trigger( 'change' );
+                        this.updateTags();
+                        this.updateEvent();
+                    }
                 });
         }
 
@@ -632,19 +702,34 @@
 
             let elem = $( e ),
                 elemSelect = elem.find( '.event-tags, #select-tag' ),
-                tags = elem.attr( 'data-tags' ) || elemSelect.val() || '0';
+                ignoreDataTags = elemSelect.is( '#select-tag' ),
+                tags = elem.attr( 'data-tags' ) || elemSelect.val() || '0',
+                newTags = [];
             tags = tags.split(' ');
 
             elemSelect.find( 'option' ).remove();
-            this.tags.forEach( obj => {
-                let opt = $( '<option>' )
-                    .attr( 'value', obj.id )
-                    .html( obj.name )
-                    .appendTo( elemSelect );
-                if ( tags.includes( '' + obj.id ) ) {
-                    opt.attr( 'selected', 'selected' );
+            for ( const key in this.tags ) {
+                if ( this.tags.hasOwnProperty( key ) ) {
+                    let obj = this.tags[ key ],
+                        opt = $( '<option>' )
+                            .attr( 'value', obj.id )
+                            .html( obj.name )
+                            .appendTo( elemSelect );
+                    if ( tags.includes( '' + obj.id ) ) {
+                        opt.attr( 'selected', 'selected' );
+                        newTags.push( obj.id );
+                    }
                 }
-            });
+            }
+            if ( !ignoreDataTags ) {
+                if ( !newTags.length ) {
+                    elemSelect.val( 0 );
+                    elem.attr( 'data-tags', '0' );
+                    this.updateEvent( e );
+                } else {
+                    elem.attr( 'data-tags', newTags.join(' ') );
+                }
+            }
             elemSelect.trigger( 'change' );
 
         }

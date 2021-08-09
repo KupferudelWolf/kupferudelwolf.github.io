@@ -119,6 +119,9 @@ h1.ui-bar {
     width: auto !important;
     width: -webkit-fill-available !important;
 }
+#select-tag-button.editting > span {
+    display: none !important;
+}
 
 
 .slider-bubble {
