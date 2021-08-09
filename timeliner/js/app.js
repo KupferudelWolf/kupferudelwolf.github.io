@@ -157,7 +157,7 @@
                 .val( name )
                 .on( 'change focusout', function () {
                     let self = $( this );
-                    name = self.val() || 'Unnamed Event';
+                    name = app.sanitize(self.val()) || 'Unnamed Event';
                     header
                         .attr( 'name', name )
                         .removeClass( 'editting' )
@@ -551,7 +551,7 @@
                     }
                     selectTagButton.addClass( 'editting' );
                     selectTagButton.siblings( 'span' ).hide();
-                    tagRenamer.show().focus();
+                    tagRenamer.val( app.sanitize( tag.name, true ) ).show().focus();
                 });
             colorInput
                 .val( tag.color )
@@ -578,7 +578,7 @@
                 .val( tag.name )
                 .on( 'change focusout', function () {
                     let self = $( this );
-                    tag.name = self.val() || 'Unnamed Tag';
+                    tag.name = app.sanitize(self.val()) || 'Unnamed Tag';
                     // tag.name = name;
                     tagSelect.children( 'option[selected="selected"]' ).html( tag.name );
                     selectTagButton.removeClass( 'editting' );
@@ -622,11 +622,10 @@
                 return Math.floor( d * 1 ) - 1;
             }
             let reducer = ( a, b ) => a.length > b.length ? a : b,
-                val = d
-                    .toLowerCase()
-                    .replace(/(year)/g, 'y')
-                    .replace(/(day)/g, 'd')
-                    .replace(/[^dy0-9.]/g, ''),
+                val = d.toLowerCase()
+                    .replace( /(year)/g, 'y' )
+                    .replace( /(day)/g, 'd' )
+                    .replace( /[^dy0-9.]/g, '' ),
                 year = val.match( /y[0-9]+/g ),
                 day = val.match( /d[0-9]+/g );
             if ( year ) {
@@ -670,6 +669,24 @@
                 return `Day ${ Math.floor( year * this.daysMax ) + day }`;
             } else {
                 return `Year ${ year + 1 }, Day ${ day }`;
+            }
+        }
+
+        sanitize( str, reverse ) {
+            if ( reverse ) {
+                return str
+                    .replace( /&lt;/g, '<' )
+                    .replace( /&gt;/g, '>' )
+                    .replace( /&quot;/g, '"' )
+                    .replace( /&#x27;/g, '\'' )
+                    .replace( /&#x2F;/g, '/' );
+            } else {
+                return str
+                    .replace( /</g, '&lt;' )
+                    .replace( />/g, '&gt;' )
+                    .replace( /"/g, '&quot;' )
+                    .replace( /'/g, '&#x27;' )
+                    .replace( /\//g, '&#x2F;' );
             }
         }
 
