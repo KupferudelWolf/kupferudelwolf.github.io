@@ -162,9 +162,6 @@ h1.ui-bar {
     opacity: 0.333;
     cursor: pointer;
 }
-.dragger.dragging {
-    cursor: move;
-}
 
 
 .sidebar {
@@ -214,6 +211,8 @@ h1.ui-bar {
 }
 .single-event.dragging {
     position: absolute;
+    z-index: 1000;
+    cursor: move;
 }
 .single-event.placeholder {
     width: 100%;

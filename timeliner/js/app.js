@@ -13,6 +13,7 @@
         cvsZoom = 1
         timeBegin = 0
         timeEnd = 1
+        loops = []
 
         constructor() {
             CVS = $( '#map' ).get( 0 );
@@ -34,6 +35,7 @@
             this.loadData().then( () => {
                 this.updateTags();
                 this.sortEvents();
+                this.startAnims();
                 /// Temporary: fill the map with a checkerboard pattern.
                 let ckbd = 32;
                 CTX.fillStyle = 'black';
@@ -59,10 +61,11 @@
                 idAll = $( '.single-event' ).not( this ).map( function () {
                     return $( this ).attr( 'data-id' ) * 1;
                 }).get(),
+                eventsPanel = $( '.events' ),
                 colors = [], id,
                 container, placeholder, dragger, header, footerButtons, footerColor,
                 color_button, color_picker, color_text, lockButton, tagSelect,
-                dragging, offX, offY;
+                dragging, offX, offY, mXP, mYP;
 
             for ( let i = 0, l = idAll.length + 1; i < l; ++i ) {
                 if ( !idAll.includes( i ) ) {
@@ -75,7 +78,7 @@
                 .addClass( 'ui-bar ui-body-a single-event' )
                 .attr( 'data-date', date )
                 .attr( 'data-id', id )
-                .appendTo( '.events' );
+                .appendTo( eventsPanel );
             placeholder = $( '<div>' )
                 .addClass( 'single-event placeholder' );
 
@@ -92,10 +95,10 @@
                         mY = e.pageY,
                         posSelf = self.position(),
                         offset = container.offset();
-                    offX = -posSelf.left - self.width()/2;
-                    offY = -posSelf.top - self.height()/2;
-                    // offX = offset.left - e.pageX;
-                    // offY = offset.top - e.pageY;
+                    mXP = mX;
+                    mYP = mY;
+                    offX = -posSelf.left - self.width() / 2;
+                    offY = -posSelf.top - self.height() * 2;
                     dragging = true;
                     placeholder
                         .height( `${ container.outerHeight() }px` )
@@ -108,7 +111,20 @@
                         .addClass( 'dragging' )
                         .css( 'left', `${ mX + offX }px` )
                         .css( 'top', `${ mY + offY }px` );
-                    self.addClass( 'dragging' );
+                    /// Edge Scrolling
+                    let ePan = eventsPanel.get( 0 ),
+                        y1 = container.outerHeight() / 2,
+                        y2 = $( window ).height() - y1;
+                    app.loops.push( function () {
+                        if ( !container.is( '.dragging' ) ) return true;
+                        if ( mYP < y1 ) {
+                            /// Scroll up.
+                            ePan.scrollBy( 0, -15 );
+                        } else if ( mYP > y2 ) {
+                            /// Scroll down.
+                            ePan.scrollBy( 0, 15 );
+                        }
+                    });
                 })
                 .appendTo( container );
             /// Title Button
@@ -231,16 +247,6 @@
             tagSelect.selectmenu({
                 'icon': 'tag'
             });
-            // this.tags.forEach( obj => {
-            //     let opt = $( '<option>' )
-            //         .attr( 'value', obj.id )
-            //         .html( obj.name )
-            //         .appendTo( tagSelect );
-            //     if ( tags.includes( '' + obj.id ) ) {
-            //         opt.attr( 'selected', 'selected' );
-            //         colors.push( obj.color );
-            //     }
-            // });
             container.attr( 'data-tags', tags.join(' ') );
 
             /// Click-and-Drag Functionality
@@ -254,6 +260,8 @@
                     top = mY + offY,
                     height = container.outerHeight(),
                     found;
+                mXP = mX;
+                mYP = mY;
                 container.css({
                     'left': `${ left }px`,
                     'top': `${ top }px`
@@ -272,11 +280,10 @@
                 });
                 /// The following is true if the container is at the bottom of the list.
                 if ( !found ) {
-                    placeholder.detach().appendTo( '.events' );
+                    placeholder.detach().appendTo( eventsPanel );
                 }
             });
             container.on( 'mouseup mouseleave', () => {
-                dragger.removeClass( 'dragging' );
                 if ( !dragging ) return;
                 let date = +container.attr( 'data-date' ),
                     allDates = $( '.single-event' ).map( function () {
@@ -648,6 +655,20 @@
             } else {
                 return `Year ${ year + 1 }, Day ${ day }`;
             }
+        }
+
+        startAnims() {
+            let newLoops = [],
+                step = ( t ) => {
+                    window.requestAnimationFrame( step );
+                    this.loops.forEach( f => {
+                        if ( !f( t ) ) newLoops.push( f );
+                    });
+                    this.loops = newLoops;
+                    newLoops = [];
+                };
+
+            window.requestAnimationFrame( step );
         }
 
         updateEvent( e ) {
