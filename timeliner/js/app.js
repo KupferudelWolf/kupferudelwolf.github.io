@@ -311,6 +311,8 @@
             /// Mobile-ize the inputs.
             container.children( 'input, textarea' ).textinput();
 
+            this.updateTags( tagSelect );
+
             return container;
         }
 
@@ -440,7 +442,6 @@
                     day: $( '#time-selection' ).val(),
                     tags: 0
                 });
-                this.updateTags( newEvent );
                 newEvent.children( '.event-title' ).trigger( 'contextmenu' );
             });
 
