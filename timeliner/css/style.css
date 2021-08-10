@@ -110,7 +110,7 @@ h1.ui-bar {
     display: inline-block;
 }
 .tag-color-controls {
-    display: inline-flex;
+    display: flex;
     grid-gap: 0.5em;
     align-items: center;
 }

@@ -21,7 +21,7 @@
     {
         "type": "event",
         "name": "&lt;div&gt;",
-        "day": 1000,
+        "day": -10,
         "desc": "&lt;div&gt;",
         "tags": [2]
     },
@@ -37,6 +37,7 @@
         "color": "#ffffcc",
         "name": "Another Tag",
         "desc": "Tag #2",
-        "id": 2
+        "id": 2,
+        "cat": "Hello!"
     }
 ]

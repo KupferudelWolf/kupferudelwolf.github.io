@@ -232,8 +232,8 @@
                 .addClass( 'ui-btn ui-shadow ui-btn-icon-notext ui-icon-delete' )
                 .attr( 'name', 'Delete' )
                 .attr( 'title', 'Delete Event' )
-                .on( 'click', function () {
-                    if ( confirm( `Are you sure you want to delete "${ name }"?` )) {
+                .on( 'click', () => {
+                    if ( confirm( `Are you sure you want to delete "${ this.sanitize( name, true ) }"?` )) {
                         container.remove();
                     }
                 })
@@ -327,6 +327,7 @@
             let ind = data.id;
             data.name = data.name || 'Unnamed Tag';
             data.color = data.color || '#ffffff';
+            data.cat = data.cat || '';
             this.tags[ ind + '' ] = data;
         }
 
@@ -484,6 +485,7 @@
                 tagSelect = $( '#select-tag' ),
                 colorInput = $( '#tag-color-input' ),
                 colorPicker = $( '.tag-colorpicker' ),
+                catInput = $( '#tag-category-input' ),
                 descInput = $( '.tag-desc' ),
                 deleteButton = $( '.delete-tag' ),
                 tagRenamer,
@@ -497,74 +499,78 @@
 
             /// Tag Title
             tagSelect
-                .on( 'change', function () {
-                    tag = app.tags[ this.value ];
+                .on( 'change', () => {
+                    tag = this.tags[ tagSelect.val() ];
                     if ( !tag ) {
-                        $( this ).val( 0 );
+                        tagSelect.val( 0 );
                         tag = app.tags[ 0 ];
                     }
-                    tagRenamer.val( tag.name );
+                    tagRenamer.val( this.sanitize( tag.name, true ) );
                     colorInput.val( tag.color );
-                    descInput.val( tag.desc );
-                    deleteButton.attr('disabled', tag.id == 0 );
-                    if ( tag.id == 0 ) {
+                    colorPicker.val( tag.color );
+                    catInput.val( this.sanitize( tag.cat, true ) );
+                    descInput.val( this.sanitize( tag.desc, true ) );
+                    deleteButton.attr('disabled', +tag.id === 0 );
+                    if ( +tag.id === 0 ) {
                         colorInput.textinput( 'disable' );
                         descInput.textinput( 'disable' );
+                        catInput.textinput( 'disable' );
                     } else {
                         colorInput.textinput( 'enable' );
                         descInput.textinput( 'enable' );
+                        catInput.textinput( 'enable' );
                     }
-                    // colorPicker.colorpicker( 'val', color );
-                    container.get(0).style.setProperty( '--color', tag.color );
+                    container.get( 0 ).style.setProperty( '--color', tag.color );
                 })
-                .on( 'contextmenu', function ( e ) {
+                .on( 'contextmenu', ( e ) => {
                     e.preventDefault();
-                    if ( tag.id == 0 ) return;
-                    let self = $( this );
-                    if ( !jQuery.contains( document, tagRenamer ) ) {
+                    if ( +tag.id === 0 ) return;
+                    if ( !$.contains( document, tagRenamer ) ) {
                         tagRenamer.prependTo( tagSelect.parent() );
                     }
                     selectTagButton.addClass( 'editting' );
                     selectTagButton.siblings( 'span' ).hide();
-                    tagRenamer.val( app.sanitize( tag.name, true ) ).show().focus();
+                    tagRenamer.val( this.sanitize( tag.name, true ) ).show().focus();
                 });
             /// Tag Renamer
             tagRenamer = $( '<input>' )
                 .attr( 'type', 'text' )
-                .val( tag.name )
-                .on( 'change focusout', function () {
-                    let self = $( this );
-                    tag.name = app.sanitize( self.val() ) || 'Unnamed Tag';
+                .on( 'change focusout', () => {
+                    if ( +tag.id === 0 ) return;
+                    tag.name = app.sanitize( tagRenamer.val() ) || 'Unnamed Tag';
                     tagSelect.children( 'option[selected="selected"]' ).html( tag.name );
                     selectTagButton.removeClass( 'editting' );
                     selectTagButton.siblings( 'span' ).html( tag.name ).show();
-                    self.hide();
-                    app.updateTags();
+                    tagRenamer.hide();
+                    this.updateTags();
                 })
                 .textinput()
                 .hide();
             /// Text Field
-            colorInput
-                .val( tag.color )
-                .on( 'change input', function () {
-                    let color = this.value.replace( /[^A-Fa-f0-9]/g, '' );
-                    color = '#' + color.substring( 0, 6 );
-                    tag.color = color;
-                    setTagColor( color );
-                });
+            colorInput.on( 'change input', () => {
+                if ( +tag.id === 0 ) return;
+                let color = colorInput.val().replace( /[^A-Fa-f0-9]/g, '' );
+                color = '#' + color.substring( 0, 6 );
+                tag.color = color;
+                setTagColor( color );
+            });
             /// Color Picker
-            colorPicker
-                .val( tag.color )
-                .on( 'change.color', function ( e, val ) {
-                    if ( tag.id == 0 ) return;
-                    setTagColor( val );
-                });
+            colorPicker.on( 'change.color', function ( e, val ) {
+                if ( +tag.id === 0 ) return;
+                setTagColor( val );
+            });
+            catInput.on( 'change', () => {
+                if ( +tag.id === 0 ) return;
+                tag.cat = this.sanitize( catInput.val() );
+                this.updateTags();
+            });
             /// Tag Description
-            descInput
-                .val( tag.desc )
-                .on( 'change input', function () {
-                    tag.desc = this.value;
-                });
+            descInput.on( 'change input', () => {
+                if ( +tag.id === 0 ) return;
+                tag.desc = this.sanitize( descInput.val() );
+            });
+
+            tagSelect.trigger( 'change' );
 
             /// Add New Tag Button
             $( '.add-new-tag' ).on( 'click', () => {
@@ -585,16 +591,15 @@
                 tagSelect.val( id ).trigger( 'change' ).trigger( 'contextmenu' );
             });
             /// Delete Tag Button
-            $( '.delete-tag' )
-                .on( 'click', () => {
-                    if ( tag.id == 0 ) return;
-                    if ( confirm( `Are you sure you want to delete "${ tag.name }"?` )) {
-                        delete this.tags[ tag.id ];
-                        tagSelect.val( tag.id - 1 ).trigger( 'change' );
-                        this.updateTags();
-                        this.updateEvent();
-                    }
-                });
+            $( '.delete-tag' ).on( 'click', () => {
+                if ( +tag.id === 0 ) return;
+                if ( confirm( `Are you sure you want to delete "${ this.sanitize( tag.name, true ) }"?` )) {
+                    delete this.tags[ tag.id ];
+                    tagSelect.val( tag.id - 1 ).trigger( 'change' );
+                    this.updateTags();
+                    this.updateEvent();
+                }
+            });
         }
 
         interpretDate( d ) {
@@ -620,10 +625,6 @@
                 isNegative = year < 0 || ( year === 0 && day < 0 );
                 if ( isNegative ) {
                     ++year;
-                    // while ( day > this.daysMax ) {
-                    //     day -= this.daysMax;
-                    //     ++year;
-                    // }
                     day = this.daysMax - day;
                 }
                 year = Math.abs( year );
@@ -784,9 +785,10 @@
                     out.push({
                         'type':  'tag',
                         'id':    key,
-                        'name':  tag.name || '',
-                        'desc':  tag.desc || '',
-                        'color': tag.color || '#ffffff'
+                        'name':  tag.name  || '',
+                        'color': tag.color || '#ffffff',
+                        'cat':   tag.cat   || '',
+                        'desc':  tag.desc  || ''
                     });
                 }
             }
