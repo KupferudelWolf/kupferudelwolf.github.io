@@ -598,8 +598,8 @@
         }
 
         interpretDate( d ) {
-            if ( !isNaN( d * 1 ) ) {
-                return Math.floor( d * 1 ) - 1;
+            if ( !isNaN( +d ) ) {
+                return Math.floor( +d );
             }
             let reducer = ( a, b ) => a.length > b.length ? a : b,
                 val = d.toLowerCase()
@@ -610,21 +610,28 @@
                 day = val.match( /d-?[0-9]+/g ),
                 isNegative;
             if ( year ) {
-                year = year.reduce(reducer).substring(1);
-                if ( !day ) {
-                    day = ['d1'];
-                }
+                year = +year.reduce( reducer ).substring( 1 );
+                day = day || ['d1'];
             } else {
                 year = 0;
             }
-            if ( year <= 0 ) isNegative = true;
             if ( day ) {
-                console.log( isNegative );
-                day = Math.abs( day.reduce( reducer ).substring( 1 ) ) - 1;
-                year = Math.abs( year ) - 1;
-                day = Math.ceil( year * this.daysMax ) + day;
+                day = +day.reduce( reducer ).substring( 1 );
+                isNegative = year < 0 || ( year === 0 && day < 0 );
+                if ( isNegative ) {
+                    ++year;
+                    // while ( day > this.daysMax ) {
+                    //     day -= this.daysMax;
+                    //     ++year;
+                    // }
+                    day = this.daysMax - day;
+                }
+                year = Math.abs( year );
+                day = Math.abs( day );
+                day = year * this.daysMax + day;
                 if ( isNegative ) day *= -1;
-                return day;
+                // console.log( d, '=>', day );
+                return Math.ceil( day - 1 );
             } else {
                 return null;
             }
@@ -716,19 +723,20 @@
         }
 
         printDate( val ) {
-            let year = Math.floor( val / this.daysMax ),
-                day = Math.floor( val % this.daysMax );
-
-            if ( !$( '#enable-years' ).is( ':checked' ) ) {
-                return `Day ${ Math.floor( year * this.daysMax ) + day + 1 }`;
-            } else {
-                if ( year >= 0 ) {
+            if ( $( '#enable-years' ).is( ':checked' ) ) {
+                let year = Math.abs( val ) / this.daysMax,
+                    day =  Math.abs( val ) - Math.floor( year ) * this.daysMax;
+                if ( val < 0 ) {
                     ++year;
-                    ++day;
-                } else {
-                    day = Math.abs( day );
+                    day = this.daysMax - day;
                 }
+                year = Math.floor( year ) * Math.sign( val );
+                day = Math.floor( day ) + 1;
+                // console.log( val, '=>', `Year ${ year }, Day ${ day }` );
                 return `Year ${ year }, Day ${ day }`;
+            } else {
+                // day += Math.floor( year * this.daysMax );
+                return `Day ${ val }`;
             }
         }
 
