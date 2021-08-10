@@ -19,10 +19,24 @@
         "desc": "This is the end."
     },
     {
+        "type": "event",
+        "name": "&lt;div&gt;",
+        "day": 1000,
+        "desc": "&lt;div&gt;",
+        "tags": [2]
+    },
+    {
         "type": "tag",
         "color": "#ffcccc",
         "name": "My First Tag",
         "desc": "This is a tag!",
         "id": 1
+    },
+    {
+        "type": "tag",
+        "color": "#ffffcc",
+        "name": "Another Tag",
+        "desc": "Tag #2",
+        "id": 2
     }
 ]

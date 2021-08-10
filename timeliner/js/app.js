@@ -42,9 +42,12 @@
                 setTimeout( () => {
                     this.saveData( true );
                 }, 1000 );
-                // setTimeout( () => {
-                //     this.loadData();
-                // }, 5000 );
+                setTimeout( () => {
+                    this.loadData();
+                }, 5000 );
+                setTimeout( () => {
+                    this.saveData( true );
+                }, 4000 );
                 /// Temporary: fill the map with a checkerboard pattern.
                 let ckbd = 32;
                 CTX.fillStyle = 'black';
@@ -71,7 +74,7 @@
                 }).get(),
                 eventsPanel = $( '.events' ),
                 colors = [], id,
-                container, dragbar, header, footerButtons, footerColor,
+                container, dragbar, header, headerInput, footerButtons, footerColor,
                 color_button, color_picker, color_text, lockButton, tagSelect,
                 dragging, offX, offY, mXP, mYP;
 
@@ -152,19 +155,20 @@
                     /// Rename the title.
                     e.preventDefault();
                     if ( lockButton.attr( 'data-lock' ) === 'on' ) return;
-                    let self = $( this ).addClass( 'editting' );
-                    self.children( 'span' ).hide();
-                    self.children( 'input' ).show().focus();
+                    header.addClass( 'editting' );
+                    let name = header.children( 'span' ).hide().html();
+                    headerInput
+                        .val( app.sanitize( name, true ) )
+                        .show().focus();
                 })
                 .appendTo( container );
             /// Title Changer
-            $( '<input>' )
+            headerInput = $( '<input>' )
                 .attr( 'type', 'text' )
-                .val( name )
                 .on( 'change focusout', function () {
                     /// Appears while renaming the title.
                     let self = $( this );
-                    name = app.sanitize(self.val()) || 'Unnamed Event';
+                    name = app.sanitize( self.val() ) || 'Unnamed Event';
                     header
                         .attr( 'name', name )
                         .removeClass( 'editting' )
@@ -192,7 +196,7 @@
             /// Description
             $( '<textarea>' )
                 .addClass( 'event-desc ui-bar ui-body-a' )
-                .html( desc )
+                .html( this.sanitize( desc, true ) )
                 .appendTo( container );
             /// Button Container
             footerButtons = $( '<div>' )
@@ -530,7 +534,7 @@
                 .val( tag.name )
                 .on( 'change focusout', function () {
                     let self = $( this );
-                    tag.name = app.sanitize(self.val()) || 'Unnamed Tag';
+                    tag.name = app.sanitize( self.val() ) || 'Unnamed Tag';
                     tagSelect.children( 'option[selected="selected"]' ).html( tag.name );
                     selectTagButton.removeClass( 'editting' );
                     selectTagButton.siblings( 'span' ).html( tag.name ).show();
@@ -601,20 +605,26 @@
                 val = d.toLowerCase()
                     .replace( /(year)/g, 'y' )
                     .replace( /(day)/g, 'd' )
-                    .replace( /[^dy0-9.]/g, '' ),
-                year = val.match( /y[0-9]+/g ),
-                day = val.match( /d[0-9]+/g );
+                    .replace( /[^-.0-9dy]/g, '' ),
+                year = val.match( /y-?[0-9]+/g ),
+                day = val.match( /d-?[0-9]+/g ),
+                isNegative;
             if ( year ) {
-                year = year.reduce(reducer).substring(1) - 1;
+                year = year.reduce(reducer).substring(1);
                 if ( !day ) {
                     day = ['d1'];
                 }
             } else {
                 year = 0;
             }
+            if ( year <= 0 ) isNegative = true;
             if ( day ) {
-                day = day.reduce( reducer ).substring( 1 ) * 1;
-                return Math.ceil( year * this.daysMax ) + day - 1;
+                console.log( isNegative );
+                day = Math.abs( day.reduce( reducer ).substring( 1 ) ) - 1;
+                year = Math.abs( year ) - 1;
+                day = Math.ceil( year * this.daysMax ) + day;
+                if ( isNegative ) day *= -1;
+                return day;
             } else {
                 return null;
             }
@@ -647,7 +657,7 @@
                         event.tags = event.tags || '0';
                         elem.attr( 'data-date', event.day || 0 );
                         elem.attr( 'data-tags', event.tags.join( ' ' ) );
-                        elem.find( '.event-desc' ).val( event.desc || '' );
+                        elem.find( '.event-desc' ).val( app.sanitize( event.desc, true ) || '' );
                         app.updateEvent( elem );
                     } else {
                         /// Create a new event.
@@ -662,8 +672,8 @@
                         self.remove();
                     }
                 });
-                console.log( 'loaded:', data );
                 app.updateTags();
+                console.log( 'loaded:', data );
             };
 
             if ( url ) {
@@ -688,9 +698,9 @@
                     }
                     val = JSON.parse( val );
                     /// Revert Greek question marks back to semicolons.
-                    if ( val.hasOwnProperty( key ) ) {
-                        if ( typeof( val[ key ]) === 'string' ) {
-                            val[ key ] = val[ key ].replace( new RegExp( semicolon, 'g' ), ';' )
+                    for ( let prop in val ) {
+                        if ( val.hasOwnProperty( prop ) && typeof( val[ prop ]) === 'string' ) {
+                            val[ prop ] = val[ prop ].replace( new RegExp( semicolon, 'g' ), ';' );
                         }
                     }
                     data[ ind ] = val;
@@ -703,18 +713,24 @@
         }
 
         printDate( val ) {
-            const year = Math.floor( val / this.daysMax ),
-                  day = Math.floor( val % this.daysMax ) + 1;
+            let year = Math.floor( val / this.daysMax ),
+                day = Math.floor( val % this.daysMax );
 
             if ( !$( '#enable-years' ).is( ':checked' ) ) {
-                return `Day ${ Math.floor( year * this.daysMax ) + day }`;
+                return `Day ${ Math.floor( year * this.daysMax ) + day + 1 }`;
             } else {
-                return `Year ${ year + 1 }, Day ${ day }`;
+                if ( year >= 0 ) {
+                    ++year;
+                    ++day;
+                } else {
+                    day = Math.abs( day );
+                }
+                return `Year ${ year }, Day ${ day }`;
             }
         }
 
         sanitize( str, reverse ) {
-            if ( typeof( str ) !== 'string' ) str = '';
+            if ( typeof( str ) !== 'string' ) return '';
             if ( reverse ) {
                 /// Unsanitize.
                 return str
@@ -726,6 +742,7 @@
             } else {
                 /// Sanitize.
                 return str
+                    .trim()
                     .replace( /</g, '&lt;' )
                     .replace( />/g, '&gt;' )
                     .replace( /"/g, '&quot;' )
@@ -775,6 +792,7 @@
                     for ( const key in obj ) {
                         /// Replace semicolons with the similar Greek question mark.
                         if ( obj.hasOwnProperty( key ) && typeof( obj[ key ]) === 'string' ) {
+                            obj[ key ] = app.sanitize( obj[ key ] );
                             obj[ key ] = obj[ key ].replace( /;/g, semicolon );
                         }
                     }
@@ -876,8 +894,10 @@
                 tags = elemSelect.val() || '0',
                 keys = Object.keys( this.tags ).sort( ( a, b ) => {
                     /// Alphabetize the tag IDs by their names.
-                    let aN = this.tags[ a ].name.toLowerCase(),
-                        bN = this.tags[ b ].name.toLowerCase();
+                    let aN = this.sanitize( this.tags[ a ].name.toLowerCase(), true ),
+                        bN = this.sanitize( this.tags[ b ].name.toLowerCase(), true );
+                    if ( this.tags[ a ].id === 0 ) return -1;
+                    if ( this.tags[ b ].id === 0 ) return 1;
                     if ( aN < bN ) return -1;
                     if ( aN > bN ) return 1;
                     return 0;
