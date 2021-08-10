@@ -681,7 +681,10 @@
                 $.getJSON( url, ( data ) => {
                     parseData( data );
                     this.updateEvent();
-                }).then( () => {
+                }).error( () => {
+                    console.error( 'JSON failed to resolve.' );
+                    deferred.resolve();
+                }).done( () => {
                     deferred.resolve();
                 });
             } else {
