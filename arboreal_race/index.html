@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Arboreal Character Generator</title>
+		<link rel="stylesheet" type="text/css" href="../css/style.css">
+	    <link rel="stylesheet" type="text/css" href="css/style.css">
+	    <script src="../lib/jquery.min.js" type="text/javascript"></script>
+		<script src="js/app.js" type="module"></script>
+	</head>
+	<body>
+		<div class="container">
+			<canvas id="output" width="720" height="540"></canvas>
+		</div>
+		<div class="options">
+			<button type="button" class="collapsible active"></button>
+			<div class="collapsible-content options-content">
+
+                <!-- <button type="button" class="collapsible">Body</button> -->
+                <!-- <div class="collapsible-content options-content"> -->
+                    <div class="controls">
+                        <p>Size</p>
+                        <input id="ctrl-heft" class="control-input" type="range" min="0" max="1" step="0.01" value="0.5">
+                        <p>Leg Width</p>
+                        <input id="ctrl-arm_width" class="control-input" type="range" min="0" max="1" step="0.01" value="0.5">
+                        <p>Head Shape</p>
+                        <input id="ctrl-muzzle_shape" class="control-input" type="range" min="0" max="1" step="0.01" value="0.5">
+                        <p>Ear Sharpness</p>
+                        <input id="ctrl-ear_shape" class="control-input" type="range" min="0" max="1" step="0.01" value="0.5">
+                        <p>Tail Size</p>
+                        <input id="ctrl-tail_size" class="control-input" type="range" min="0" max="1" step="0.01" value="0.5">
+                    </div>
+                <!-- </div> -->
+
+            </div>
+		</div>
+	</body>
+</html>

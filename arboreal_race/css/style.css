@@ -1,0 +1,137 @@
+@font-face {
+    font-family: 'Dekar';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Dekar'), url('https://fonts.cdnfonts.com/s/13296/Dekar.woff') format('woff');
+}
+@font-face {
+    font-family: 'Dekar Light';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Dekar Light'), url('https://fonts.cdnfonts.com/s/13297/Dekar Light.woff') format('woff');
+}
+
+body {
+    /* background-color: #0f0f12; */
+    font-family: Raleway, sans-serif;
+    background-color: grey;
+}
+body * {
+    font-family: Raleway, sans-serif;
+}
+p {
+    font-size: inherit;
+    margin-top: 18px;
+    margin-bottom: 18px;
+}
+input {
+    width: 100%;
+}
+canvas {
+    background-color: white;
+}
+
+.output {
+    display: block;
+    width: 100vw;
+    height: auto;
+    overflow-x: auto;
+}
+
+
+
+.options {
+    width: min-content;
+    position: absolute;
+    min-height: 40px;
+    margin: 16px;
+    right: 0;
+    top: 0;
+}
+.options > .collapsible.active {
+    width: 512px;
+}
+
+.options .controls,
+.options .details {
+    display: grid;
+    grid-gap: 9px 18px;
+    align-items: center;
+    margin: 18px 0;
+}
+.options .controls {
+    grid-template-columns: min-content auto 25%;
+}
+.options .details {
+    grid-template-columns: min-content auto;
+}
+.options .spacer {
+    grid-column: 1 / -1;
+}
+.options .controls p,
+.options .details p {
+    margin: 0;
+}
+.controls .control-text {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    grid-gap: 0.5em;
+}
+.controls .control-text input:not(.control-unit) {
+    font-family: monospace;
+    text-align: right;
+    font-size: 12px;
+}
+.controls .control-unit {
+    width: 35%;
+}
+
+
+
+.collapsible {
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.collapsible.active, .collapsible:hover {
+    background-color: blue;
+}
+
+.collapsible-content {
+    display: none;
+    overflow: hidden;
+    white-space: normal;
+    background-color: lightgrey;
+    font-size: 14px;
+}
+.collapsible-content:not(:empty) {
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-bottom: 18px;
+}
+.collapsible.active + .collapsible-content {
+    display: block;
+}
+
+.collapsible:after {
+    content: '\2295';
+    float: right;
+    text-align: right;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-weight: 400;
+}
+
+.collapsible.active:after {
+    content: "\2296";
+}
