@@ -185,25 +185,33 @@ $( function () {
         initGUI() {
             const time_scale_base = 1 / 365.2524;
             const prop = {
-                'time_scale': 1
+                'time_scale': 1,
+                'time_reverse': false
             };
             this.TIME_SCALE = time_scale_base * prop.time_scale / 24;
             this.gui = new GUI({
                 width: 320
             });
-            this.gui.add( prop, 'time_scale', 0.1, 48, 0.1 ).onChange( () => {
+            this.gui.add( prop, 'time_scale', 0, 8760, 0.1 ).onChange( () => {
                 this.TIME_SCALE = time_scale_base * prop.time_scale / 24;
+                if ( prop.time_reverse ) this.TIME_SCALE *= -1;
             }).name( 'Speed' );
+            this.gui.add( prop, 'time_reverse' ).onChange( () => {
+                this.TIME_SCALE *= -1;
+            }).name( 'Reverse Time' );
         }
 
         initTime() {
-            let prev, timer;
-            prev = timer = Date.now();
+            let start, prev, timer;
+            start = prev = timer = Date.now();
             this.now = () => {
-                const delta = this.TIME_SCALE * ( Date.now() - prev );
+                const delta = Date.now() - prev;
                 prev = Date.now();
-                timer += delta;
+                timer += this.TIME_SCALE * delta;
                 return timer;
+            };
+            this.realtime = () => {
+                return start + ( this.now() - start ) * 365.2425 * 86400;
             };
         }
 
@@ -368,6 +376,24 @@ $( function () {
             });
         }
 
+        drawTimestamp() {
+            const date = new Date( this.realtime() ).toLocaleString( undefined, {
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZoneName: 'short'
+            });
+            CTX.font = '10px Arial';
+            const dims = CTX.measureText( date );
+            CTX.fillStyle = 'white';
+            CTX.fillRect( 8, CVS.height - 20, dims.width + 4, 12 );
+            CTX.fillStyle = 'black';
+            CTX.fillText( date, 10, CVS.height - 10 );
+        }
+
         loop() {
             CTX.fillStyle = 'darkgrey';
             CTX.fillRect( 0, 0, CVS.width, CVS.height );
@@ -378,6 +404,8 @@ $( function () {
             this.updateCamera();
             this.drawBodies();
             this.drawOrbit();
+
+            this.drawTimestamp();
         }
 
         run() {
