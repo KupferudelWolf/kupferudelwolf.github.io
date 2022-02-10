@@ -371,6 +371,8 @@ $( function () {
                     CTX.fill();
                 }
 
+                const font_size = AV.map( body.radius, 100, 10000, 8, 20, true );
+                CTX.font = `${ Math.round( font_size ) }px Arial`;
                 CTX.fillStyle = 'black';
                 CTX.fillText( body.name, t_x, t_y );
             });
