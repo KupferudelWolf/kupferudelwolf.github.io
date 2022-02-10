@@ -68,6 +68,7 @@ $( function () {
                             radius: 2574.73,
                             mass: 1.3452e+23,
                             semi: 1221870,
+                            ecc: 0.0288,
                             anomaly: 0
                         },
                         'Iapetus': {

@@ -36,6 +36,16 @@ const UNITS = {
             'M<sub>&#128808;</sub>': 5.976e+24
         }
     },
+    parameter: {
+        options: {
+            ' ': 1,
+            '%': 0.01
+        },
+        ranges: {
+            ' ': [ 0, 1, 0.01 ],
+            '%': [ 0, 100, 1 ]
+        }
+    },
     radius: {
         options: {
             'km': 1,
@@ -82,7 +92,7 @@ class Body2D {
         this._.hill = a * ( 1 - e ) * Math.pow( m_sat / ( 3 * m_par ), 1/3 );
         if ( this.controls && this.has_rings ) {
             this.controls.ring_inner.quietUpdate();
-            this.controls.ring_outer.quietUpdate();
+            this.controls.ring_width.quietUpdate();
         }
     }
     updateRoche( d_sat ) {
@@ -118,13 +128,21 @@ class Body2D {
         return this.hill;
     }
 
+    get gm() {
+        return GC * this.mass;
+    }
+
     get hill()    { return this._.hill; }
     get period()  { return this._.period; }
+
 
     get anomaly() { return this._.anomaly; }
     set anomaly( x ) {
         this._.anomaly = x;
     }
+
+    get arg()      { return this._.arg; }
+    set arg( val ) { this._.arg = val; }
 
     get atmo_height() { return this._.atmo_height; }
     set atmo_height( x ) {
@@ -149,6 +167,9 @@ class Body2D {
         this.updateHill();
     }
 
+    get inc()      { return this._.inc; }
+    set inc( val ) { this._.inc = val; }
+
     get mass() { return this._.mass; }
     set mass( val ) {
         this._.mass = val;
@@ -165,6 +186,9 @@ class Body2D {
         this._.parent = val;
         this.refresh();
     }
+
+    get raan()      { return this._.raan; }
+    set raan( val ) { this._.raan = val; }
 
     get radius() { return this._.radius; }
     set radius( val ) {
@@ -216,21 +240,21 @@ class Body2D {
 
         const mass = prop.mass;
         const radius = prop.radius;
-        const semi = prop.semi;
+
+        const semi = prop.semi;            /// Semi-major axis.
+        const ecc = prop.ecc || 0;         /// Eccentricity.
+        const arg = prop.arg || 0;         /// Argument of the perigee.
+        const raan = prop.raan || 0;       /// Right ascension of the ascending node.
+        const anomaly = prop.anomaly || 0; /// Mean anomaly.
+        const inc = prop.inc || 0;         /// Inclination.
 
         const setFocus = prop.setFocus || function () {};
         const onAddMoon = prop.onAddMoon || function () {};
         const onDelete = prop.onDelete || function () {};
 
         const atmo_height = prop.atmo_height || 0;
-        const ecc = prop.ecc || 0;
         const ring_inner = prop.ring_inner;
         const ring_outer = prop.ring_outer;
-
-        var anomaly = prop.anomaly || 0;
-        if ( typeof( prop.anomaly ) === 'undefined' ) {
-            anomaly = Math.random() * AV.RADIAN;
-        }
 
         this.setFocus = setFocus;
         this.onAddMoon = onAddMoon;
@@ -254,7 +278,10 @@ class Body2D {
         this._.semi = semi;
         if ( semi ) {
             this._.ecc = ecc;
+            this._.arg = arg;
+            this._.raan = raan;
             this._.anomaly = anomaly;
+            this._.inc = inc;
         }
 
         this._.ring_inner = ring_inner;
@@ -268,16 +295,56 @@ class Body2D {
         this.updateController();
     }
 
+    calcTrueAnomaly( time ) {
+        const yr = time * 0.001 / UNITS.time.options.yr;
+        const t = ( time / this.period ) % 1;
+        const ecc = this.ecc;
+        const anom_mean = ( this.anomaly + t * AV.RADIAN ) % AV.RADIAN;
+        /// Find eccentric anomaly via Newton-Raphson iterator.
+        let anom_ecc = ecc < 0.8 ? anom_mean : Math.PI,
+            dividend = anom_ecc - ecc * Math.sin( anom_mean ) - anom_mean;
+        for ( let i = 0; i < 30; ++i ) {
+            anom_ecc -= dividend / ( 1 - ecc * Math.cos( anom_ecc ) );
+            dividend = anom_ecc - ecc * Math.sin( anom_ecc ) - anom_mean;
+        }
+        const x = Math.cos( anom_ecc ) - ecc;
+        const y = Math.sqrt( 1 - ecc ** 2 ) * Math.sin( anom_ecc );
+        return Math.atan2( y, x );
+    }
+
     getCartesian( time = Date.now() ) {
-        let semi = this.semi,
-            yr = time * 0.001 / UNITS.time.options.yr,
-            t = ( time / this.period ) % 1,
-            anomaly = AV.RADIAN * t + this.anomaly;
+        const a = this.semi;
+        const gm = this.gm * 1e-9;
+        const ecc = this.ecc;
+        const nu = this.calcTrueAnomaly( time );
+        const peri = a * ( 1 - ecc ** 2 );
+        const r_0 = peri / ( 1 + ecc * Math.cos( nu ));
+        const c_px = r_0 * Math.cos( nu );
+        const c_py = r_0 * Math.sin( nu );
+        const c_v = ( gm / peri ) ** 0.5;
+        const c_vx = -c_v * Math.sin( nu );
+        const c_vy = c_v * ( ecc + Math.cos( nu ) );
+        const trig = {};
+        [ 'arg', 'inc', 'raan' ].forEach( ( key ) => {
+            trig[ key ] = {
+                'sin': Math.sin( this[ key ] ),
+                'cos': Math.cos( this[ key ] )
+            }
+        });
+        const a_x =  trig.raan.cos * trig.arg.cos - trig.raan.sin * trig.arg.sin * trig.inc.cos;
+        const a_y = -trig.raan.cos * trig.arg.sin - trig.raan.sin * trig.arg.cos * trig.inc.cos;
+        const b_x =  trig.raan.sin * trig.arg.cos + trig.raan.cos * trig.arg.sin * trig.inc.cos;
+        const b_y = -trig.raan.sin * trig.arg.sin + trig.raan.cos * trig.arg.cos * trig.inc.cos
+        const c_x = trig.arg.sin * trig.inc.sin;
+        const c_y = trig.arg.cos * trig.inc.cos;
         return {
-            x: semi * Math.sin( anomaly ),
-            y: semi * Math.cos( anomaly ),
-            z: 0
-        };
+              x: a_x * c_px + a_y * c_py,
+              y: b_x * c_px + b_y * c_py,
+              z: c_x * c_px + c_y * c_py,
+            v_x: a_x * c_vx + a_y * c_vy,
+            v_y: b_x * c_vx + b_y * c_vy,
+            v_z: c_x * c_vx + c_y * c_vy
+        }
     };
 
     delete() {
@@ -310,6 +377,7 @@ class Body2D {
                 'radius': this.radius,
                 'density': this.density,
                 'semi': this.semi,
+                'ecc': this.ecc,
                 'anomaly': this.anomaly,
                 'ring_inner': this.ring_inner,
                 'ring_width': this.ring_width
@@ -327,6 +395,10 @@ class Body2D {
                 'semi': {
                     name: 'Semi-major',
                     units: 'distance'
+                },
+                'ecc': {
+                    name: 'Eccentricity',
+                    units: 'parameter'
                 },
                 'anomaly': {
                     units: 'angle'
@@ -357,6 +429,7 @@ class Body2D {
                         mass: mass,
                         radius: ( 3 * mass / ( 1e+12 * 4 * density * Math.PI ) ) ** ( 1/3 ),
                         semi: Math.min( this.radius * ( 1.5 + ( this.children.length + 1 ) * 0.5 ), this.hill ),
+                        ecc: 0,
                         anomaly: Math.random() * AV.RADIAN,
                         setFocus: this.setFocus,
                         onAddMoon: this.onAddMoon,
@@ -407,7 +480,7 @@ class Body2D {
                     let min = Infinity, unit_best = keys[0], control_unit;
 
                     /// Find which unit fits best.
-                    if ( key !== 'anomaly' ) {
+                    if ( key !== 'anomaly' && unit_type !== 'parameter' ) {
                         keys.forEach( ( u_key ) => {
                             let val = data_disp[ key ] / units[ u_key ],
                                 dist = Math.abs( Math.log10( val ) );
