@@ -103,7 +103,7 @@ $( function () {
 
     class App {
         WORLD_SCALE = 5e-4;
-        TIME_SCALE = 0.125 * 0.125 * 1/365.25; /// yr/sec
+        TIME_SCALE = 1 / 365.2524; /// yr/sec
 
         cam_x = 0;
         cam_y = 0;
@@ -122,6 +122,7 @@ $( function () {
         ];
 
         constructor() {
+            this.initTime();
             this.initGUI();
             this.initControls();
 
@@ -182,13 +183,32 @@ $( function () {
         }
 
         initGUI() {
+            const time_scale_base = 1 / 365.2524;
+            const prop = {
+                'time_scale': 1
+            };
+            this.TIME_SCALE = time_scale_base * prop.time_scale / 24;
             this.gui = new GUI({
                 width: 320
             });
+            this.gui.add( prop, 'time_scale', 0.1, 48, 0.1 ).onChange( () => {
+                this.TIME_SCALE = time_scale_base * prop.time_scale / 24;
+            }).name( 'Speed' );
+        }
+
+        initTime() {
+            let prev, timer;
+            prev = timer = Date.now();
+            this.now = () => {
+                const delta = this.TIME_SCALE * ( Date.now() - prev );
+                prev = Date.now();
+                timer += delta;
+                return timer;
+            };
         }
 
         updateBodies() {
-            const timer = this.TIME_SCALE * Date.now() / 1000;
+            const timer = this.now() / 1000;
             this.bodies.forEach( ( body ) => {
                 if ( !body ) return;
                 if ( !body.parent ) {
@@ -231,7 +251,7 @@ $( function () {
                 this.WORLD_SCALE * body.semi * Math.sqrt( 1 - body.ecc ** 2 ),
                 body.arg
             ];
-            // const t = ( this.TIME_SCALE * Date.now() / 1000 / body.period ) % 1;
+            // const t = ( this.now() / 1000 / body.period ) % 1;
             // if ( body.isCounterClockwise ) {
             //     ellipse.push(
             //         ( -t + 0.99 ) * AV.RADIAN,
