@@ -408,38 +408,46 @@ class Body2D {
                 'anomaly': this.anomaly,
                 'ecc': this.ecc,
                 'arg': this.arg,
-                'isClockwise': this.isClockwise,
+                'isClockwise': this.semi ? this.isClockwise : null,
                 'ring_inner': this.ring_inner,
                 'ring_width': this.ring_width
             };
             const props = {
                 'mass': {
-                    units: 'mass'
+                    units: 'mass',
+                    folder: 'Physical Characteristics'
                 },
                 'radius': {
-                    units: 'radius'
+                    units: 'radius',
+                    folder: 'Physical Characteristics'
                 },
                 'density': {
-                    units: 'density'
+                    units: 'density',
+                    folder: 'Physical Characteristics'
                 },
                 'semi': {
                     name: 'Semi-major',
-                    units: 'distance'
+                    units: 'distance',
+                    folder: 'Orbital Characteristics'
                 },
                 'anomaly': {
-                    name: 'Mean Anomaly',
-                    units: 'angle'
+                    name: 'Mean anomaly',
+                    units: 'angle',
+                    folder: 'Orbital Characteristics'
                 },
                 'ecc': {
                     name: 'Eccentricity',
-                    units: 'parameter'
+                    units: 'parameter',
+                    folder: 'Orbital Characteristics'
                 },
                 'arg': {
                     name: 'Arg. Perigee',
-                    units: 'angle'
+                    units: 'angle',
+                    folder: 'Orbital Characteristics'
                 },
                 'isClockwise': {
-                    name: 'Reverse Orbit'
+                    name: 'Reverse Orbit',
+                    folder: 'Orbital Characteristics'
                 },
                 'ring_inner': {
                     name: 'Ring (inner)',
@@ -447,11 +455,13 @@ class Body2D {
                     // ranges: () => {
                     //     return [ this.ring_min, this.ring_max ];
                     // }
+                    folder: 'Rings'
                 },
                 'ring_width': {
                     name: 'Ring (width)',
                     units: 'radius',
                     // ranges: [ 1, this.ring_max ]
+                    folder: 'Rings'
                 }
             };
             const buttons = {
@@ -481,6 +491,7 @@ class Body2D {
                 }
             };
             const controls = {};
+            const subfolders = {};
 
             /// Add the new folder to the parent object's folder.
             let group = this.gui;
@@ -495,14 +506,23 @@ class Body2D {
 
                 const prop = props[ key ] || {};
                 let unit_type = prop.units,
+                    folder = this.folder,
                     name, control, div_unit, unit_mult;
+
+                if ( prop.folder ) {
+                    folder = subfolders[ prop.folder ];
+                    if ( !folder ) {
+                        folder = subfolders[ prop.folder ] = this.folder.addFolder( prop.folder );
+                    }
+                    folder.close();
+                }
 
                 if ( prop.name ) {
                     name = prop.name;
                 } else {
                     name = key.slice( 0, 1 ).toUpperCase() + key.slice( 1 );
                 }
-                control = controls[key] = this.folder.add( data_disp, key );
+                control = controls[key] = folder.add( data_disp, key );
                 control.name( name );
                 control.onChange( () => {
                     this[key] = data_disp[key] * ( unit_mult || 1 );
@@ -530,7 +550,7 @@ class Body2D {
                     }
 
                     /// Add the unit dropdown.
-                    control_unit = this.folder.add( obj, 'unit', keys );
+                    control_unit = folder.add( obj, 'unit', keys );
                     control.onChange( () => {
                         this[key] = data_disp[key] * unit_mult;
                     });
@@ -562,11 +582,11 @@ class Body2D {
                     $( control_unit.domElement )
                         .addClass( 'unit' )
                         .appendTo( control.domElement )
-                        // .appendTo( this.folder.$children )
+                        // .appendTo( folder.$children )
                         .children( '.name' ).remove();
                     /// Remove the reference to this control.
                     // control.children.push( control_unit );
-                    this.folder.children.pop();
+                    folder.children.pop();
 
                     /// Set the unit.
                     unit_mult = units[ obj.unit ];
