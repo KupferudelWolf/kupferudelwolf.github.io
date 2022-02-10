@@ -99,6 +99,10 @@ $( function () {
         WORLD_SCALE = 5e-4;
         TIME_SCALE = 0.125 * 0.125 * 1/365.25; /// yr/sec
 
+        cam_x = 0;
+        cam_y = 0;
+        cam_t = 0;
+
         /// https://en.wikipedia.org/wiki/Kirkwood_gap
         RESONANCES = [
             1/5,
@@ -118,8 +122,7 @@ $( function () {
             this.bodies = [];
             this.initBodies( DATA );
 
-            this.focus = this.bodies[ 1 ];
-            console.log( this.focus );
+            this.focus = this.bodies[ 0 ];
 
             this.bodies.forEach( ( body ) => {
                 body.onAddMoon = ( moon ) => {
@@ -129,6 +132,15 @@ $( function () {
                     this.bodies = this.bodies.filter( ( obj ) => {
                         return obj && obj.id !== moon.id;
                     });
+                };
+                body.setFocus = ( moon ) => {
+                    if ( this.focus && this.focus.id === moon.id ) {
+                        this.focus = null;
+                    } else {
+                        this.focus = moon;
+                    }
+                    console.log( this.focus );
+                    this.cam_t = 0;
                 };
             });
         }
@@ -157,7 +169,7 @@ $( function () {
                 } else if ( delta < 0 ) {
                     scale_power *= 1.025;
                 }
-                scale_power = AV.clamp( scale_power, -6, -3 );
+                scale_power = AV.clamp( scale_power, -9, -1 );
 
                 this.WORLD_SCALE = 5 * 10 ** scale_power;
             });
@@ -173,17 +185,30 @@ $( function () {
             const timer = this.TIME_SCALE * Date.now() / 1000;
             this.bodies.forEach( ( body ) => {
                 if ( !body ) return;
-                if ( body.name === 'Sun' ) return;
-                if ( body.name === 'Saturn' ) {
-                    body.x = CVS.width / 2 / this.WORLD_SCALE;
-                    body.y = CVS.height / 2 / this.WORLD_SCALE;
+                if ( !body.parent ) {
+                    body.x = 0;
+                    body.y = 0;
                     return;
                 }
+                // if ( body.name === 'Saturn' ) {
+                //     body.x = CVS.width / 2 / this.WORLD_SCALE;
+                //     body.y = CVS.height / 2 / this.WORLD_SCALE;
+                //     return;
+                // }
 
                 const pos = body.getCartesian( timer );
                 body.x = pos.x + body.parent.x;
                 body.y = pos.y + body.parent.y;
             });
+        }
+
+        updateCamera() {
+            this.cam_t = AV.clamp( this.cam_t + 0.01 );
+            if ( !this.focus ) return;
+            let x = this.focus.x,
+                y = this.focus.y;
+            this.cam_x = AV.lerp( this.cam_x, x, this.cam_t );
+            this.cam_y = AV.lerp( this.cam_y, y, this.cam_t );
         }
 
         drawBodies() {
@@ -192,12 +217,12 @@ $( function () {
             this.bodies.forEach( ( body ) => {
                 if ( !body || !body.hill ) return;
 
-                let x = this.WORLD_SCALE * body.x,
-                    y = this.WORLD_SCALE * body.y,
+                let x = this.WORLD_SCALE * ( body.x - this.cam_x ) + CVS.width / 2,
+                    y = this.WORLD_SCALE * ( body.y - this.cam_y ) + CVS.height / 2,
                     r = this.WORLD_SCALE * body.hill;
 
                 CTX.fillStyle = `rgba( 211, 211, 211, 0.25 )`;
-                if ( body.name === 'Saturn' ) {
+                if ( body.children.length > 0 ) {
                     CTX.fillStyle = `grey`;
                 }
                 CTX.beginPath();
@@ -209,10 +234,10 @@ $( function () {
             // CTX.setLineDash([]);
             this.bodies.forEach( ( body ) => {
                 if ( !body ) return;
-                if ( body.name === 'Sun' ) return;
+                // if ( body.name === 'Sun' ) return;
 
-                let x = this.WORLD_SCALE * body.x,
-                    y = this.WORLD_SCALE * body.y,
+                let x = this.WORLD_SCALE * ( body.x - this.cam_x ) + CVS.width / 2,
+                    y = this.WORLD_SCALE * ( body.y - this.cam_y ) + CVS.height / 2,
                     r = Math.max( this.WORLD_SCALE * body.radius, 1 ),
                     dist = Math.sqrt( r ** 2 / 2 ) + 1,
                     t_x = x + dist,
@@ -274,6 +299,7 @@ $( function () {
             CTX.fillRect( 0, 0, CVS.width, CVS.height );
 
             this.updateBodies();
+            this.updateCamera();
             this.drawBodies();
         }
 

@@ -346,7 +346,7 @@ class Body2D {
             };
             const buttons = {
                 'Focus': () => {
-                    this.setFocus();
+                    this.setFocus( this );
                 },
                 'Add Moon': () => {
                     const mass = this.mass * 1e-4;
@@ -471,7 +471,6 @@ class Body2D {
             /// Add buttons.
             const button_obj = {};
             for ( let key in buttons ) {
-                const func = buttons[ key ];
                 const control = this.folder.add( buttons, key );
                 button_obj[ key ] = control;
             }
