@@ -19,6 +19,8 @@ $( function () {
                     mass: 5.6834e+26,
                     semi: 1.433537e+9,
                     ecc: 0.0565,
+                    arg: 339.392 * Math.PI / 180,
+                    raan: 113.665  * Math.PI / 180,
                     ring_inner: 0,
                     ring_outer: 135000,
                     satellites: {
@@ -69,7 +71,10 @@ $( function () {
                             mass: 1.3452e+23,
                             semi: 1221870,
                             ecc: 0.0288,
-                            anomaly: 0
+                            anomaly: 0,
+                            scale_height_min: 15,
+                            scale_height_max: 50,
+                            obliquity: 0
                         },
                         'Iapetus': {
                             radius: 734.5,
@@ -191,11 +196,6 @@ $( function () {
                     body.y = 0;
                     return;
                 }
-                // if ( body.name === 'Saturn' ) {
-                //     body.x = CVS.width / 2 / this.WORLD_SCALE;
-                //     body.y = CVS.height / 2 / this.WORLD_SCALE;
-                //     return;
-                // }
 
                 const pos = body.getCartesian( timer );
                 body.x = pos.x + body.parent.x;
@@ -208,8 +208,55 @@ $( function () {
             if ( !this.focus ) return;
             let x = this.focus.x,
                 y = this.focus.y;
-            this.cam_x = AV.lerp( this.cam_x, x, this.cam_t );
-            this.cam_y = AV.lerp( this.cam_y, y, this.cam_t );
+            this.cam_x = AV.lerp( this.cam_x, x, this.cam_t ) || 0;
+            this.cam_y = AV.lerp( this.cam_y, y, this.cam_t ) || 0;
+        }
+
+        drawOrbit() {
+            const body = this.focus;
+            if ( !body || !body.parent ) return;
+            const anom = -body.anomaly;
+            const per_time = body.period * anom / AV.RADIAN;
+            const apo_time = body.period * ( 0.5 + anom / AV.RADIAN );
+            const perigee = body.getCartesian( per_time );
+            const apogee = body.getCartesian( apo_time );
+            const perigee_x = this.WORLD_SCALE * ( perigee.x + body.parent.x - this.cam_x ) + CVS.width / 2;
+            const perigee_y = this.WORLD_SCALE * ( perigee.y + body.parent.y - this.cam_y ) + CVS.height / 2;
+            const apogee_x = this.WORLD_SCALE * ( apogee.x + body.parent.x - this.cam_x ) + CVS.width / 2;
+            const apogee_y = this.WORLD_SCALE * ( apogee.y + body.parent.y - this.cam_y ) + CVS.height / 2;
+            const ellipse = [
+                ( apogee_x + perigee_x ) / 2,
+                ( apogee_y + perigee_y ) / 2,
+                this.WORLD_SCALE * body.semi,
+                this.WORLD_SCALE * body.semi * Math.sqrt( 1 - body.ecc ** 2 ),
+                body.arg
+            ];
+            // const t = ( this.TIME_SCALE * Date.now() / 1000 / body.period ) % 1;
+            // if ( body.isCounterClockwise ) {
+            //     ellipse.push(
+            //         ( -t + 0.99 ) * AV.RADIAN,
+            //         ( -t ) * AV.RADIAN,
+            //         true
+            //     );
+            // } else {
+            //     ellipse.push(
+            //         ( t ) * AV.RADIAN,
+            //         ( t - 0.99 ) * AV.RADIAN,
+            //         true
+            //     );
+            // }
+            ellipse.push( 0, AV.RADIAN, false );
+            CTX.lineWidth = 1;
+            CTX.strokeStyle = 'red';
+            CTX.beginPath();
+            CTX.rect( perigee_x - 4, perigee_y - 4, 8, 8 );
+            CTX.stroke();
+            CTX.beginPath();
+            CTX.arc( apogee_x, apogee_y, 4, 0, AV.RADIAN );
+            CTX.stroke();
+            CTX.beginPath();
+            CTX.ellipse( ...ellipse );
+            CTX.stroke();
         }
 
         drawBodies() {
@@ -237,12 +284,13 @@ $( function () {
                 if ( !body ) return;
                 // if ( body.name === 'Sun' ) return;
 
-                let x = this.WORLD_SCALE * ( body.x - this.cam_x ) + CVS.width / 2,
-                    y = this.WORLD_SCALE * ( body.y - this.cam_y ) + CVS.height / 2,
-                    r = Math.max( this.WORLD_SCALE * body.radius, 1 ),
-                    dist = Math.sqrt( r ** 2 / 2 ) + 1,
-                    t_x = x + dist,
-                    t_y = y - dist;
+                const x = this.WORLD_SCALE * ( body.x - this.cam_x ) + CVS.width / 2;
+                const y = this.WORLD_SCALE * ( body.y - this.cam_y ) + CVS.height / 2;
+                const r = Math.max( this.WORLD_SCALE * body.radius, 1 );
+                const dist = Math.sqrt( r ** 2 / 2 ) + 1;
+                const t_x = x + dist;
+                const t_y = y - dist;
+                const scale_height = this.WORLD_SCALE * body.scale_height;
 
                 if ( body.has_rings ) {
                     const r_min = this.WORLD_SCALE * body.ring_inner;
@@ -288,6 +336,13 @@ $( function () {
                 CTX.fill();
                 CTX.stroke();
 
+                if ( scale_height ) {
+                    CTX.fillStyle = 'rgba( 0, 151, 151, 0.25 )';
+                    CTX.beginPath();
+                    CTX.arc( x, y, r + scale_height, 0, AV.RADIAN );
+                    CTX.fill();
+                }
+
                 CTX.fillStyle = 'black';
                 CTX.fillText( body.name, t_x, t_y );
             });
@@ -302,6 +357,7 @@ $( function () {
             this.updateBodies();
             this.updateCamera();
             this.drawBodies();
+            this.drawOrbit();
         }
 
         run() {

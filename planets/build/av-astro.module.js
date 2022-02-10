@@ -1,6 +1,6 @@
 import AV from '../../lib/av.module.js';
 
-const GC = 6.67408e-11;
+const GC = 6.6743015e-11;
 
 var id = 0;
 
@@ -122,7 +122,7 @@ class Body2D {
         return this.updateRoche( 2.65 );
     }
     get ring_min() {
-        return Math.max( this.atmo_height, this.roche_ice );
+        return Math.max( this.scale_height_max, this.roche_ice );
     }
     get ring_max() {
         return this.hill;
@@ -132,8 +132,9 @@ class Body2D {
         return GC * this.mass;
     }
 
-    get hill()    { return this._.hill; }
-    get period()  { return this._.period; }
+    get hill() { return this._.hill; }
+    get period() { return this._.period; }
+    get period_ms() { return this._.period * UNITS.time.options.yr * 1000; }
 
 
     get anomaly() { return this._.anomaly; }
@@ -144,10 +145,15 @@ class Body2D {
     get arg()      { return this._.arg; }
     set arg( val ) { this._.arg = val; }
 
-    get atmo_height() { return this._.atmo_height; }
-    set atmo_height( x ) {
-        this._.atmo_height = x;
+    get scale_height_min() { return this._.scale_height_min; }
+    set scale_height_min( x ) {
+        this._.scale_height_min = x;
     }
+    get scale_height_max() { return this._.scale_height_max; }
+    set scale_height_max( x ) {
+        this._.scale_height_max = x;
+    }
+    get scale_height() { return ( this.scale_height_min + this.scale_height_max ) / 2; }
 
     get density() { return this._.density; }
     set density( val ) {
@@ -169,6 +175,11 @@ class Body2D {
 
     get inc()      { return this._.inc; }
     set inc( val ) { this._.inc = val; }
+
+    get isClockwise() { return !this._.ccw; }
+    set isClockwise( val ) { this._.ccw = !val; }
+    get isCounterClockwise() { return !!this._.ccw; }
+    set isCounterClockwise( val ) { this._.ccw = !!val; }
 
     get mass() { return this._.mass; }
     set mass( val ) {
@@ -241,6 +252,8 @@ class Body2D {
         const mass = prop.mass;
         const radius = prop.radius;
 
+        const counterclockwise = prop.counterclockwise;
+
         const semi = prop.semi;            /// Semi-major axis.
         const ecc = prop.ecc || 0;         /// Eccentricity.
         const arg = prop.arg || 0;         /// Argument of the perigee.
@@ -252,9 +265,11 @@ class Body2D {
         const onAddMoon = prop.onAddMoon || function () {};
         const onDelete = prop.onDelete || function () {};
 
-        const atmo_height = prop.atmo_height || 0;
+        const scale_height_min = prop.scale_height_min || prop.scale_height || 0;
+        const scale_height_max = prop.scale_height_max || prop.scale_height || 0;
         const ring_inner = prop.ring_inner;
         const ring_outer = prop.ring_outer;
+        const obliquity = prop.obliquity;
 
         this.setFocus = setFocus;
         this.onAddMoon = onAddMoon;
@@ -282,12 +297,19 @@ class Body2D {
             this._.raan = raan;
             this._.anomaly = anomaly;
             this._.inc = inc;
+            this._.ccw = counterclockwise;
+            if ( typeof( this._.ccw ) === 'undefined' ) {
+                this._.ccw = true;
+            }
         }
+
+        this._.scale_height_min = scale_height_min;
+        this._.scale_height_max = scale_height_max;
 
         this._.ring_inner = ring_inner;
         this._.ring_outer = ring_outer;
 
-        this._.atmo_height = atmo_height;
+        this._.obliquity = obliquity;
 
         this.gui = gui;
 
@@ -296,7 +318,6 @@ class Body2D {
     }
 
     calcTrueAnomaly( time ) {
-        const yr = time * 0.001 / UNITS.time.options.yr;
         const t = ( time / this.period ) % 1;
         const ecc = this.ecc;
         const anom_mean = ( this.anomaly + t * AV.RADIAN ) % AV.RADIAN;
@@ -313,15 +334,22 @@ class Body2D {
     }
 
     getCartesian( time = Date.now() ) {
+        if ( !parent ) {
+            return {
+                x: 0, y: 0, z: 0,
+                v_x: 0, v_y: 0, v_z: 0
+            };
+        }
+        /// https://www.mathworks.com/matlabcentral/fileexchange/80632-kepler2carts
         const a = this.semi;
-        const gm = this.gm * 1e-9;
+        const gm = this.parent.gm * 1e-9;
         const ecc = this.ecc;
-        const nu = this.calcTrueAnomaly( time );
+        const nu = this.calcTrueAnomaly( time ) * ( this.isCounterClockwise ? -1 : 1 );
         const peri = a * ( 1 - ecc ** 2 );
         const r_0 = peri / ( 1 + ecc * Math.cos( nu ));
         const c_px = r_0 * Math.cos( nu );
         const c_py = r_0 * Math.sin( nu );
-        const c_v = ( gm / peri ) ** 0.5;
+        const c_v = Math.sqrt( gm / peri );
         const c_vx = -c_v * Math.sin( nu );
         const c_vy = c_v * ( ecc + Math.cos( nu ) );
         const trig = {};
@@ -377,8 +405,10 @@ class Body2D {
                 'radius': this.radius,
                 'density': this.density,
                 'semi': this.semi,
-                'ecc': this.ecc,
                 'anomaly': this.anomaly,
+                'ecc': this.ecc,
+                'arg': this.arg,
+                'isClockwise': this.isClockwise,
                 'ring_inner': this.ring_inner,
                 'ring_width': this.ring_width
             };
@@ -396,12 +426,20 @@ class Body2D {
                     name: 'Semi-major',
                     units: 'distance'
                 },
+                'anomaly': {
+                    name: 'Mean Anomaly',
+                    units: 'angle'
+                },
                 'ecc': {
                     name: 'Eccentricity',
                     units: 'parameter'
                 },
-                'anomaly': {
+                'arg': {
+                    name: 'Arg. Perigee',
                     units: 'angle'
+                },
+                'isClockwise': {
+                    name: 'Reverse Orbit'
                 },
                 'ring_inner': {
                     name: 'Ring (inner)',
