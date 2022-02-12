@@ -538,7 +538,7 @@ class Body2D {
                     let min = Infinity, unit_best = keys[0], control_unit;
 
                     /// Find which unit fits best.
-                    if ( key !== 'anomaly' && unit_type !== 'parameter' ) {
+                    if ( key !== 'anomaly' && unit_type !== 'angle' && unit_type !== 'parameter' ) {
                         keys.forEach( ( u_key ) => {
                             let val = data_disp[ key ] / units[ u_key ],
                                 dist = Math.abs( Math.log10( val ) );
