@@ -15,10 +15,12 @@
     top: 0;
     right: 0;
     width: var(--width);
-    height: 100vh;
+    height: calc(100vh - 24px);
     padding: 12px 16px;
     color: var(--color-blue-lightest);
     background-color: var(--color-blue-darkest);
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .astro-gui * {
     padding: 0;
@@ -31,6 +33,7 @@
 .astro-gui input:active,
 .astro-gui input:focus,
 .astro-gui select {
+    -webkit-appearance: none;
     appearance: none;
     border: none;
     outline: none;
@@ -43,18 +46,41 @@
     color: var(--color-yellow-neutral);
     background: var(--color-blue-dark);
 }
-.astro-gui input[type=text] {
-    /* background-color: var(--color-blue-darker);
-    color: var(--color-blue-lightest); */
+.astro-gui input[type=button] {
+    cursor: pointer;
 }
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+.astro-gui input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 6px;
+    height: 24px;
+    background: var(--color-blue-neutral);
+    cursor: pointer;
+}
+.astro-gui input::-moz-range-thumb {
+    width: 6px;
+    height: 24px;
+    background: var(--color-blue-neutral);
+    cursor: pointer;
+}
+.astro-gui input::-webkit-outer-spin-button,
+.astro-gui input::-webkit-inner-spin-button {
   -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }
-
-input[type=number] {
+.astro-gui input[type=number] {
   -moz-appearance: textfield;
+}
+.astro-gui input.slider-plusminus::after {
+    content: "− | +";
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    word-spacing: 0.75em;
+    white-space: nowrap;
+    color: var(--color-blue-neutral);
 }
 .astro-gui .number,
 .astro-gui .trailing,
@@ -142,13 +168,28 @@ input[type=number] {
 .astro-gui .control {
     display: grid;
     grid-template-columns: 25% 50% 75% 25%;
+    padding: 4px 0;
+    right: 0%;
+    transition: right 0.25s;
+    position: relative;
+}
+.astro-gui .control-container {
     overflow: hidden;
+    position: relative;
+}
+.astro-gui .control > * {
+    position: relative;
 }
 .astro-gui .control .control-label {
     text-align: right;
 }
 .astro-gui .control > input {
+    height: 18px;
     margin: 0 6px;
+}
+.astro-gui .control > select {
+    height: 18px;
+    margin-left: 6px;
 }
 .astro-gui .panel-data {
     width: 100%;
