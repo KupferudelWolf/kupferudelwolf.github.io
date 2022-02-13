@@ -10,7 +10,7 @@ const CTX = CVS.getContext( '2d' );
     class App {
         geo = {};
         shaders = {};
-        radius = 100;
+        radius = 6371;
 
         dir_glsl = [
             'ground.fragment.glsl',
@@ -67,7 +67,7 @@ const CTX = CVS.getContext( '2d' );
             this.camera = new THREE.PerspectiveCamera(
                 45,
                 CVS.width / CVS.height,
-                1, 2000
+                1, 100000
             );
 
             this.camera.position.z = -4;
@@ -121,7 +121,7 @@ const CTX = CVS.getContext( '2d' );
             this.scene.add( ambient );
 
             this.light = new THREE.DirectionalLight( 0xfff5f2, 0.9 );
-            this.light.position.set( 0.5, 0, -1 );
+            this.light.position.set( 0, 0, -1 );
             this.scene.add( this.light );
 
             // const globe_geo = new THREE.IcosahedronGeometry( 1, 20 );
@@ -137,18 +137,18 @@ const CTX = CVS.getContext( '2d' );
             // this.geo.atmo = new THREE.Mesh( atmo_geo, atmo_mat );
             // this.scene.add( this.geo.atmo );
 
+            const atmo_param = {
+                Kr: 0.0025,
+                Km: 0.0010,
+                ESun: 20.0,
+                g: -0.950,
+                innerRadius: this.radius,
+                outerRadius: this.radius * 1.025,
+                wavelength: [ 0.650, 0.570, 0.475 ],
+                scaleDepth: 0.25,
+                mieScaleDepth: 0.1
+            };
             ( () => {
-                const atmosphere_parameters = {
-                    Kr: 0.0025,
-                    Km: 0.0010,
-                    ESun: 20.0,
-                    g: -0.950,
-                    innerRadius: this.radius,
-                    outerRadius: this.radius * 1.025,
-                    wavelength: [ 0.650, 0.570, 0.475 ],
-                    scaleDepth: 0.25,
-                    mieScaleDepth: 0.1
-                };
 
                 const maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
                 const diffuse = THREE.ImageUtils.loadTexture( '/map-small.jpg' );
@@ -163,7 +163,7 @@ const CTX = CVS.getContext( '2d' );
                     },
                     v3InvWavelength: {
                         type: 'v3',
-                        value: new THREE.Vector3( 1 / Math.pow( atmosphere_parameters.wavelength[0], 4 ), 1 / Math.pow( atmosphere_parameters.wavelength[1], 4 ), 1 / Math.pow( atmosphere_parameters.wavelength[2], 4 ) )
+                        value: new THREE.Vector3( 1 / Math.pow( atmo_param.wavelength[0], 4 ), 1 / Math.pow( atmo_param.wavelength[1], 4 ), 1 / Math.pow( atmo_param.wavelength[2], 4 ) )
                     },
                     fCameraHeight: {
                         type: 'f',
@@ -175,55 +175,55 @@ const CTX = CVS.getContext( '2d' );
                     },
                     fInnerRadius: {
                         type: 'f',
-                        value: atmosphere_parameters.innerRadius
+                        value: atmo_param.innerRadius
                     },
                     fInnerRadius2: {
                         type: 'f',
-                        value: atmosphere_parameters.innerRadius * atmosphere_parameters.innerRadius
+                        value: atmo_param.innerRadius * atmo_param.innerRadius
                     },
                     fOuterRadius: {
                         type: 'f',
-                        value: atmosphere_parameters.outerRadius
+                        value: atmo_param.outerRadius
                     },
                     fOuterRadius2: {
                         type: 'f',
-                        value: atmosphere_parameters.outerRadius * atmosphere_parameters.outerRadius
+                        value: atmo_param.outerRadius * atmo_param.outerRadius
                     },
                     fKrESun: {
                         type: 'f',
-                        value: atmosphere_parameters.Kr * atmosphere_parameters.ESun
+                        value: atmo_param.Kr * atmo_param.ESun
                     },
                     fKmESun: {
                         type: 'f',
-                        value: atmosphere_parameters.Km * atmosphere_parameters.ESun
+                        value: atmo_param.Km * atmo_param.ESun
                     },
                     fKr4PI: {
                         type: 'f',
-                        value: atmosphere_parameters.Kr * 4.0 * Math.PI
+                        value: atmo_param.Kr * 4.0 * Math.PI
                     },
                     fKm4PI: {
                         type: 'f',
-                        value: atmosphere_parameters.Km * 4.0 * Math.PI
+                        value: atmo_param.Km * 4.0 * Math.PI
                     },
                     fScale: {
                         type: 'f',
-                        value: 1 / ( atmosphere_parameters.outerRadius - atmosphere_parameters.innerRadius )
+                        value: 1 / ( atmo_param.outerRadius - atmo_param.innerRadius )
                     },
                     fScaleDepth: {
                         type: 'f',
-                        value: atmosphere_parameters.scaleDepth
+                        value: atmo_param.scaleDepth
                     },
                     fScaleOverScaleDepth: {
                         type: 'f',
-                        value: 1 / ( atmosphere_parameters.outerRadius - atmosphere_parameters.innerRadius ) / atmosphere_parameters.scaleDepth
+                        value: 1 / ( atmo_param.outerRadius - atmo_param.innerRadius ) / atmo_param.scaleDepth
                     },
                     g: {
                         type: 'f',
-                        value: atmosphere_parameters.g
+                        value: atmo_param.g
                     },
                     g2: {
                         type: 'f',
-                        value: atmosphere_parameters.g * atmosphere_parameters.g
+                        value: atmo_param.g * atmo_param.g
                     },
                     nSamples: {
                         type: 'i',
@@ -256,7 +256,7 @@ const CTX = CVS.getContext( '2d' );
                 };
 
                 const ground = {
-                    geometry: new THREE.IcosahedronGeometry( atmosphere_parameters.innerRadius, 20 ),
+                    geometry: new THREE.IcosahedronGeometry( atmo_param.innerRadius, 20 ),
                     material: new THREE.ShaderMaterial({
                         uniforms: uniforms,
                         vertexShader: this.shaders.ground.vertex,
@@ -267,7 +267,7 @@ const CTX = CVS.getContext( '2d' );
                 ground.mesh = new THREE.Mesh( ground.geometry, ground.material );
 
                 const sky = {
-                    geometry: new THREE.IcosahedronGeometry( atmosphere_parameters.outerRadius, 20 ),
+                    geometry: new THREE.IcosahedronGeometry( atmo_param.outerRadius, 20 ),
                     material: new THREE.ShaderMaterial({
                         uniforms: uniforms,
                         vertexShader: this.shaders.sky.vertex,
@@ -289,6 +289,33 @@ const CTX = CVS.getContext( '2d' );
 
                 this.camera.position.set( this.radius * 4, 0, 0 );
             })();
+
+            const sun_radius = 695700;
+            const sun_dist = 1.496e+8;
+            const sun_ang_diam = 2 * Math.atan( sun_radius / sun_dist );
+            const sim_dist = this.camera.far / 2;
+            const sim_rad = sim_dist * Math.tan( sun_ang_diam / 2 );
+            const sun_color_value = atmo_param.wavelength.map( x => Math.round( x * 255 ) ).join( ',' );
+            const sun_color = new THREE.Color( `rgb(${ sun_color_value })` );
+            const sun_geo = new THREE.IcosahedronGeometry( 1, 20 );
+            const sun_mat = new THREE.MeshBasicMaterial({
+                color: sun_color
+            });
+            this.sun = new THREE.Mesh( sun_geo, sun_mat );
+            this.sun.scale.set( sim_rad, sim_rad, sim_rad );
+            this.sun.position.set( 0, 0, -sim_dist );
+            this.scene.add( this.sun );
+            // this.light.position.set( 0, 0, -1 );
+            this.light.color = sun_color;
+
+
+            const sky_geo = new THREE.IcosahedronGeometry( this.camera.far, 20 );
+            const sky_mat = new THREE.MeshBasicMaterial({
+                color: 0x000000,
+                side: THREE.BackSide
+            });
+            this.sky = new THREE.Mesh( sky_geo, sky_mat );
+            this.camera.add( this.sky );
         }
 
         updateAtmosphere() {
@@ -304,6 +331,26 @@ const CTX = CVS.getContext( '2d' );
             this.geo.globe.material.uniforms.fCameraHeight2.value = cameraHeight ** 2;
         }
 
+        updateSun() {
+            const sun_radius = 695700;
+            const sun_dist = 1.496e+8;
+            const sun_ang_diam = 2 * Math.atan( sun_radius / sun_dist );
+
+            const targ_dist = 0;//-this.camera.far;
+
+            const cam_dist = this.camera.position.distanceTo( new THREE.Vector3( 0, 0, 0 ) );
+
+            const ang = this.camera.position.angleTo( new THREE.Vector3( 0, 0, -1 ) );
+
+            const sim_dist = Math.sqrt( cam_dist ** 2 + targ_dist ** 2 - 2 * cam_dist * targ_dist * Math.cos( ang ) );
+            const sim_rad = sim_dist * Math.tan( sun_ang_diam / 2 );
+
+            this.sun.position.set( 0, 0, -sim_dist );
+            this.sun.scale.set( sim_rad, sim_rad, sim_rad );
+
+            // console.log( Math.round( sim_dist ) );
+        }
+
         /** Renders a frame of the WebGL scene. */
         render() {
             this.renderer.render( this.scene, this.camera );
@@ -313,6 +360,7 @@ const CTX = CVS.getContext( '2d' );
         loop() {
             if ( !this.ready ) return;
             this.updateAtmosphere();
+            this.updateSun();
             this.render();
         }
 
