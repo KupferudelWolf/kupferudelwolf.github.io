@@ -1,0 +1,19 @@
+[
+    {
+        "title": "New Folder",
+        "type": "folder",
+        "contents": [
+            {
+                "title": "Doveport",
+                "type": "article",
+                "contents": [
+                    {
+                        "title": "Aspen",
+                        "type": "article",
+                        "contents": []
+                    }
+                ]
+            }
+        ]
+    }
+]

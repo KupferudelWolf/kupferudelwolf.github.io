@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Star System Map</title>
+		<link rel="stylesheet" type="text/css" href="../css/style.css">
+		<link rel="stylesheet" type="text/css" href="build/av-astro-gui.css">
+	    <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script src="../lib/jquery.min.js" type="text/javascript"></script>
+		<script src="src/gui_test.js" type="module"></script>
+	</head>
+	<body>
+        <canvas id="output" width="960" height="960" style="background-color: black;"></canvas>
+		<div class="astro-gui">
+			<section>
+				<div class="collapsible">
+					<input type="button" class="button-large">
+					<input type="text" class="section-title name" value="Saturn">
+					<input type="button" class="button-collapse button-large" value="v">
+				</div>
+				<div class="collapsible-section content-body">
+					<div class="button-rack">
+						<input type="button" class="button-wide" value="B#1">
+						<input type="button" class="button-wide" value="B#2">
+						<input type="button" class="button-wide" value="B#3">
+						<input type="button" class="button-wide" value="DEL">
+					</div>
+					<div class="collapsible">
+						<input type="button" class="button-collapse" value="v">
+						<div class="section-title">orbital characteristics</div>
+					</div>
+					<div class="collapsible-section">
+						<div class="panel-controls">
+							<div class="control-container">
+								<div class="control data-eccentricity">
+									<span class="control-label">e</span>
+									<input type="range" class="input-parameter">
+									<input type="number" class="input-display">
+								</div>
+							</div>
+							<div class="control-container">
+								<div class="control data-semimajor">
+									<span class="control-label">a</span>
+									<input type="range" class="input-distance">
+									<input type="number" class="input-display">
+								</div>
+							</div>
+							<div class="control-container">
+								<div class="control data-apogee">
+									<span class="control-label">apogee</span>
+									<input type="range" class="input-distance">
+									<input type="number" class="input-display">
+								</div>
+							</div>
+							<div class="control-container">
+								<div class="control data-perigee">
+									<span class="control-label">perigee</span>
+									<input type="range" class="input-distance">
+									<input type="number" class="input-display">
+								</div>
+							</div>
+							<div class="control-container">
+								<div class="control data-orbital_period">
+									<span class="control-label">orbital period</span>
+									<input type="range" class="input-time">
+									<input type="number" class="input-display">
+								</div>
+							</div>
+							<div class="control-container">
+								<div class="control data-i">
+									<span class="control-label">i</span>
+									<input type="range" class="input-angle">
+									<input type="number" class="input-display">
+								</div>
+							</div>
+							<div class="control-container">
+								<div class="control data-raan">
+									<span class="control-label">Ω</span>
+									<input type="range" class="input-angle">
+									<input type="number" class="input-display">
+								</div>
+							</div>
+							<div class="control-container">
+								<div class="control data-argument">
+									<span class="control-label">ω</span>
+									<input type="range" class="input-angle">
+									<input type="number" class="input-display">
+								</div>
+							</div>
+							<div class="control-container">
+								<div class="control data-mean_anomaly">
+									<span class="control-label">M</span>
+									<input type="range" class="input-angle">
+									<input type="number" class="input-display">
+								</div>
+							</div>
+							<div class="control-container">
+								<div class="control"></div>
+							</div>
+						</div>
+						<div class="panel-data">
+							<div>
+								<div>roche (rock)</div>
+								<div class="number">0.0<span class="trailing">000000</span> km</div>
+								<div class="number">0.0<span class="trailing">000000</span> AU</div>
+							</div>
+							<div>
+								<div>roche (ice)</div>
+								<div class="number">0.0<span class="trailing">000000</span> km</div>
+								<div class="number">0.0<span class="trailing">000000</span> AU</div>
+							</div>
+							<div>
+								<div>hill sphere</div>
+								<div class="number">6.1634e+7 km</div>
+								<div class="number">0.412<span class="trailing">0000</span> AU</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+    </body>
+</html>

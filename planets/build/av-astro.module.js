@@ -122,10 +122,10 @@ class Body2D {
         return this.updateRoche( 2.65 );
     }
     get ring_min() {
-        return Math.max( this.scale_height_max, this.roche_ice );
+        return this.radius; //Math.max( this.scale_height_max, this.roche_ice );
     }
     get ring_max() {
-        return this.hill;
+        return this.roche_rock; //this.hill;
     }
 
     get gm() {
@@ -538,7 +538,7 @@ class Body2D {
                     let min = Infinity, unit_best = keys[0], control_unit;
 
                     /// Find which unit fits best.
-                    if ( key !== 'anomaly' && unit_type !== 'parameter' ) {
+                    if ( key !== 'anomaly' && unit_type !== 'angle' && unit_type !== 'parameter' ) {
                         keys.forEach( ( u_key ) => {
                             let val = data_disp[ key ] / units[ u_key ],
                                 dist = Math.abs( Math.log10( val ) );

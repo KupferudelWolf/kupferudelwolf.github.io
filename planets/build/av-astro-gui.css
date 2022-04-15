@@ -1,0 +1,216 @@
+.astro-gui {
+    --color-red-neutral:    #eb7260;
+    --color-yellow-neutral: #ebca00;
+    --color-blue-lightest:  #afcec7;
+    --color-blue-neutral:   #00989b;
+    --color-blue-dark:      #0d7f81;
+    --color-blue-darker:    #1a6667;
+    --color-blue-darkest:   #264c4d;
+    --width: 412px;
+    --section-body-height: 40px;
+}
+
+.astro-gui {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--width);
+    height: calc(100vh - 24px);
+    padding: 12px 16px;
+    color: var(--color-blue-lightest);
+    background-color: var(--color-blue-darkest);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.astro-gui * {
+    padding: 0;
+    margin: 0;
+    font-weight: 300;
+    font-family: Rajdhani;
+}
+
+.astro-gui input,
+.astro-gui input:active,
+.astro-gui input:focus,
+.astro-gui select {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    outline: none;
+    /* background-color: var(--color-blue-darkest);
+    color: var(--color-blue-lightest); */
+    background-color: var(--color-blue-darker);
+    color: var(--color-blue-lightest);
+}
+.astro-gui *::selection {
+    color: var(--color-yellow-neutral);
+    background: var(--color-blue-dark);
+}
+.astro-gui input[type=button] {
+    cursor: pointer;
+}
+.astro-gui input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 6px;
+    height: 24px;
+    background: var(--color-blue-neutral);
+    cursor: pointer;
+}
+.astro-gui input::-moz-range-thumb {
+    width: 6px;
+    height: 24px;
+    background: var(--color-blue-neutral);
+    cursor: pointer;
+}
+.astro-gui input::-webkit-outer-spin-button,
+.astro-gui input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+.astro-gui input[type=number] {
+  -moz-appearance: textfield;
+}
+.astro-gui input.slider-plusminus::after {
+    content: "− | +";
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    word-spacing: 0.75em;
+    white-space: nowrap;
+    color: var(--color-blue-neutral);
+}
+.astro-gui .number,
+.astro-gui .trailing,
+.astro-gui .input-unit,
+input[type=number] {
+    font-family: monospace;
+}
+
+
+.astro-gui input[type=button].button-collapse {
+    content: "v";
+}
+
+
+/* .astro-gui .collapsible-section {
+    padding-left: 24px;
+}
+.astro-gui section > .collapsible-section {
+    padding-left: 0;
+} */
+.astro-gui .collapsible {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 4px;
+}
+.astro-gui .collapsible-section > * {
+    /* display: flex; */
+    /* flex-wrap: nowrap; */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 4px;
+}
+.astro-gui section > * {
+    margin-bottom: 12px !important;
+}
+.astro-gui .button-rack {
+    margin-bottom: 12px !important;
+}
+.astro-gui .name,
+.astro-gui .section-title {
+    flex-grow: 1;
+    height: 100%;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+.astro-gui .name {
+    height: 40px;
+    font-size: 32px;
+}
+
+.astro-gui .button-large {
+    width: 40px;
+    height: 40px;
+}
+.astro-gui .button-wide {
+    width: 36px;
+    height: 24px;
+    margin-right: 6px;
+}
+
+
+.astro-gui .content-body > .collapsible {
+    height: 24px;
+}
+.astro-gui .content-body > .collapsible .button-collapse {
+    width: 24px;
+    height: 24px;
+    background-color: var(--color-blue-darkest);
+    color: var(--color-blue-lightest);
+}
+.astro-gui .content-body .section-title {
+    font-size: 19px;
+}
+
+.astro-gui .panel-controls,
+.astro-gui .panel-data {
+    margin-bottom: 12px;
+}
+.astro-gui .panel-controls {
+    width: 100%;
+    display: block;
+    columns: 2;
+}
+.astro-gui .control {
+    display: grid;
+    grid-template-columns: 25% 50% 75% 25%;
+    padding: 4px 0;
+    right: 0%;
+    transition: right 0.25s;
+    position: relative;
+}
+.astro-gui .control-container {
+    overflow: hidden;
+    position: relative;
+}
+.astro-gui .control > * {
+    position: relative;
+}
+.astro-gui .control .control-label {
+    text-align: right;
+}
+.astro-gui .control .input-display,
+.astro-gui .control .input-unit {
+    padding: 0 0 0 4px;
+}
+.astro-gui .control > input {
+    height: 18px;
+    margin: 0 6px;
+}
+.astro-gui .control > select {
+    height: 18px;
+    margin-left: 6px;
+}
+.astro-gui .panel-data {
+    width: 100%;
+    display: block;
+}
+.astro-gui .panel-data > div {
+    display: grid;
+    grid-template-columns: 25% 25% 50%;
+    align-items: center;
+    text-align: right;
+    grid-gap: 16px;
+}
+.astro-gui .panel-data > div > *:last-child {
+    text-align: left;
+}
+
+.astro-gui .trailing {
+    color: var(--color-blue-dark);
+}
