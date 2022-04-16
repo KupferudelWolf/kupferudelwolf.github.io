@@ -12,8 +12,8 @@ const CTX = CVS.getContext( '2d' );
         shaders = {};
         radius = 6371;
 
-        // mode = 'realistic';
-        mode = 'heatmap';
+        mode = 'realistic';
+        // mode = 'heatmap';
 
         dir_glsl = [
             'ground.fragment.glsl',
@@ -31,6 +31,7 @@ const CTX = CVS.getContext( '2d' );
                 this.initCamera();
                 this.initScenes();
                 this.initControls();
+                this.initGUI();
                 $( window ).resize();
                 this.ready = true;
             });
@@ -103,6 +104,10 @@ const CTX = CVS.getContext( '2d' );
             this.controls.maxDistance = this.camera.far - this.radius;
         }
 
+        initGUI() {
+            const div = $( '<div>' );
+        }
+
         /** WebGL renderer. */
         initRenderer() {
             this.renderer = new THREE.WebGLRenderer({
@@ -115,12 +120,9 @@ const CTX = CVS.getContext( '2d' );
 
         /** WebGL objects. */
         initScenes() {
-            const globe = {
-                geometry: new THREE.IcosahedronGeometry( this.radius, 20 ),
-                material: new THREE.MeshBasicMaterial()
-            };
-            globe.mesh = new THREE.Mesh( globe.geometry, globe.material );
-            this.geo.globe = globe.mesh;
+            const globe_geo = new THREE.IcosahedronGeometry( this.radius, 20 );
+            const globe_mat = new THREE.MeshBasicMaterial();
+            const globe_mesh = new THREE.Mesh( globe_geo, globe_mat );
 
             this.scenes = {
                 heatmap: {},
@@ -128,7 +130,7 @@ const CTX = CVS.getContext( '2d' );
             };
             for ( const key in this.scenes ) {
                 if ( !this.scenes.hasOwnProperty( key ) ) return;
-                const globe = this.geo.globe.clone()
+                const globe = globe_mesh.clone();
                 const scene = new THREE.Scene();
                 this.scenes[ key ].globe = globe;
                 this.scenes[ key ].scene = scene;
@@ -161,7 +163,7 @@ const CTX = CVS.getContext( '2d' );
                 0xff0000,
                 this.radius * 0.15
             );
-            scene.add( axis );
+            this.scenes.heatmap.globe.add( axis );
 
             scene.background = new THREE.Color( 0x444444 );
 
@@ -178,6 +180,8 @@ const CTX = CVS.getContext( '2d' );
         }
 
         initRealisticScene() {
+            const scene = this.scenes.realistic.scene;
+            const globe = this.scenes.realistic.globe;
             const atmo_param = {
                 Kr: 0.0025,
                 Km: 0.0010,
@@ -191,11 +195,11 @@ const CTX = CVS.getContext( '2d' );
             };
 
             const ambient = new THREE.AmbientLight( 0x1f1f1f );
-            this.scenes.realistic.scene.add( ambient );
+            scene.add( ambient );
 
-            this.scenes.realistic.light = new THREE.DirectionalLight( 0xfff5f2, 0.9 );
-            this.scenes.realistic.light.position.set( 0, 0, -1 );
-            this.scenes.realistic.scene.add( this.scenes.realistic.light );
+            const light = new THREE.DirectionalLight( 0xfff5f2, 0.9 );
+            light.position.set( 0, 0, -1 );
+            scene.add( light );
 
             const sky_geo = new THREE.IcosahedronGeometry( this.camera.far, 20 );
             const sky_mat = new THREE.MeshBasicMaterial({
@@ -203,7 +207,7 @@ const CTX = CVS.getContext( '2d' );
                 side: THREE.BackSide
             });
             const sky_mesh = new THREE.Mesh( sky_geo, sky_mat );
-            this.scenes.realistic.scene.add( sky_mesh );
+            scene.add( sky_mesh );
 
             const maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
             const diffuse = THREE.ImageUtils.loadTexture( '/map-small.jpg' );
@@ -315,9 +319,7 @@ const CTX = CVS.getContext( '2d' );
                 fragmentShader: this.shaders.ground.fragment
             });
 
-            this.geo.globe.material = ground_mat;
-
-            const sky = {
+            const atmo = {
                 geometry: new THREE.IcosahedronGeometry( atmo_param.outerRadius, 20 ),
                 material: new THREE.ShaderMaterial({
                     uniforms: uniforms,
@@ -326,12 +328,11 @@ const CTX = CVS.getContext( '2d' );
                 })
             };
 
-            sky.mesh = new THREE.Mesh( sky.geometry, sky.material );
-            sky.material.side = THREE.BackSide;
-            sky.material.transparent = true;
+            atmo.mesh = new THREE.Mesh( atmo.geometry, atmo.material );
+            atmo.material.side = THREE.BackSide;
+            atmo.material.transparent = true;
 
-            this.geo.atmo = sky.mesh;
-            this.scenes.realistic.scene.add( sky.mesh );
+            scene.add( atmo.mesh );
 
             const sun_radius = 695700;
             const sun_dist = 1.496e+8;
@@ -347,25 +348,28 @@ const CTX = CVS.getContext( '2d' );
             const sun_mesh = new THREE.Mesh( sun_geo, sun_mat );
             sun_mesh.scale.set( sim_rad, sim_rad, sim_rad );
             sun_mesh.position.set( 0, 0, -sim_dist );
-            this.scenes.realistic.scene.add( sun_mesh );
-            // this.scenes.realistic.light.position.set( 0, 0, -1 );
-            this.scenes.realistic.light.color = sun_color;
+            scene.add( sun_mesh );
+            // light.position.set( 0, 0, -1 );
+            light.color = sun_color;
 
             this.scenes.realistic.init = () => {
-                this.geo.globe.material = ground_mat;
+                globe.material = ground_mat;
             };
             this.scenes.realistic.update = () => {
                 /// Update atmosphere.
                 this.camera.lookAt( 0, 0, 0 );
-                const light = this.scenes.realistic.light.position.clone();
-                const cameraHeight = this.camera.position.length();
+                const light_pos = light.position.clone();
+                const camera_height = this.camera.position.length();
 
-                this.geo.atmo.material.uniforms.v3LightPosition.value = light;
-                this.geo.atmo.material.uniforms.fCameraHeight.value = cameraHeight;
-                this.geo.atmo.material.uniforms.fCameraHeight2.value = cameraHeight ** 2;
-                this.geo.globe.material.uniforms.v3LightPosition.value = light;
-                this.geo.globe.material.uniforms.fCameraHeight.value = cameraHeight;
-                this.geo.globe.material.uniforms.fCameraHeight2.value = cameraHeight ** 2;
+                atmo.mesh.material.uniforms.v3LightPosition.value = light_pos;
+                atmo.mesh.material.uniforms.fCameraHeight.value = camera_height;
+                atmo.mesh.material.uniforms.fCameraHeight2.value = camera_height ** 2;
+                // ground.mesh.material.uniforms.v3LightPosition.value = light_pos;
+                // ground.mesh.material.uniforms.fCameraHeight.value = camera_height;
+                // ground.mesh.material.uniforms.fCameraHeight2.value = camera_height ** 2;
+                globe.material.uniforms.v3LightPosition.value = light_pos;
+                globe.material.uniforms.fCameraHeight.value = camera_height;
+                globe.material.uniforms.fCameraHeight2.value = camera_height ** 2;
 
                 /// Update star.
                 const sun_radius = 695700;
