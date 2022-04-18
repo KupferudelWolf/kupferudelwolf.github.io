@@ -1,4 +1,5 @@
 import * as THREE from '/build/three.js/build/three.module.js';
+import { UVsDebug } from '/build/three.js/examples/jsm/utils/UVsDebug.js';
 import { OrbitControls } from '/build/three.js/examples/jsm/controls/OrbitControls.js';
 import AV from '/lib/av.module.js';
 
@@ -12,8 +13,8 @@ const CTX = CVS.getContext( '2d' );
         shaders = {};
         radius = 6371;
 
-        mode = 'realistic';
-        // mode = 'heatmap';
+        // mode = 'realistic';
+        mode = 'heatmap';
 
         dir_glsl = [
             'ground.fragment.glsl',
@@ -120,8 +121,73 @@ const CTX = CVS.getContext( '2d' );
 
         /** WebGL objects. */
         initScenes() {
-            const globe_geo = new THREE.IcosahedronGeometry( this.radius, 20 );
+            const globe_geo = new THREE.IcosahedronGeometry( this.radius, 21 );
             const globe_mat = new THREE.MeshBasicMaterial();
+            let min_x = Infinity, max_x = -Infinity,
+                min_y = Infinity, max_y = -Infinity;
+            // for ( let ind = 0, len = globe_geo.attributes.uv.count; ind < len; ++ind ) {
+            //     const x = globe_geo.attributes.uv.getX( ind );
+            //     const y = globe_geo.attributes.uv.getY( ind );
+            //     min_x = Math.min( x, min_x );
+            //     max_x = Math.max( x, max_x );
+            //     min_y = Math.min( y, min_y );
+            //     max_y = Math.max( y, max_y );
+            // }
+            // for ( let ind = 0, len = globe_geo.attributes.uv.count; ind < len; ++ind ) {
+            //     let x = globe_geo.attributes.uv.getX( ind );
+            //     let y = globe_geo.attributes.uv.getY( ind );
+            //     x = AV.map( x, min_x, max_x, 0, 1 );
+            //     y = AV.map( y, min_y, max_y, 0, 1 );
+            //     globe_geo.attributes.uv.setXY( ind, x, y );
+            // }
+            // for ( let ind = 0, len = globe_geo.attributes.uv.count; ind < len; ind += 3 ) {
+            //     const u = [], v = [];
+            //     var zero = -1;
+            //     for ( let i = 0; i < 3; ++i ) {
+            //         const x = globe_geo.attributes.normal.getX( ind + i );
+            //         const y = globe_geo.attributes.normal.getY( ind + i );
+            //         const z = globe_geo.attributes.normal.getZ( ind + i );
+            //         const a = 0.5 + Math.atan2( z, x ) / AV.RADIAN;
+            //         const b = 0.5 - Math.asin( y ) / Math.PI;
+            //         u.push( a );
+            //         v.push( b );
+            //         // if ( zero === -1 && a === 1 ) zero = i;
+            //     }
+            //     // if ( zero !== -1 ) {
+            //         const len_a = [], len_b = [];
+            //         for ( let i = 0; i < 3; ++i ) {
+            //             // const i_a = ( 3 + i - zero ) % 3;
+            //             const i_a = ( i + ind ) % 3;
+            //             const i_b = ( i_a + 1 ) % 3;
+            //             var l = AV.dist( u[ i_a ], v[ i_a ], u[ i_b ], v[ i_b ] );
+            //             len_a.push( l );
+            //             if ( i_a === 0 ) l = AV.dist( 1 - u[ i_a ], v[ i_a ], u[ i_b ], v[ i_b ] );
+            //             if ( i_b === 0 ) l = AV.dist( u[ i_a ], v[ i_a ], 1 - u[ i_b ], v[ i_b ] );
+            //             len_b.push( l );
+            //         }
+            //         const sp_a = len_a.reduce( ( a, b ) => a + b ) / 2;
+            //         const sp_b = len_b.reduce( ( a, b ) => a + b ) / 2;
+            //         const area_a = Math.sqrt( sp_a * ( sp_a - len_a[0] ) * ( sp_a - len_a[1] ) * ( sp_a - len_a[2] ) );
+            //         const area_b = Math.sqrt( sp_b * ( sp_b - len_b[0] ) * ( sp_b - len_b[1] ) * ( sp_b - len_b[2] ) );
+            //         if ( area_b < area_a ) {
+            //             u[ zero ] = 1 - u[ zero ];
+            //         }
+            //     // }
+            //     for ( let i = 0; i < 3; ++i ) {
+            //         globe_geo.attributes.uv.setXY( ind + i, u[i], v[i] );
+            //     }
+            //     // if ( z === 0 ) {
+            //     //     if ( v_claimed.includes( v ) ) {
+            //     //         u = 1 - u;
+            //     //     } else {
+            //     //         v_claimed.push( v );
+            //     //     }
+            //     // }
+            //     // globe_geo.attributes.uv.setXY( ind, u, v );
+            // }
+            globe_mat.wrapS = THREE.RepeatWrapping;
+            globe_mat.wrapT = THREE.RepeatWrapping;
+            globe_geo.attributes.uv.needsUpdate = true;
             const globe_mesh = new THREE.Mesh( globe_geo, globe_mat );
 
             this.scenes = {
@@ -152,30 +218,106 @@ const CTX = CVS.getContext( '2d' );
 
         initHeatmapScene() {
             const scene = this.scenes.heatmap.scene;
+            const globe = this.scenes.heatmap.globe;
             const globe_mat = new THREE.MeshStandardMaterial({
                 color: 0xdddddd
             });
+            const res = 2**13;
+            // const res = 2**8;
 
-            const axis = new THREE.ArrowHelper(
+            const axis_y = new THREE.ArrowHelper(
                 new THREE.Vector3( 0, 1, 0 ),
                 new THREE.Vector3( 0, -this.radius * 1.25, 0 ),
                 this.radius * 2.5,
-                0xff0000,
+                0x00ff00,
                 this.radius * 0.15
             );
-            this.scenes.heatmap.globe.add( axis );
+            this.scenes.heatmap.globe.add( axis_y );
 
             scene.background = new THREE.Color( 0x444444 );
 
             const light = new THREE.DirectionalLight();
             scene.add( light );
 
+            const lines_cvs = $( '<canvas>' )
+                .attr({
+                    'width': res,
+                    'height': res
+                })
+                .get( 0 );
+            const lines_ctx = lines_cvs.getContext( '2d' );
+
+            const uv_cvs = UVsDebug( globe.geometry, {
+                size: res,
+                showText: false
+            });
+            // const uv_ctx = uv_cvs.getContext( '2d' );
+            const div_uv = $( '<div>' );
+            div_uv.css({
+                'position': 'absolute',
+                'right': 0,
+                'top': 0,
+                'width': `320px`
+            });
+            $( uv_cvs ).css( 'width', '100%' );
+            div_uv.appendTo( 'body' );
+            div_uv.append( uv_cvs );
+
+            lines_ctx.drawImage( uv_cvs, 0, 0 );
+
+            const globe_tex = new THREE.CanvasTexture( lines_cvs );
+            globe_mat.map = globe_tex;
+
+            const raycaster = new THREE.Raycaster();
+            const pointer = {};
+            var intersected;
+
+            $( CVS ).on( 'mouseover mousemove', ( e ) => {
+                if ( this.mode !== 'heatmap' ) return;
+                const m_x = e.clientX;
+                const m_y = e.clientY;
+                pointer.x = 2 * m_x / window.innerWidth - 1;
+                pointer.y = 1 - 2 * m_y / window.innerHeight;
+                raycaster.setFromCamera( pointer, this.camera );
+                const intersects = raycaster.intersectObjects( [ globe ], false );
+                if ( intersects.length > 0 ) {
+    				if ( intersected != intersects[ 0 ] ) {
+    					intersected = intersects[ 0 ];
+    				}
+                } else {
+                    intersected = null;
+                    return;
+                }
+            });
+
             this.scenes.heatmap.init = () => {
-                this.scenes.heatmap.globe.material = globe_mat;
+                globe.material = globe_mat;
             };
             this.scenes.heatmap.update = () => {
                 light.position.set( 0, 1, 0 );
                 light.position.copy( this.camera.position );
+
+                if ( !intersected ) return;
+                const uv = intersected.uv;
+                const uv_x = uv.x * uv_cvs.width;
+                const uv_y = ( 1 - uv.y ) * uv_cvs.height;
+                // intersected.object.material.map.transformUv( uv );
+
+                lines_ctx.clearRect( 0, 0, res, res );
+                lines_ctx.drawImage( uv_cvs, 0, 0 );
+                lines_ctx.fillStyle = 'red';
+                // for ( let x = -1; x <= 1; ++x ) {
+                    lines_ctx.beginPath();
+                    lines_ctx.ellipse(
+                        uv_x + 0 * uv_cvs.width,
+                        uv_y,
+                        20, 40, 0,
+                        0, AV.RADIAN );
+                    lines_ctx.closePath();
+                    lines_ctx.fill();
+                // }
+
+                globe.material.map.needsUpdate = true;
             };
         }
 
