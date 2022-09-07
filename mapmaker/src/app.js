@@ -1,12 +1,7 @@
 import * as THREE from '/build/three.js/build/three.module.js';
-<<<<<<< HEAD
-import { OrbitControls } from '/build/three.js/examples/jsm/controls/OrbitControls.js';
-import AV from '../../lib/av.module.js';
-=======
 import { UVsDebug } from '/build/three.js/examples/jsm/utils/UVsDebug.js';
 import { OrbitControls } from '/build/three.js/examples/jsm/controls/OrbitControls.js';
 import AV from '/lib/av.module.js';
->>>>>>> 2e579a4a2b0fc1d94329ab3e455648d03f28d4ca
 
 const CVS = document.getElementById( '#output' );
 const CTX = CVS.getContext( '2d' );
@@ -18,12 +13,9 @@ const CTX = CVS.getContext( '2d' );
         shaders = {};
         radius = 6371;
 
-<<<<<<< HEAD
-=======
         // mode = 'realistic';
         mode = 'heatmap';
 
->>>>>>> 2e579a4a2b0fc1d94329ab3e455648d03f28d4ca
         dir_glsl = [
             'ground.fragment.glsl',
             'ground.vertex.glsl',
@@ -38,17 +30,12 @@ const CTX = CVS.getContext( '2d' );
                 this.initCanvas( CVS );
                 this.initRenderer();
                 this.initCamera();
-<<<<<<< HEAD
-                this.initScene();
-                this.initControls();
-=======
                 this.initScenes();
                 this.initControls();
                 this.initGUI();
->>>>>>> 2e579a4a2b0fc1d94329ab3e455648d03f28d4ca
                 $( window ).resize();
                 this.ready = true;
-            });
+            } );
         }
 
         loadGLSL() {
@@ -58,22 +45,22 @@ const CTX = CVS.getContext( '2d' );
             this.dir_glsl.forEach( ( file ) => {
                 const defer = $.Deferred();
                 defers.push( defer );
-                $.ajax({
+                $.ajax( {
                     url: `./shaders/${ file }`,
                     dataType: 'text',
                     success: ( data ) => {
-                        const split = file.split('.');
-                        const group = split[0];
-                        const key = split[1];
+                        const split = file.split( '.' );
+                        const group = split[ 0 ];
+                        const key = split[ 1 ];
                         if ( !this.shaders[ group ] ) {
                             this.shaders[ group ] = {};
                         }
                         this.shaders[ group ][ key ] = data;
                         defer.resolve();
                     }
-                });
-            });
-            defers[0].resolve();
+                } );
+            } );
+            defers[ 0 ].resolve();
 
             $.when( ...defers ).done( deferred.resolve );
 
@@ -88,12 +75,8 @@ const CTX = CVS.getContext( '2d' );
                 1, 100000
             );
 
-<<<<<<< HEAD
-            this.camera.position.z = -4;
-=======
             // this.camera.position.z = -4;
             this.camera.position.set( this.radius * 4, 0, 0 );
->>>>>>> 2e579a4a2b0fc1d94329ab3e455648d03f28d4ca
         }
 
         initCanvas( cvs ) {
@@ -105,7 +88,7 @@ const CTX = CVS.getContext( '2d' );
                 this.camera.updateProjectionMatrix();
                 if ( !this.renderer ) return;
                 this.renderer.setSize( CVS.width, CVS.height );
-            });
+            } );
         }
 
         initControls() {
@@ -122,53 +105,21 @@ const CTX = CVS.getContext( '2d' );
             this.controls.maxDistance = this.camera.far - this.radius;
         }
 
-<<<<<<< HEAD
-=======
         initGUI() {
             const div = $( '<div>' );
         }
 
->>>>>>> 2e579a4a2b0fc1d94329ab3e455648d03f28d4ca
         /** WebGL renderer. */
         initRenderer() {
-            this.renderer = new THREE.WebGLRenderer({
+            this.renderer = new THREE.WebGLRenderer( {
                 alpha: false,
                 antialias: true
-            });
+            } );
             this.renderer.setPixelRatio( window.devicePixelRatio );
             this.renderer.setSize( CVS.width, CVS.height );
         }
 
         /** WebGL objects. */
-<<<<<<< HEAD
-        initScene() {
-            this.scene = new THREE.Scene();
-            this.scene.add( this.camera );
-
-            this.scene.background = 0x000000;
-
-
-            const ambient = new THREE.AmbientLight( 0x1f1f1f );
-            this.scene.add( ambient );
-
-            this.light = new THREE.DirectionalLight( 0xfff5f2, 0.9 );
-            this.light.position.set( 0, 0, -1 );
-            this.scene.add( this.light );
-
-            // const globe_geo = new THREE.IcosahedronGeometry( 1, 20 );
-            // const globe_mat = new THREE.MeshStandardMaterial({
-            //     color: 0x16316f,
-            //     roughness: 1/3,
-            //     metalness: 0,
-            // });
-            // this.geo.globe = new THREE.Mesh( globe_geo, globe_mat );
-            // this.scene.add( this.geo.globe );
-
-            // const atmo_geo = new THREE.IcosahedronGeometry( 1.05, 20 );
-            // this.geo.atmo = new THREE.Mesh( atmo_geo, atmo_mat );
-            // this.scene.add( this.geo.atmo );
-
-=======
         initScenes() {
             const globe_geo = new THREE.IcosahedronGeometry( this.radius, 21 );
             const globe_mat = new THREE.MeshBasicMaterial();
@@ -254,8 +205,8 @@ const CTX = CVS.getContext( '2d' );
                 // scene.add( this.camera );
                 scene.background = 0x000000;
 
-                this.scenes[ key ].init = () => {};
-                this.scenes[ key ].update = () => {};
+                this.scenes[ key ].init = () => { };
+                this.scenes[ key ].update = () => { };
             }
 
             this.initHeatmapScene();
@@ -268,10 +219,10 @@ const CTX = CVS.getContext( '2d' );
         initHeatmapScene() {
             const scene = this.scenes.heatmap.scene;
             const globe = this.scenes.heatmap.globe;
-            const globe_mat = new THREE.MeshStandardMaterial({
+            const globe_mat = new THREE.MeshStandardMaterial( {
                 color: 0xdddddd
-            });
-            const res = 2**13;
+            } );
+            const res = 2 ** 13;
             // const res = 2**8;
 
             const axis_y = new THREE.ArrowHelper(
@@ -289,25 +240,25 @@ const CTX = CVS.getContext( '2d' );
             scene.add( light );
 
             const lines_cvs = $( '<canvas>' )
-                .attr({
+                .attr( {
                     'width': res,
                     'height': res
-                })
+                } )
                 .get( 0 );
             const lines_ctx = lines_cvs.getContext( '2d' );
 
             const uv_cvs = UVsDebug( globe.geometry, {
                 size: res,
                 showText: false
-            });
+            } );
             // const uv_ctx = uv_cvs.getContext( '2d' );
             const div_uv = $( '<div>' );
-            div_uv.css({
+            div_uv.css( {
                 'position': 'absolute',
                 'right': 0,
                 'top': 0,
                 'width': `320px`
-            });
+            } );
             $( uv_cvs ).css( 'width', '100%' );
             div_uv.appendTo( 'body' );
             div_uv.append( uv_cvs );
@@ -330,14 +281,14 @@ const CTX = CVS.getContext( '2d' );
                 raycaster.setFromCamera( pointer, this.camera );
                 const intersects = raycaster.intersectObjects( [ globe ], false );
                 if ( intersects.length > 0 ) {
-    				if ( intersected != intersects[ 0 ] ) {
-    					intersected = intersects[ 0 ];
-    				}
+                    if ( intersected != intersects[ 0 ] ) {
+                        intersected = intersects[ 0 ];
+                    }
                 } else {
                     intersected = null;
                     return;
                 }
-            });
+            } );
 
             this.scenes.heatmap.init = () => {
                 globe.material = globe_mat;
@@ -356,14 +307,14 @@ const CTX = CVS.getContext( '2d' );
                 lines_ctx.drawImage( uv_cvs, 0, 0 );
                 lines_ctx.fillStyle = 'red';
                 // for ( let x = -1; x <= 1; ++x ) {
-                    lines_ctx.beginPath();
-                    lines_ctx.ellipse(
-                        uv_x + 0 * uv_cvs.width,
-                        uv_y,
-                        20, 40, 0,
-                        0, AV.RADIAN );
-                    lines_ctx.closePath();
-                    lines_ctx.fill();
+                lines_ctx.beginPath();
+                lines_ctx.ellipse(
+                    uv_x + 0 * uv_cvs.width,
+                    uv_y,
+                    20, 40, 0,
+                    0, AV.RADIAN );
+                lines_ctx.closePath();
+                lines_ctx.fill();
                 // }
 
                 globe.material.map.needsUpdate = true;
@@ -373,7 +324,6 @@ const CTX = CVS.getContext( '2d' );
         initRealisticScene() {
             const scene = this.scenes.realistic.scene;
             const globe = this.scenes.realistic.globe;
->>>>>>> 2e579a4a2b0fc1d94329ab3e455648d03f28d4ca
             const atmo_param = {
                 Kr: 0.0025,
                 Km: 0.0010,
@@ -385,149 +335,6 @@ const CTX = CVS.getContext( '2d' );
                 scaleDepth: 0.25,
                 mieScaleDepth: 0.1
             };
-<<<<<<< HEAD
-            ( () => {
-
-                const maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
-                const diffuse = THREE.ImageUtils.loadTexture( '/map-small.jpg' );
-                const diffuseNight = THREE.ImageUtils.loadTexture( '/map-lights.jpg' );
-                diffuse.anisotropy = maxAnisotropy;
-                diffuseNight.anisotropy = maxAnisotropy;
-
-                const uniforms = {
-                    v3LightPosition: {
-                        type: 'v3',
-                        value: new THREE.Vector3( 1e8, 0, 1e8 ).normalize()
-                    },
-                    v3InvWavelength: {
-                        type: 'v3',
-                        value: new THREE.Vector3( 1 / Math.pow( atmo_param.wavelength[0], 4 ), 1 / Math.pow( atmo_param.wavelength[1], 4 ), 1 / Math.pow( atmo_param.wavelength[2], 4 ) )
-                    },
-                    fCameraHeight: {
-                        type: 'f',
-                        value: 0
-                    },
-                    fCameraHeight2: {
-                        type: 'f',
-                        value: 0
-                    },
-                    fInnerRadius: {
-                        type: 'f',
-                        value: atmo_param.innerRadius
-                    },
-                    fInnerRadius2: {
-                        type: 'f',
-                        value: atmo_param.innerRadius * atmo_param.innerRadius
-                    },
-                    fOuterRadius: {
-                        type: 'f',
-                        value: atmo_param.outerRadius
-                    },
-                    fOuterRadius2: {
-                        type: 'f',
-                        value: atmo_param.outerRadius * atmo_param.outerRadius
-                    },
-                    fKrESun: {
-                        type: 'f',
-                        value: atmo_param.Kr * atmo_param.ESun
-                    },
-                    fKmESun: {
-                        type: 'f',
-                        value: atmo_param.Km * atmo_param.ESun
-                    },
-                    fKr4PI: {
-                        type: 'f',
-                        value: atmo_param.Kr * 4.0 * Math.PI
-                    },
-                    fKm4PI: {
-                        type: 'f',
-                        value: atmo_param.Km * 4.0 * Math.PI
-                    },
-                    fScale: {
-                        type: 'f',
-                        value: 1 / ( atmo_param.outerRadius - atmo_param.innerRadius )
-                    },
-                    fScaleDepth: {
-                        type: 'f',
-                        value: atmo_param.scaleDepth
-                    },
-                    fScaleOverScaleDepth: {
-                        type: 'f',
-                        value: 1 / ( atmo_param.outerRadius - atmo_param.innerRadius ) / atmo_param.scaleDepth
-                    },
-                    g: {
-                        type: 'f',
-                        value: atmo_param.g
-                    },
-                    g2: {
-                        type: 'f',
-                        value: atmo_param.g * atmo_param.g
-                    },
-                    nSamples: {
-                        type: 'i',
-                        value: 3
-                    },
-                    fSamples: {
-                        type: 'f',
-                        value: 3.0
-                    },
-                    tDiffuse: {
-                        type: 't',
-                        value: diffuse
-                    },
-                    tDiffuseNight: {
-                        type: 't',
-                        value: diffuseNight
-                    },
-                    tDisplacement: {
-                        type: 't',
-                        value: 0
-                    },
-                    tSkyboxDiffuse: {
-                        type: 't',
-                        value: 0
-                    },
-                    fNightScale: {
-                        type: 'f',
-                        value: 1
-                    }
-                };
-
-                const ground = {
-                    geometry: new THREE.IcosahedronGeometry( atmo_param.innerRadius, 20 ),
-                    material: new THREE.ShaderMaterial({
-                        uniforms: uniforms,
-                        vertexShader: this.shaders.ground.vertex,
-                        fragmentShader: this.shaders.ground.fragment
-                    })
-                };
-
-                ground.mesh = new THREE.Mesh( ground.geometry, ground.material );
-
-                const sky = {
-                    geometry: new THREE.IcosahedronGeometry( atmo_param.outerRadius, 20 ),
-                    material: new THREE.ShaderMaterial({
-                        uniforms: uniforms,
-                        vertexShader: this.shaders.sky.vertex,
-                        fragmentShader: this.shaders.sky.fragment
-                    })
-                };
-
-                sky.mesh = new THREE.Mesh(sky.geometry, sky.material);
-
-                sky.material.side = THREE.BackSide;
-
-                sky.material.transparent = true;
-
-
-                this.geo.globe = ground.mesh;
-                this.geo.atmo = sky.mesh;
-                this.scene.add( ground.mesh );
-                this.scene.add( sky.mesh );
-
-                this.camera.position.set( this.radius * 4, 0, 0 );
-            })();
-=======
 
             const ambient = new THREE.AmbientLight( 0x1f1f1f );
             scene.add( ambient );
@@ -537,10 +344,10 @@ const CTX = CVS.getContext( '2d' );
             scene.add( light );
 
             const sky_geo = new THREE.IcosahedronGeometry( this.camera.far, 20 );
-            const sky_mat = new THREE.MeshBasicMaterial({
+            const sky_mat = new THREE.MeshBasicMaterial( {
                 color: 0x000000,
                 side: THREE.BackSide
-            });
+            } );
             const sky_mesh = new THREE.Mesh( sky_geo, sky_mat );
             scene.add( sky_mesh );
 
@@ -557,7 +364,7 @@ const CTX = CVS.getContext( '2d' );
                 },
                 v3InvWavelength: {
                     type: 'v3',
-                    value: new THREE.Vector3( 1 / Math.pow( atmo_param.wavelength[0], 4 ), 1 / Math.pow( atmo_param.wavelength[1], 4 ), 1 / Math.pow( atmo_param.wavelength[2], 4 ) )
+                    value: new THREE.Vector3( 1 / Math.pow( atmo_param.wavelength[ 0 ], 4 ), 1 / Math.pow( atmo_param.wavelength[ 1 ], 4 ), 1 / Math.pow( atmo_param.wavelength[ 2 ], 4 ) )
                 },
                 fCameraHeight: {
                     type: 'f',
@@ -648,19 +455,19 @@ const CTX = CVS.getContext( '2d' );
                     value: 1
                 }
             };
-            const ground_mat = new THREE.ShaderMaterial({
+            const ground_mat = new THREE.ShaderMaterial( {
                 uniforms: uniforms,
                 vertexShader: this.shaders.ground.vertex,
                 fragmentShader: this.shaders.ground.fragment
-            });
+            } );
 
             const atmo = {
                 geometry: new THREE.IcosahedronGeometry( atmo_param.outerRadius, 20 ),
-                material: new THREE.ShaderMaterial({
+                material: new THREE.ShaderMaterial( {
                     uniforms: uniforms,
                     vertexShader: this.shaders.sky.vertex,
                     fragmentShader: this.shaders.sky.fragment
-                })
+                } )
             };
 
             atmo.mesh = new THREE.Mesh( atmo.geometry, atmo.material );
@@ -668,7 +475,6 @@ const CTX = CVS.getContext( '2d' );
             atmo.material.transparent = true;
 
             scene.add( atmo.mesh );
->>>>>>> 2e579a4a2b0fc1d94329ab3e455648d03f28d4ca
 
             const sun_radius = 695700;
             const sun_dist = 1.496e+8;
@@ -678,59 +484,9 @@ const CTX = CVS.getContext( '2d' );
             const sun_color_value = atmo_param.wavelength.map( x => Math.round( x * 255 ) ).join( ',' );
             const sun_color = new THREE.Color( `rgb(${ sun_color_value })` );
             const sun_geo = new THREE.IcosahedronGeometry( 1, 20 );
-            const sun_mat = new THREE.MeshBasicMaterial({
+            const sun_mat = new THREE.MeshBasicMaterial( {
                 color: sun_color
-            });
-<<<<<<< HEAD
-            this.sun = new THREE.Mesh( sun_geo, sun_mat );
-            this.sun.scale.set( sim_rad, sim_rad, sim_rad );
-            this.sun.position.set( 0, 0, -sim_dist );
-            this.scene.add( this.sun );
-            // this.light.position.set( 0, 0, -1 );
-            this.light.color = sun_color;
-
-
-            const sky_geo = new THREE.IcosahedronGeometry( this.camera.far, 20 );
-            const sky_mat = new THREE.MeshBasicMaterial({
-                color: 0x000000,
-                side: THREE.BackSide
-            });
-            this.sky = new THREE.Mesh( sky_geo, sky_mat );
-            this.camera.add( this.sky );
-        }
-
-        updateAtmosphere() {
-            this.camera.lookAt( 0, 0, 0 );
-            const light = this.light.position.clone();
-            const cameraHeight = this.camera.position.length();
-
-            this.geo.atmo.material.uniforms.v3LightPosition.value = light;
-            this.geo.atmo.material.uniforms.fCameraHeight.value = cameraHeight;
-            this.geo.atmo.material.uniforms.fCameraHeight2.value = cameraHeight ** 2;
-            this.geo.globe.material.uniforms.v3LightPosition.value = light;
-            this.geo.globe.material.uniforms.fCameraHeight.value = cameraHeight;
-            this.geo.globe.material.uniforms.fCameraHeight2.value = cameraHeight ** 2;
-        }
-
-        updateSun() {
-            const sun_radius = 695700;
-            const sun_dist = 1.496e+8;
-            const sun_ang_diam = 2 * Math.atan( sun_radius / sun_dist );
-
-            const targ_dist = 0;//-this.camera.far;
-
-            const cam_dist = this.camera.position.distanceTo( new THREE.Vector3( 0, 0, 0 ) );
-
-            const ang = this.camera.position.angleTo( new THREE.Vector3( 0, 0, -1 ) );
-
-            const sim_dist = Math.sqrt( cam_dist ** 2 + targ_dist ** 2 - 2 * cam_dist * targ_dist * Math.cos( ang ) );
-            const sim_rad = sim_dist * Math.tan( sun_ang_diam / 2 );
-
-            this.sun.position.set( 0, 0, -sim_dist );
-            this.sun.scale.set( sim_rad, sim_rad, sim_rad );
-
-            // console.log( Math.round( sim_dist ) );
-=======
+            } );
             const sun_mesh = new THREE.Mesh( sun_geo, sun_mat );
             sun_mesh.scale.set( sim_rad, sim_rad, sim_rad );
             sun_mesh.position.set( 0, 0, -sim_dist );
@@ -774,27 +530,17 @@ const CTX = CVS.getContext( '2d' );
                 sun_mesh.position.set( 0, 0, -sim_dist );
                 sun_mesh.scale.set( sim_rad, sim_rad, sim_rad );
             };
->>>>>>> 2e579a4a2b0fc1d94329ab3e455648d03f28d4ca
         }
 
         /** Renders a frame of the WebGL scene. */
         render() {
-<<<<<<< HEAD
-            this.renderer.render( this.scene, this.camera );
-=======
             this.renderer.render( this.scenes[ this.mode ].scene, this.camera );
->>>>>>> 2e579a4a2b0fc1d94329ab3e455648d03f28d4ca
             CTX.drawImage( this.renderer.domElement, 0, 0 );
         }
 
         loop() {
             if ( !this.ready ) return;
-<<<<<<< HEAD
-            this.updateAtmosphere();
-            this.updateSun();
-=======
             this.scenes[ this.mode ].update();
->>>>>>> 2e579a4a2b0fc1d94329ab3e455648d03f28d4ca
             this.render();
         }
 
@@ -817,6 +563,6 @@ const CTX = CVS.getContext( '2d' );
         const app = new App();
 
         app.run();
-    });
+    } );
 
-})();
+} )();
