@@ -122,10 +122,10 @@ class Body2D {
         return this.updateRoche( 2.65 );
     }
     get ring_min() {
-        return Math.max( this.scale_height_max, this.roche_ice );
+        return this.radius; //Math.max( this.scale_height_max, this.roche_ice );
     }
     get ring_max() {
-        return this.hill;
+        return this.roche_rock; //this.hill;
     }
 
     get gm() {

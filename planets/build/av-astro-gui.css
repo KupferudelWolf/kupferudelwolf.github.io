@@ -84,6 +84,7 @@
 }
 .astro-gui .number,
 .astro-gui .trailing,
+.astro-gui .input-unit,
 input[type=number] {
     font-family: monospace;
 }
@@ -182,6 +183,10 @@ input[type=number] {
 }
 .astro-gui .control .control-label {
     text-align: right;
+}
+.astro-gui .control .input-display,
+.astro-gui .control .input-unit {
+    padding: 0 0 0 4px;
 }
 .astro-gui .control > input {
     height: 18px;
