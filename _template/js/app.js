@@ -2,7 +2,7 @@
 
 import AV from '../../build/av.module.js/av.module.js';
 
-(function () {
+( function () {
     //
 
     class App {
@@ -13,5 +13,5 @@ import AV from '../../build/av.module.js/av.module.js';
 
     $( function () {
         const APP = new App();
-    });
-})();
+    } );
+} )();
