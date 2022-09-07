@@ -35,7 +35,7 @@ const CTX = CVS.getContext( '2d' );
                 this.initGUI();
                 $( window ).resize();
                 this.ready = true;
-            });
+            } );
         }
 
         loadGLSL() {
@@ -45,22 +45,22 @@ const CTX = CVS.getContext( '2d' );
             this.dir_glsl.forEach( ( file ) => {
                 const defer = $.Deferred();
                 defers.push( defer );
-                $.ajax({
+                $.ajax( {
                     url: `./shaders/${ file }`,
                     dataType: 'text',
                     success: ( data ) => {
-                        const split = file.split('.');
-                        const group = split[0];
-                        const key = split[1];
+                        const split = file.split( '.' );
+                        const group = split[ 0 ];
+                        const key = split[ 1 ];
                         if ( !this.shaders[ group ] ) {
                             this.shaders[ group ] = {};
                         }
                         this.shaders[ group ][ key ] = data;
                         defer.resolve();
                     }
-                });
-            });
-            defers[0].resolve();
+                } );
+            } );
+            defers[ 0 ].resolve();
 
             $.when( ...defers ).done( deferred.resolve );
 
@@ -88,7 +88,7 @@ const CTX = CVS.getContext( '2d' );
                 this.camera.updateProjectionMatrix();
                 if ( !this.renderer ) return;
                 this.renderer.setSize( CVS.width, CVS.height );
-            });
+            } );
         }
 
         initControls() {
@@ -111,10 +111,10 @@ const CTX = CVS.getContext( '2d' );
 
         /** WebGL renderer. */
         initRenderer() {
-            this.renderer = new THREE.WebGLRenderer({
+            this.renderer = new THREE.WebGLRenderer( {
                 alpha: false,
                 antialias: true
-            });
+            } );
             this.renderer.setPixelRatio( window.devicePixelRatio );
             this.renderer.setSize( CVS.width, CVS.height );
         }
@@ -205,8 +205,8 @@ const CTX = CVS.getContext( '2d' );
                 // scene.add( this.camera );
                 scene.background = 0x000000;
 
-                this.scenes[ key ].init = () => {};
-                this.scenes[ key ].update = () => {};
+                this.scenes[ key ].init = () => { };
+                this.scenes[ key ].update = () => { };
             }
 
             this.initHeatmapScene();
@@ -219,10 +219,10 @@ const CTX = CVS.getContext( '2d' );
         initHeatmapScene() {
             const scene = this.scenes.heatmap.scene;
             const globe = this.scenes.heatmap.globe;
-            const globe_mat = new THREE.MeshStandardMaterial({
+            const globe_mat = new THREE.MeshStandardMaterial( {
                 color: 0xdddddd
-            });
-            const res = 2**13;
+            } );
+            const res = 2 ** 13;
             // const res = 2**8;
 
             const axis_y = new THREE.ArrowHelper(
@@ -240,25 +240,25 @@ const CTX = CVS.getContext( '2d' );
             scene.add( light );
 
             const lines_cvs = $( '<canvas>' )
-                .attr({
+                .attr( {
                     'width': res,
                     'height': res
-                })
+                } )
                 .get( 0 );
             const lines_ctx = lines_cvs.getContext( '2d' );
 
             const uv_cvs = UVsDebug( globe.geometry, {
                 size: res,
                 showText: false
-            });
+            } );
             // const uv_ctx = uv_cvs.getContext( '2d' );
             const div_uv = $( '<div>' );
-            div_uv.css({
+            div_uv.css( {
                 'position': 'absolute',
                 'right': 0,
                 'top': 0,
                 'width': `320px`
-            });
+            } );
             $( uv_cvs ).css( 'width', '100%' );
             div_uv.appendTo( 'body' );
             div_uv.append( uv_cvs );
@@ -281,14 +281,14 @@ const CTX = CVS.getContext( '2d' );
                 raycaster.setFromCamera( pointer, this.camera );
                 const intersects = raycaster.intersectObjects( [ globe ], false );
                 if ( intersects.length > 0 ) {
-    				if ( intersected != intersects[ 0 ] ) {
-    					intersected = intersects[ 0 ];
-    				}
+                    if ( intersected != intersects[ 0 ] ) {
+                        intersected = intersects[ 0 ];
+                    }
                 } else {
                     intersected = null;
                     return;
                 }
-            });
+            } );
 
             this.scenes.heatmap.init = () => {
                 globe.material = globe_mat;
@@ -307,14 +307,14 @@ const CTX = CVS.getContext( '2d' );
                 lines_ctx.drawImage( uv_cvs, 0, 0 );
                 lines_ctx.fillStyle = 'red';
                 // for ( let x = -1; x <= 1; ++x ) {
-                    lines_ctx.beginPath();
-                    lines_ctx.ellipse(
-                        uv_x + 0 * uv_cvs.width,
-                        uv_y,
-                        20, 40, 0,
-                        0, AV.RADIAN );
-                    lines_ctx.closePath();
-                    lines_ctx.fill();
+                lines_ctx.beginPath();
+                lines_ctx.ellipse(
+                    uv_x + 0 * uv_cvs.width,
+                    uv_y,
+                    20, 40, 0,
+                    0, AV.RADIAN );
+                lines_ctx.closePath();
+                lines_ctx.fill();
                 // }
 
                 globe.material.map.needsUpdate = true;
@@ -344,10 +344,10 @@ const CTX = CVS.getContext( '2d' );
             scene.add( light );
 
             const sky_geo = new THREE.IcosahedronGeometry( this.camera.far, 20 );
-            const sky_mat = new THREE.MeshBasicMaterial({
+            const sky_mat = new THREE.MeshBasicMaterial( {
                 color: 0x000000,
                 side: THREE.BackSide
-            });
+            } );
             const sky_mesh = new THREE.Mesh( sky_geo, sky_mat );
             scene.add( sky_mesh );
 
@@ -364,7 +364,7 @@ const CTX = CVS.getContext( '2d' );
                 },
                 v3InvWavelength: {
                     type: 'v3',
-                    value: new THREE.Vector3( 1 / Math.pow( atmo_param.wavelength[0], 4 ), 1 / Math.pow( atmo_param.wavelength[1], 4 ), 1 / Math.pow( atmo_param.wavelength[2], 4 ) )
+                    value: new THREE.Vector3( 1 / Math.pow( atmo_param.wavelength[ 0 ], 4 ), 1 / Math.pow( atmo_param.wavelength[ 1 ], 4 ), 1 / Math.pow( atmo_param.wavelength[ 2 ], 4 ) )
                 },
                 fCameraHeight: {
                     type: 'f',
@@ -455,19 +455,19 @@ const CTX = CVS.getContext( '2d' );
                     value: 1
                 }
             };
-            const ground_mat = new THREE.ShaderMaterial({
+            const ground_mat = new THREE.ShaderMaterial( {
                 uniforms: uniforms,
                 vertexShader: this.shaders.ground.vertex,
                 fragmentShader: this.shaders.ground.fragment
-            });
+            } );
 
             const atmo = {
                 geometry: new THREE.IcosahedronGeometry( atmo_param.outerRadius, 20 ),
-                material: new THREE.ShaderMaterial({
+                material: new THREE.ShaderMaterial( {
                     uniforms: uniforms,
                     vertexShader: this.shaders.sky.vertex,
                     fragmentShader: this.shaders.sky.fragment
-                })
+                } )
             };
 
             atmo.mesh = new THREE.Mesh( atmo.geometry, atmo.material );
@@ -484,9 +484,9 @@ const CTX = CVS.getContext( '2d' );
             const sun_color_value = atmo_param.wavelength.map( x => Math.round( x * 255 ) ).join( ',' );
             const sun_color = new THREE.Color( `rgb(${ sun_color_value })` );
             const sun_geo = new THREE.IcosahedronGeometry( 1, 20 );
-            const sun_mat = new THREE.MeshBasicMaterial({
+            const sun_mat = new THREE.MeshBasicMaterial( {
                 color: sun_color
-            });
+            } );
             const sun_mesh = new THREE.Mesh( sun_geo, sun_mat );
             sun_mesh.scale.set( sim_rad, sim_rad, sim_rad );
             sun_mesh.position.set( 0, 0, -sim_dist );
@@ -563,6 +563,6 @@ const CTX = CVS.getContext( '2d' );
         const app = new App();
 
         app.run();
-    });
+    } );
 
-})();
+} )();

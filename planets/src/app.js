@@ -1,6 +1,5 @@
 import AV from '../../lib/av.module.js';
 import GUI from '../../lib/lil-gui.esm.js';
-
 import { Body2D } from '../build/av-astro.module.js';
 
 $( function () {
