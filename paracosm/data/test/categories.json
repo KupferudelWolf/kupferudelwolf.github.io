@@ -1,0 +1,21 @@
+[
+    {
+        "id": "city",
+        "name": "city",
+        "plural": "cities",
+        "parent": "geography"
+    },
+    {
+        "id": "nation",
+        "parent": "geography"
+    },
+    {
+        "id": "geography",
+        "name": "geography",
+        "plural": "geography",
+        "parent": ""
+    },
+    {
+        "id": "character"
+    }
+]
