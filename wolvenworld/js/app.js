@@ -1,9 +1,9 @@
 /*jshint esversion: 7*/
 
-import AV from '../../build/av.module.js/av.module.js';
-import * as THREE from '../../build/three.js/build/three.module.js';
-import Stats from '../build/three.js/examples/jsm/libs/stats.module.js';
-import { GUI } from '../build/three.js/examples/jsm/libs/lil-gui.module.min.js';
+import AV from '/build/av.module.js/av.module.js';
+import * as THREE from '/build/three.js/build/three.module.js';
+import Stats from '/build/three.js/examples/jsm/libs/stats.module.js';
+import { GUI } from '/build/three.js/examples/jsm/libs/lil-gui.module.min.js';
 
 ( function () {
     //

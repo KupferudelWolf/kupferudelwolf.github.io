@@ -7,7 +7,7 @@ import { GUI } from '/build/three.js/examples/jsm/libs/lil-gui.module.min.js';
 
 ( function () {
 
-    class AV_3 {
+    class ENGINE {
         constructor() {
             this.params = {};
 
@@ -98,7 +98,7 @@ import { GUI } from '/build/three.js/examples/jsm/libs/lil-gui.module.min.js';
     }
 
     $( function () {
-        const APP = new AV_3();
+        const APP = new ENGINE();
         APP.run();
     } );
 } )();
