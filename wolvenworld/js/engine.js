@@ -138,6 +138,11 @@ import { GUI } from '/build/three.js/examples/jsm/libs/lil-gui.module.min.js';
                 this.controls.update();
             }
 
+            /// Temporary fix. When switching tabs, the animation is paused.
+            /// setInterval() helps but is limited to one call per second when tab is inactive.
+            // if ( delta > 60 / 1000 ) return;
+            delta = Math.max( delta, 60 / 1000 );
+
             /// Gravity.
             this.dynamics.forEach( ( obj ) => {
                 obj.velocity.y -= this.params.gravity * delta;
@@ -162,7 +167,7 @@ import { GUI } from '/build/three.js/examples/jsm/libs/lil-gui.module.min.js';
                 } );
                 if ( normal && dist < magnitude ) {
                     if ( magnitude < this.unit_scale / 10 ) {
-                        obj.velocity.set( 0, 0, 0 );
+                        obj.velocity.setScalar( 0 );
                     }
                     this.cache.matrix.extractRotation( coll_obj.matrixWorld );
                     normal.applyMatrix4( this.cache.matrix ).normalize();
@@ -188,8 +193,10 @@ import { GUI } from '/build/three.js/examples/jsm/libs/lil-gui.module.min.js';
 
         /** Initialize step function. */
         run() {
-            var time_last = 0;
-            const step = ( time ) => {
+            const $window = $( window );
+            var time_last = Date.now();
+            const step = () => {
+                const time = Date.now();
                 const delta = ( time - time_last ) / 1000;
                 time_last = time;
                 // console.log( time );
@@ -200,9 +207,11 @@ import { GUI } from '/build/three.js/examples/jsm/libs/lil-gui.module.min.js';
                 /// Update the framerate display.
                 if ( this.stats ) this.stats.update();
 
-                window.requestAnimationFrame( step );
+                // window.requestAnimationFrame( step );
             };
-            window.requestAnimationFrame( step );
+            // window.requestAnimationFrame( step );
+            $window.stop( true, true );
+            setInterval( step, 1000 / 60 );
         }
     }
 
