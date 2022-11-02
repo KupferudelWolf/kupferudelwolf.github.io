@@ -1,0 +1,39 @@
+.io {
+    display: flex;
+    gap: 1em;
+    width: 100vw;
+    height: 80vh;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    gap: 1em;
+    padding: 1em;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.container.output {
+    flex: 2;
+    flex-direction: column;
+    padding: 0;
+}
+.container.output .container.canvas {
+    flex: 9;
+    background-color: lightgrey;
+}
+#output {
+    flex-grow: 1;
+    background-color: white;
+    border: dotted 1px black;
+}
+.container.output .container.controls {
+    /* flex: 1; */
+}
+
+.container.input {
+    padding: 0;
+}
