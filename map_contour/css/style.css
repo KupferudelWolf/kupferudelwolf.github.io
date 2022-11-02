@@ -1,3 +1,7 @@
+.hidden {
+    display: none;
+}
+
 .io {
     display: flex;
     gap: 1em;
@@ -22,7 +26,10 @@
     padding: 0;
 }
 .container.output .container.canvas {
-    flex: 9;
+    /* flex: 9; */
+    height: 70vh;
+    min-height: 70vh;
+    max-height: 70vh;
     background-color: #ddd;
     box-sizing: border-box;
 }
@@ -30,12 +37,14 @@
     flex-direction: column;
 }
 #output {
-    flex-grow: 1;
+    flex: 1;
+    max-width: 100%;
+    max-height: 100%;
     background-color: white;
     border: 2px dashed #ccc;
 }
 .container.output .container.controls {
-    /* flex: 1; */
+    flex: 1;
 }
 
 .container.input {
