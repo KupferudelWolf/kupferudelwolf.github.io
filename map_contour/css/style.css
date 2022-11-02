@@ -23,17 +23,131 @@
 }
 .container.output .container.canvas {
     flex: 9;
-    background-color: lightgrey;
+    background-color: #ddd;
+    box-sizing: border-box;
+}
+.container.output .container.canvas.vertical {
+    flex-direction: column;
 }
 #output {
     flex-grow: 1;
     background-color: white;
-    border: dotted 1px black;
+    border: 2px dashed #ccc;
 }
 .container.output .container.controls {
     /* flex: 1; */
 }
 
 .container.input {
-    padding: 0;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0;
+}
+.container.input * {
+    font-size: 0.9rem;
+}
+.container.input > * {
+    width: 100%;
+    flex: 0;
+    gap: 0.5em;
+}
+.container.input .container > * {
+    text-align: right;
+    flex-grow: 1;
+    width: auto;
+    height: 100%;
+}
+.container.input .container label {
+    text-align: left;
+    width: 30%;
+    flex-grow: 0;
+    height: auto;
+    /* width: 50%; */
+}
+.container.input .container div,
+.container.input .container label {
+    text-align: left;
+}
+.divider {
+    flex: 0;
+    margin: 0.5em 0;
+    border-top: 2px dashed #ccc;
+}
+
+select,
+input[type="number"] {
+    border-style: solid;
+    border-width: 1px;
+    box-sizing: border-box;
+}
+input[type="number"] {
+    font-family: 'Courier New', Courier, monospace;
+}
+input[type=number]::-webkit-inner-spin-button {
+    margin-left: 0.25em;
+}
+
+
+
+
+
+
+
+
+
+/* The switch - the box around the slider */
+.switch {
+    --width: 30px;
+    --padding: 4px;
+    --color-off: #ccc;
+    --color-on: #2196F3;
+    position: relative;
+    display: inline-block;
+    max-width: var(--width);
+    height: 100%;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-off);
+    -webkit-transition: .1s;
+    transition: .1s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    width: calc(var(--width) * 0.4);
+    left: var(--padding);
+    top: var(--padding);
+    bottom: var(--padding);
+    background-color: white;
+    -webkit-transition: .1s;
+    transition: .1s;
+}
+
+input:checked + .slider {
+    background-color: var(--color-on);
+}
+
+input:focus + .slider {
+    outline: auto;
+}
+
+input:checked + .slider:before {
+    padding-left: auto;
+    left: calc(100% - var(--width) * 0.4 - var(--padding));
 }

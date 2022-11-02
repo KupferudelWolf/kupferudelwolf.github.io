@@ -9,6 +9,8 @@
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script src="/build/jquery.min.js" type="text/javascript"></script>
+	<!-- <link rel="stylesheet" href="build/rangeslider/rangeslider.css" /> -->
+	<!-- <script src="build/rangeslider/rangeslider.umd.min.js"></script> -->
 	<script src="js/app.js" type="module"></script>
 </head>
 
@@ -25,6 +27,53 @@
 			</div>
 		</div>
 		<div class="container input">
+			<div class="container">
+				<label class="switch lock-sea">
+					<input type="checkbox">
+					<span class="slider"></span>
+				</label>
+				<label for="sea">Sea level:</label>
+				<input type="range" name="sea" id="ctrl-sea" min="0" max="1" step="0.01" />
+			</div>
+			<div class="container">
+				<label class="switch lock-elevation-min">
+					<input type="checkbox">
+					<span class="slider"></span>
+				</label>
+				<label for="elevation-min">Minimum elevation:</label>
+				<input type="number" name="elevation-min" id="ctrl-elevation-min" />
+				<select name="elevation-min-unit" id="ctrl-elevation-min-unit" class="sync-elev" style="flex-grow: 0;">
+					<option value="km">km</option>
+					<option value="mi">mi</option>
+				</select>
+			</div>
+			<div class="container">
+				<label class="switch lock-elevation-max">
+					<input type="checkbox">
+					<span class="slider"></span>
+				</label>
+				<label for="elevation-max">Maximum elevation:</label>
+				<input type="number" name="elevation-max" id="ctrl-elevation-max" />
+				<select name="elevation-max-unit" id="ctrl-elevation-max-unit" class="sync-elev" style="flex-grow: 0;">
+					<option value="km">km</option>
+					<option value="mi">mi</option>
+				</select>
+			</div>
+			<!-- <div class="container">
+				<div name="elevation" id="ctrl-elevation"></div>
+			</div> -->
+			<div class="divider"></div>
+			<div class="container">
+				<label for="steps">Steps:</label>
+				<input type="number" name="steps" id="ctrl-steps" />
+			</div>
+			<div class="container">
+				<label class="switch ctrl-hide-sea">
+					<input type="checkbox">
+					<span class="slider"></span>
+				</label>
+				<div>Do not map below sea level.</div>
+			</div>
 		</div>
 	</div>
 </body>
