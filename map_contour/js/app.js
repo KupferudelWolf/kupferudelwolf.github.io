@@ -18,6 +18,7 @@ import rangeSlider from '../build/rangeslider/rangeslider.js';
         }
 
         initControls() {
+            /// Import map.
             var double_click = 0;
             $( '#import' ).on( 'click', () => {
                 $( '#import-file' ).trigger( 'click' );
@@ -26,7 +27,6 @@ import rangeSlider from '../build/rangeslider/rangeslider.js';
                 const delta = Date.now() - double_click;
                 double_click = Date.now();
                 if ( this.state && delta > 200 ) return;
-                console.log( delta );
                 $( '#import-file' ).trigger( 'click' );
             } );
             $( '#import-file' ).on( 'change', ( event ) => {
@@ -37,17 +37,33 @@ import rangeSlider from '../build/rangeslider/rangeslider.js';
 
                 const reader = new FileReader();
                 reader.onload = ( e ) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        CVS.width = img.width;
-                        CVS.height = img.height;
-                        CTX.drawImage( img, 0, 0 );
+                    const image = new Image();
+                    image.onload = () => {
+                        CVS.width = image.width;
+                        CVS.height = image.height;
+                        CTX.drawImage( image, 0, 0 );
                         this.updateCanvas();
                         this.state = 'ready';
+                        var filename = $( '#import-file' ).val();
+                        filename = filename.split( '/' ).pop().split( '.' );
+                        filename.pop();
+                        this.filename = filename.join( '.' );
                     };
-                    img.src = e.target.result;
+                    image.src = e.target.result;
                 };
                 reader.readAsDataURL( files[ 0 ] );
+            } );
+
+            /// Save as PNG.
+            var saves = 0;
+            const export_link = $( '<a>' ).get( 0 );
+            $( '#export-png' ).on( 'click', () => {
+                if ( this.state !== 'ready' ) return;
+                export_link.setAttribute( 'href', CVS.toDataURL( 'image/png' ) );
+                const num = String( saves ).padStart( 4, '0' );
+                export_link.setAttribute( 'download', `${ this.filename } - Countour #${ num }` );
+                export_link.click();
+                ++saves;
             } );
         }
 
