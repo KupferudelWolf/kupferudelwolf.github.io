@@ -1,0 +1,18 @@
+body {
+    overflow: hidden;
+}
+
+canvas {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+canvas.palette {
+    z-index: -2;
+}
+canvas.overlay {
+    z-index: -1;
+}
