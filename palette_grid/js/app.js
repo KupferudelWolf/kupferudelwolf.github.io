@@ -33,50 +33,7 @@ import AV from '/build/av.module.js/av.module.js';
             };
             this.hex = '#000000ff';
 
-            const type = typeof color;
-            if ( type === 'undefined' ) return;
-            if ( type === 'number' ) {
-                /// Numerical value.
-                this.setValue( color );
-                return;
-            }
-            if ( type === 'string' ) {
-                color = color.toLowerCase();
-            } else {
-                return;
-            }
-            if ( color[ 0 ] === '#' ) {
-                /// Hex RGB or RGBA value.
-                const args = [ 0, 0, 0, 1, false ];
-                for ( let i = 0, l = ( color.length - 1 ) / 2; i < l; ++i ) {
-                    const ind = i * 2 + 1;
-                    const val = color.slice( ind, ind + 2 );
-                    const num = Number( '0x' + val ) / 255;
-                    args[ i ] = num;
-                }
-                this.setRGBA( ...args );
-            }
-            if ( !color.includes( ',' ) ) return;
-            const code = color.slice( 0, 3 );
-            const args = color.replace( /((rgba?)|(hsla?))\(|\)/g, '' ).split( ',' );
-            const colors = [ 0, 0, 0 ];
-            args.forEach( ( v, i ) => {
-                colors[ i ] = Number( v.trim().replace( /[^0-9]/g, '' ) || 0 );
-            } );
-            if ( code === 'rgb' ) {
-                /// RGB() or RGBA() value.
-                if ( colors.length < 4 ) {
-                    colors[ 3 ] = 1;
-                }
-                this.setRGBA( ...args );
-            }
-            if ( code === 'hsl' ) {
-                if ( colors.length < 4 ) {
-                    colors[ 3 ] = 1;
-                }
-                this.setHSLA( ...args );
-            }
-            return;
+            this.set( color || 0 );
         }
 
         /** @type {number} The red value, from 0 to 1. */
@@ -315,6 +272,73 @@ import AV from '/build/av.module.js/av.module.js';
             return this;
         }
 
+        /** Attempts to automatically set the color.
+         * @param {number|string} color - A numerical RGB value, RGB[A] hex color, RGB[A] code, or HSL[A] code.
+         * @returns {boolean} Whether a color was successfully set.
+         */
+        set( color ) {
+            const error_message = `"${ color }" could not be interpreted as a color.`;
+            const type = typeof color;
+            if ( type === 'undefined' ) {
+                this.r = 0;
+                this.g = 0;
+                this.b = 0;
+                this.a = 1;
+                return false;
+            }
+            if ( type !== 'string' && type !== 'number' ) {
+                console.warn( error_message );
+                return false;
+            }
+            if ( type === 'number' ) {
+                /// Numerical value.
+                this.setValue( color );
+                return true;
+            }
+            color = color.toLowerCase();
+            if ( color[ 0 ] === '#' ) {
+                /// Hex RGB or RGBA value.
+                const args = [ 0, 0, 0, 1, false ];
+                for ( let i = 0, l = ( color.length - 1 ) / 2; i < l; ++i ) {
+                    const ind = i * 2 + 1;
+                    const val = color.slice( ind, ind + 2 );
+                    const num = Number( '0x' + val );
+                    if ( isNaN( num ) ) {
+                        console.warn( error_message );
+                        return false;
+                    }
+                    args[ i ] = num / 255;
+                }
+                this.setRGBA( ...args );
+                return true;
+            }
+            if ( color.includes( ',' ) ) {
+                const code = color.slice( 0, 3 );
+                const args = color.replace( /((rgba?)|(hsla?))\(|\)/g, '' ).split( ',' );
+                const colors = [ 0, 0, 0 ];
+                args.forEach( ( v, i ) => {
+                    colors[ i ] = Number( v.trim().replace( /[^0-9]/g, '' ) || 0 );
+                } );
+                if ( code === 'rgb' ) {
+                    /// RGB() or RGBA() value.
+                    if ( colors.length < 4 ) {
+                        colors[ 3 ] = 1;
+                    }
+                    this.setRGBA( ...args );
+                    return true;
+                }
+                if ( code === 'hsl' ) {
+                    if ( colors.length < 4 ) {
+                        colors[ 3 ] = 1;
+                    }
+                    this.setHSLA( ...args );
+                    return true;
+                }
+            }
+            console.warn( error_message );
+            return false;
+        }
+
         /** Sets this color's HSL values.
          * @param {number} h - The hue, from 0 to 1.
          * @param {number} s - The saturation, from 0 to 1.
@@ -427,11 +451,19 @@ import AV from '/build/av.module.js/av.module.js';
         }
 
         /** Creates a new square.
+         * @param {number} x - X position of square.
+         * @param {number} y - Y position of square.
+         * @param {string|number|Color} [color] - Square color.
          * @returns {PaletteSquare} The new square.
          */
-        createSquare( x, y ) {
+        createSquare( x, y, color = 0 ) {
+            if ( !( color instanceof Color ) ) {
+                color = new Color( color );
+            } else {
+                color = color.clone();
+            }
             const obj = new PaletteSquare( {
-                color: new Color(),
+                color: color,
                 x: x,
                 y: y,
                 w: SIZE,
@@ -883,6 +915,7 @@ import AV from '/build/av.module.js/av.module.js';
             const obj = this.overlay;
             const $cvs = obj.$;
             const menu = $( '.menu' );
+            const color_cache = new Color();
             var button, clicked, long, spacebar, target, time,
                 mouse_x, mouse_y, start_x, start_y,
                 target_x, target_y, view_x, view_y;
@@ -890,8 +923,27 @@ import AV from '/build/av.module.js/av.module.js';
             /// Listen for the spacebar.
             document.body.onkeydown = ( event ) => {
                 spacebar = event.code === 'Space';
+                if ( event.code === 'KeyV' && event.ctrlKey ) {
+                    /// Paste.
+                    navigator.clipboard.readText().then( ( text ) => {
+                        if ( !isNaN( '0x' + text ) ) {
+                            text = '#' + text;
+                        };
+                        if ( color_cache.set( text ) ) {
+                            spacebar = false;
+                            long = false;
+                            clicked = true;
+                            button = 1;
+                            view_x = mouse_x - this.cam_x;
+                            view_y = mouse_y - this.cam_y;
+                            target_x = null;
+                            target_y = null;
+                            target = this.container.createSquare( view_x - SIZE / 2, view_y - SIZE / 2, color_cache );
+                        }
+                    } );
+                }
             };
-            document.body.onkeyup = () => {
+            document.body.onkeyup = ( event ) => {
                 spacebar = false;
             };
 
@@ -961,12 +1013,12 @@ import AV from '/build/av.module.js/av.module.js';
                 }
             } );
             $cvs.on( 'mouseover mousemove', ( event ) => {
+                mouse_x = event.clientX;
+                mouse_y = event.clientY;
                 event.preventDefault();
                 /// Make the GUI visible.
                 this.gui_timer = Date.now();
                 if ( !clicked ) return;
-                mouse_x = event.clientX;
-                mouse_y = event.clientY;
                 switch ( button ) {
                     case 1:
                         /// Left click.
@@ -1020,8 +1072,12 @@ import AV from '/build/av.module.js/av.module.js';
                             if ( target ) {
                                 if ( event.type === 'mouseleave' ) {
                                     /// The mouse moved off the screen. Oops!
-                                    target.x = target_x;
-                                    target.y = target_y;
+                                    if ( target_x !== null && target_y !== null ) {
+                                        target.x = target_x;
+                                        target.y = target_y;
+                                    } else {
+                                        target.delete();
+                                    }
                                 } else {
                                     /// Snap the square to the grid.
                                     const x = Math.round( target.x / SIZE ) * SIZE;
@@ -1033,8 +1089,12 @@ import AV from '/build/av.module.js/av.module.js';
                                     target.y -= SIZE;
                                     if ( detects ) {
                                         /// Place the square back where it belongs.
-                                        target.x = target_x;
-                                        target.y = target_y;
+                                        if ( target_x !== null && target_y !== null ) {
+                                            target.x = target_x;
+                                            target.y = target_y;
+                                        } else {
+                                            target.delete();
+                                        }
                                         /// See if the squares can connect.
                                         target.connect( detects );
                                     } else {
