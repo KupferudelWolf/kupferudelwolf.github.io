@@ -915,8 +915,8 @@ import AV from '/build/av.module.js/av.module.js';
                 const l = this.history.history.length;
                 $( '#btn-undo' ).toggleClass( 'disabled', l <= 1 || this.history.index === 0 );
                 $( '#btn-redo' ).toggleClass( 'disabled', l <= 1 || this.history.index >= l - 1 );
+                this.save( false, true );
             };
-            this.history.onChange();
             this.initContextMenu();
             this.initButtonBar();
             this.initInput();
@@ -926,6 +926,7 @@ import AV from '/build/av.module.js/av.module.js';
                 /// Create an initial square if no data is available.
                 this.container.createSquare( 0, 0 ).color.setValue( Math.random() * 0xffffff );
             }
+            this.history.onChange();
             if ( !this.background_color ) {
                 this.background_color = '#cccccc';
             }
@@ -1019,7 +1020,6 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( button_redo.hasClass( 'disabled' ) ) return;
                 /// Redo.
                 this.history.redo();
-                this.save();
             } );
             button_save.on( 'click', () => {
                 if ( button_save.hasClass( 'disabled' ) ) return;
@@ -1030,7 +1030,6 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( button_undo.hasClass( 'disabled' ) ) return;
                 /// Undo.
                 this.history.undo();
-                this.save();
             } );
         }
 
@@ -1267,7 +1266,6 @@ import AV from '/build/av.module.js/av.module.js';
                         } else {
                             this.history.undo();
                         }
-                        this.save();
                         break;
                     default:
                         /// Do not preventDefault().
@@ -1357,6 +1355,12 @@ import AV from '/build/av.module.js/av.module.js';
                         this.activateMenu( mouse_x, mouse_y, target );
                         $cvs.trigger( 'mouseup', [ 3 ] );
                         break;
+                    case 4:
+                        this.history.undo();
+                        break
+                    case 5:
+                        this.history.redo();
+                        break
                     default:
                         break;
                 }
@@ -1395,14 +1399,12 @@ import AV from '/build/av.module.js/av.module.js';
                             this.cam_y = mouse_y - view_y;
                             start_x = mouse_x
                             start_y = mouse_y
-                            // this.save();
                         }
                         break;
                     case 2:
                         /// Middle click.
                         this.cam_x = mouse_x - view_x;
                         this.cam_y = mouse_y - view_y;
-                        // this.save();
                         break;
                     default:
                         break;
@@ -1554,11 +1556,12 @@ import AV from '/build/av.module.js/av.module.js';
             this.cam_z = 1;
         }
 
-        /** Saves the current squares to cookies.
+        /** Saves the current squares to cookies and to the undo history.
          * @param {boolean} [no_cookie] - Returns the stringified data instead of saving it to cookies.
+         * @param {boolean} [no_history] - Skips adding the save to the undo history.
          * @returns {string|boolean}
          */
-        save( no_cookie ) {
+        save( no_cookie, no_history ) {
             const data = [ {
                 type: 'meta',
                 x: this.cam_x,
@@ -1586,7 +1589,7 @@ import AV from '/build/av.module.js/av.module.js';
                 return cookie;
             }
             Cookies.set( 'autosave', cookie );
-            this.history.add( cookie );
+            if ( !no_history ) this.history.add( cookie );
             return true;
         }
 
