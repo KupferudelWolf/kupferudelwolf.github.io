@@ -1019,6 +1019,7 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( button_redo.hasClass( 'disabled' ) ) return;
                 /// Redo.
                 this.history.redo();
+                this.save();
             } );
             button_save.on( 'click', () => {
                 if ( button_save.hasClass( 'disabled' ) ) return;
@@ -1029,6 +1030,7 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( button_undo.hasClass( 'disabled' ) ) return;
                 /// Undo.
                 this.history.undo();
+                this.save();
             } );
         }
 
@@ -1036,8 +1038,6 @@ import AV from '/build/av.module.js/av.module.js';
         initCanvas() {
             this.output = new CanvasObject( 'palette' );
             this.overlay = new CanvasObject( 'overlay' );
-
-            this.output.ctx.willReadFrequently = true;
 
             const resize = () => {
                 this.output.cvs.width = this.overlay.cvs.width = window.innerWidth;
@@ -1238,10 +1238,16 @@ import AV from '/build/av.module.js/av.module.js';
                     view_y = mouse_y - this.cam_y;
                 }
                 if ( !event.ctrlKey ) return;
+                /// Control + Key.
                 switch ( event.code ) {
                     case 'KeyC':
                         /// Copy the entire image.
                         menu_copypng.trigger( 'click' );
+                        break;
+                    case 'KeyS':
+                        /// Autosave.
+                        this.save();
+                        console.warn( 'Manually saved.' );
                         break;
                     case 'KeyV':
                         /// Paste.
@@ -1261,8 +1267,13 @@ import AV from '/build/av.module.js/av.module.js';
                         } else {
                             this.history.undo();
                         }
+                        this.save();
                         break;
+                    default:
+                        /// Do not preventDefault().
+                        return;
                 }
+                event.preventDefault();
             };
             document.body.onkeyup = ( event ) => {
                 if ( event.code === 'Space' ) {
