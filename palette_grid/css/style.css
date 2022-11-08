@@ -16,3 +16,56 @@ canvas.palette {
 canvas.overlay {
     z-index: -1;
 }
+
+.menu {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200px;
+    height: auto;
+    /* padding: 8px; */
+    background-color: #eeeeee;
+    z-index: 999;
+}
+.menu.active {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+.menu > div {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 8px;
+    cursor: pointer;
+    gap: 8px;
+}
+
+.menu > div input[type="color"] {
+    /* appearance: none; */
+    /* border: none; */
+    height: 32px;
+    width: 32px;
+    padding: 0;
+    margin: 0;
+}
+.menu > div input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 4px;
+}
+.menu > div input[type="color"]::-webkit-color-swatch {
+    /* border: none; */
+}
+
+.menu > div:hover {
+    background-color: #ddd;
+}
+
+.menu > div.hidden {
+    display: none;
+}
+
+.menu > div.disabled {
+    color: #bbb;
+}
