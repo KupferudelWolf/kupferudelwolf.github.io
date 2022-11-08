@@ -732,6 +732,19 @@ import AV from '/build/av.module.js/av.module.js';
         /** @type {CanvasObject} UI image. */
         overlay;
 
+        /** Activates the context menu.
+         * @param {number} x - X position on screen.
+         * @param {number} y - Y position on screen.
+         * @param {PaletteSquare} [target] - Square that was right-clicked, if any.
+         */
+        activateMenu( x, y, target ) { /* see: App.initContextMenu() */ }
+
+        /** Creates a square and attaches it to the mouse.
+         * @param {string|number|Color} [color] - Square color.
+         * @returns {PaletteSquare} The new square.
+         */
+        createNewSquareAtMouse( color ) { /* see: App.initInput() */ }
+
         /** Constructor. */
         constructor() {
             this.background_color = '#cccccc';
@@ -741,7 +754,7 @@ import AV from '/build/av.module.js/av.module.js';
             this.cam_y = ( this.output.cvs.height - SIZE ) / 2;
             this.container = new PaletteSquareFactory();
             this.initContextMenu();
-            this.initMouse();
+            this.initInput();
 
             /// Load from cookies.
             if ( !this.load() ) {
@@ -802,7 +815,7 @@ import AV from '/build/av.module.js/av.module.js';
 
         /** Initialize the context menu. */
         initContextMenu() {
-            var target, mouse_x, mouse_y;
+            var target, mouse_x, mouse_y, color = new Color(), hex;
 
             const menu = $( '.menu' );
             menu.on( 'contextmenu', ( event ) => {
@@ -814,8 +827,10 @@ import AV from '/build/av.module.js/av.module.js';
             } );
 
             const menu_add = $( '.menu #ctrl-add' );
+            const menu_clone = $( '.menu #ctrl-clone' );
             const menu_color = $( '.menu #ctrl-color' );
-            const menu_copy = $( '.menu #ctrl-copy' );
+            const menu_copyhex = $( '.menu #ctrl-copyhex' );
+            const menu_copypng = $( '.menu #ctrl-copypng' );
             const menu_delall = $( '.menu #ctrl-delall' );
             const menu_delete = $( '.menu #ctrl-delete' );
             const menu_save = $( '.menu #ctrl-save' );
@@ -830,8 +845,18 @@ import AV from '/build/av.module.js/av.module.js';
                     'left': x,
                     'top': y
                 } );
+                /// Get the pixel data.
+                const point = this.output.ctx.getImageData( mouse_x, mouse_y, 1, 1 ).data;
+                color.setRGB( point[ 0 ] / 255, point[ 1 ] / 255, point[ 2 ] / 255 );
+                hex = color.hex.slice( 0, 7 );
+                if ( hex === this.background_color ) {
+                    hex = null;
+                }
+                /// Toggle menu options.
                 menu_add.toggleClass( 'hidden', !!target );
+                menu_clone.toggleClass( 'hidden', !target );
                 menu_color.parent().toggleClass( 'hidden', !target );
+                menu_copyhex.toggleClass( 'disabled', !hex );
                 menu_delete.toggleClass( 'hidden', !target );
                 menu_delall.toggleClass( 'disabled', this.container.squares.length === 0 );
                 menu_delall.toggleClass( 'hidden', !!target );
@@ -858,6 +883,13 @@ import AV from '/build/av.module.js/av.module.js';
                 this.save();
             } );
 
+            menu_clone.on( 'click', () => {
+                /// Duplicate the selected square.
+                if ( !target ) return;
+                menu.removeClass( 'active' );
+                this.createNewSquareAtMouse( target.color );
+            } );
+
             menu_color.on( 'input change', () => {
                 /// Change the color.
                 if ( !target ) return;
@@ -874,7 +906,14 @@ import AV from '/build/av.module.js/av.module.js';
                 menu_color.trigger( 'click' );
             } );
 
-            menu_copy.on( 'click', () => {
+            menu_copyhex.on( 'click', () => {
+                /// Copy the hex value of the color beneath the cursor.
+                if ( menu_copyhex.hasClass( 'disabled' ) || !hex ) return;
+                menu.removeClass( 'active' );
+                navigator.clipboard.writeText( hex );
+            } );
+
+            menu_copypng.on( 'click', () => {
                 /// Copy the output onto the clipboard.
                 menu.removeClass( 'active' );
                 this.output.cvs.toBlob( function ( blob ) {
@@ -910,8 +949,8 @@ import AV from '/build/av.module.js/av.module.js';
             } );
         }
 
-        /** Initialize mouse input. */
-        initMouse() {
+        /** Initialize mouse and keyboard input. */
+        initInput() {
             const obj = this.overlay;
             const $cvs = obj.$;
             const menu = $( '.menu' );
@@ -919,6 +958,19 @@ import AV from '/build/av.module.js/av.module.js';
             var button, clicked, long, spacebar, target, time,
                 mouse_x, mouse_y, start_x, start_y,
                 target_x, target_y, view_x, view_y;
+
+            this.createNewSquareAtMouse = ( color ) => {
+                spacebar = false;
+                long = false;
+                clicked = true;
+                button = 1;
+                view_x = mouse_x - this.cam_x;
+                view_y = mouse_y - this.cam_y;
+                target_x = null;
+                target_y = null;
+                target = this.container.createSquare( view_x - SIZE / 2, view_y - SIZE / 2, color );
+                return target;
+            };
 
             /// Listen for the spacebar.
             document.body.onkeydown = ( event ) => {
@@ -930,15 +982,7 @@ import AV from '/build/av.module.js/av.module.js';
                             text = '#' + text;
                         };
                         if ( color_cache.set( text ) ) {
-                            spacebar = false;
-                            long = false;
-                            clicked = true;
-                            button = 1;
-                            view_x = mouse_x - this.cam_x;
-                            view_y = mouse_y - this.cam_y;
-                            target_x = null;
-                            target_y = null;
-                            target = this.container.createSquare( view_x - SIZE / 2, view_y - SIZE / 2, color_cache );
+                            this.createNewSquareAtMouse( color_cache );
                         }
                     } );
                 }
