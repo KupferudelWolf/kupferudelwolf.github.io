@@ -1298,6 +1298,7 @@ import AV from '/build/av.module.js/av.module.js';
                             ctx.stroke();
                             if ( long && Date.now() - time > 500 ) {
                                 /// Long-click is successful.
+                                this.activateMenu( mouse_x, mouse_y, target );
                                 $cvs.trigger( 'mouseup', [ 1 ] );
                             }
                         };
