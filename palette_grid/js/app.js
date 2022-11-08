@@ -1310,7 +1310,7 @@ import AV from '/build/av.module.js/av.module.js';
                         /// Middle click.
                         this.cam_x = mouse_x - view_x;
                         this.cam_y = mouse_y - view_y;
-                        this.save();
+                        // this.save();
                         break;
                     default:
                         break;
