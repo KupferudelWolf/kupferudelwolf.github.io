@@ -1,5 +1,6 @@
 /*jshint esversion: 7*/
 
+import Cookies from '/build/js.cookie.min.js';
 import AV from '/build/av.module.js/av.module.js';
 
 ( function () {
@@ -689,7 +690,7 @@ import AV from '/build/av.module.js/av.module.js';
         cam_y;
         /** @type {CanvasObject} Output image. */
         output;
-        /** @type {CanvasObject} User input. */
+        /** @type {CanvasObject} UI image. */
         overlay;
 
         /** Constructor. */
@@ -705,6 +706,37 @@ import AV from '/build/av.module.js/av.module.js';
 
             /// Create an initial square.
             this.container.createSquare( 0, 0 ).color.setValue( Math.random() * 0xffffff );
+        }
+
+        /** Updates the canvases. */
+        drawCanvas() {
+            const vw = this.output.cvs.width;
+            const vh = this.output.cvs.height;
+            const vx = this.cam_x;
+            const vy = this.cam_y;
+            const ctx = this.output.ctx;
+            const gui = this.overlay.ctx;
+            ctx.fillStyle = this.background_color;
+            ctx.fillRect( 0, 0, vw, vh );
+            gui.clearRect( 0, 0, vw, vh );
+            /// Background pattern.
+            ctx.strokeStyle = '#aaa';
+            for ( let y = vy % SIZE; y < vh; y += SIZE ) {
+                for ( let x = vx % SIZE; x < vw; x += SIZE ) {
+                    ctx.beginPath();
+                    ctx.moveTo( x, y - 4 );
+                    ctx.lineTo( x, y + 4 );
+                    ctx.moveTo( x - 4, y );
+                    ctx.lineTo( x + 4, y );
+                    ctx.stroke();
+                }
+            }
+            /// Squares and GUI elements.
+            this.container.forEach( ( square ) => {
+                square.draw( ctx, gui, vx, vy );
+            } );
+            this.output.draw( ctx );
+            this.overlay.draw( gui );
         }
 
         /** Initialize the canvases. */
@@ -735,6 +767,7 @@ import AV from '/build/av.module.js/av.module.js';
             const menu_add = $( '.menu #ctrl-add' );
             const menu_color = $( '.menu #ctrl-color' );
             const menu_copy = $( '.menu #ctrl-copy' );
+            const menu_delall = $( '.menu #ctrl-delall' );
             const menu_delete = $( '.menu #ctrl-delete' );
             const menu_save = $( '.menu #ctrl-save' );
 
@@ -751,6 +784,8 @@ import AV from '/build/av.module.js/av.module.js';
                 menu_add.toggleClass( 'hidden', !!target );
                 menu_color.parent().toggleClass( 'hidden', !target );
                 menu_delete.toggleClass( 'hidden', !target );
+                menu_delall.toggleClass( 'disabled', this.container.squares.length === 0 );
+                menu_delall.toggleClass( 'hidden', !!target );
             };
 
             menu_add.on( 'click', () => {
@@ -793,6 +828,12 @@ import AV from '/build/av.module.js/av.module.js';
                         new ClipboardItem( { "image/png": blob } )
                     ] );
                 } );
+            } );
+
+            menu_delall.on( 'click', () => {
+                if ( menu_delall.hasClass( 'disabled' ) ) return;
+                menu.removeClass( 'active' );
+                this.container.squares = [];
             } );
 
             menu_delete.on( 'click', () => {
@@ -993,37 +1034,6 @@ import AV from '/build/av.module.js/av.module.js';
             } );
         }
 
-        /** Updates the canvases. */
-        drawCanvas() {
-            const vw = this.output.cvs.width;
-            const vh = this.output.cvs.height;
-            const vx = this.cam_x;
-            const vy = this.cam_y;
-            const ctx = this.output.ctx;
-            const gui = this.overlay.ctx;
-            ctx.fillStyle = this.background_color;
-            ctx.fillRect( 0, 0, vw, vh );
-            gui.clearRect( 0, 0, vw, vh );
-            /// Background pattern.
-            ctx.strokeStyle = '#aaa';
-            for ( let y = vy % SIZE; y < vh; y += SIZE ) {
-                for ( let x = vx % SIZE; x < vw; x += SIZE ) {
-                    ctx.beginPath();
-                    ctx.moveTo( x, y - 4 );
-                    ctx.lineTo( x, y + 4 );
-                    ctx.moveTo( x - 4, y );
-                    ctx.lineTo( x + 4, y );
-                    ctx.stroke();
-                }
-            }
-            /// Squares and GUI elements.
-            this.container.forEach( ( square ) => {
-                square.draw( ctx, gui, vx, vy );
-            } );
-            this.output.draw( ctx );
-            this.overlay.draw( gui );
-        }
-
         /** Runs every frame. */
         run() {
             const step = () => {
@@ -1032,6 +1042,9 @@ import AV from '/build/av.module.js/av.module.js';
             };
             window.requestAnimationFrame( step );
         }
+
+        /** Saves the  */
+        save() { }
     }
 
     $( function () {
