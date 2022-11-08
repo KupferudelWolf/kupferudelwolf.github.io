@@ -4,7 +4,6 @@ import Cookies from '/build/js.cookie.min.js';
 import AV from '/build/av.module.js/av.module.js';
 
 ( function () {
-    const SIZE = 64;
     /**
      * @callback forEachCallback
      * @param {any} value
@@ -451,10 +450,13 @@ import AV from '/build/av.module.js/av.module.js';
         /** @type {PaletteSquare[]} An array of all PaletteSquare instances. */
         squares;
 
-        /** Constructor. */
-        constructor() {
+        /** Constructor.
+         * @param {number} size - The size of the squares.
+         */
+        constructor( size ) {
             this.squares = [];
             this.index = 0;
+            this.size = size;
         }
 
         /** Creates a new square.
@@ -473,8 +475,8 @@ import AV from '/build/av.module.js/av.module.js';
                 color: color,
                 x: x,
                 y: y,
-                w: SIZE,
-                h: SIZE,
+                w: this.size,
+                h: this.size,
                 index: this.index++
             } );
             obj.container = this;
@@ -510,10 +512,8 @@ import AV from '/build/av.module.js/av.module.js';
      * @class
      */
     class PaletteSquare {
-        /** @type {number} The X position of the upper left corner. */
-        x;
-        /** @type {number} The Y position of the upper left corner. */
-        y;
+        _x;
+        _y;
         /** @type {number} The depth value for draw order. */
         z;
         /** @type {number} The square's width */
@@ -544,11 +544,11 @@ import AV from '/build/av.module.js/av.module.js';
          */
         constructor( prop ) {
             this.color = prop.color;
-            this.x = prop.x;
-            this.y = prop.y;
-            this.z = prop.z || 0;
             this.w = prop.w;
             this.h = prop.h;
+            this._x = Math.round( prop.x / this.w );
+            this._y = Math.round( prop.y / this.h );
+            this.z = prop.z || 0;
             this.id = prop.index;
 
             this.locked = prop.locked || false;
@@ -562,6 +562,21 @@ import AV from '/build/av.module.js/av.module.js';
             this.color_cache = new Color();
 
             this.gui_timer = Date.now();
+        }
+
+        /** @type {number} The X position of the upper left corner. */
+        get x() {
+            return this._x * this.w;
+        }
+        set x( x ) {
+            this._x = x / this.w;
+        }
+        /** @type {number} The Y position of the upper left corner. */
+        get y() {
+            return this._y * this.h;
+        }
+        set y( y ) {
+            this._y = y / this.h;
         }
 
         /** Check if this aligns with a specific square, and connects if so.
@@ -634,7 +649,8 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( target ) connections.push( target );
             } );
             /// Break connections to the selected square.
-            this.x = this.y = SIZE / Math.PI;
+            this.x = this.w / Math.PI;
+            this.y = this.h / Math.PI;
             this.checkConnections();
             /// Connect squares that were connected to this one, if possible.
             connections.forEach( ( a ) => {
@@ -650,8 +666,8 @@ import AV from '/build/av.module.js/av.module.js';
          * @returns {boolean} Whether the point is within this square.
          */
         detect( x, y ) {
-            if ( y < this.y || y > this.y + this.h - 1 ) return false;
             if ( x < this.x || x > this.x + this.w - 1 ) return false;
+            if ( y < this.y || y > this.y + this.h - 1 ) return false;
             return true;
         }
 
@@ -685,11 +701,11 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( !targ || this.id > targ.id ) return;
                 const a = [ this.x, this.y ];
                 const b = [ targ.x, targ.y ];
-                if ( Math.abs( a[ 0 ] - b[ 0 ] ) > SIZE / 2 && Math.abs( a[ 1 ] - b[ 1 ] ) > SIZE / 2 ) {
+                if ( Math.abs( a[ 0 ] - b[ 0 ] ) > this.w / 2 && Math.abs( a[ 1 ] - b[ 1 ] ) > this.h / 2 ) {
                     /// Only draw the gradient if the squares are roughly aligned.
                     return;
                 }
-                const l = Math.max( Math.abs( a[ 0 ] - b[ 0 ] ), Math.abs( a[ 1 ] - b[ 1 ] ) ) / SIZE;
+                const l = Math.max( Math.abs( a[ 0 ] - b[ 0 ] ), Math.abs( a[ 1 ] - b[ 1 ] ) ) / this.w;
                 for ( let i = 1; i < l; ++i ) {
                     /// Draw the gradient.
                     var t = i / l;
@@ -710,10 +726,10 @@ import AV from '/build/av.module.js/av.module.js';
             [ 'left', 'top', 'bottom', 'right' ].forEach( ( key ) => {
                 const targ = this.connections[ key ];
                 if ( targ && this.id < targ.id ) {
-                    const x0 = this.x + x_off + SIZE / 2;
-                    const y0 = this.y + y_off + SIZE / 2;
-                    const x1 = targ.x + x_off + SIZE / 2;
-                    const y1 = targ.y + y_off + SIZE / 2;
+                    const x0 = this.x + x_off + this.w / 2;
+                    const y0 = this.y + y_off + this.h / 2;
+                    const x1 = targ.x + x_off + this.w / 2;
+                    const y1 = targ.y + y_off + this.h / 2;
                     if ( targ.node_color && this.node_color !== targ.node_color ) {
                         const grad = gui.createLinearGradient( x0, y0, x1, y1 );
                         grad.addColorStop( 0, this.node_color );
@@ -844,6 +860,8 @@ import AV from '/build/av.module.js/av.module.js';
         cam_x;
         /** @type {number} Negative Y position for canvas space. */
         cam_y;
+        /** @type {number} Zoom amount for canvas space. */
+        cam_z;
         /** @type {number} Timer for UI opacity. */
         gui_timer;
         /** @type {History} Undo history. */
@@ -852,6 +870,8 @@ import AV from '/build/av.module.js/av.module.js';
         output;
         /** @type {CanvasObject} UI image. */
         overlay;
+        /** @type {number} The size of one square (in pixels). */
+        size;
 
         /** Activates the context menu.
          * @param {number} x - X position on screen.
@@ -869,9 +889,11 @@ import AV from '/build/av.module.js/av.module.js';
         /** Constructor. */
         constructor() {
             this.initCanvas();
-            this.cam_x = ( this.output.cvs.width - SIZE ) / 2;
-            this.cam_y = ( this.output.cvs.height - SIZE ) / 2;
-            this.container = new PaletteSquareFactory();
+            this.size = 64;
+            this.cam_x = ( this.output.cvs.width - this.size ) / 2;
+            this.cam_y = ( this.output.cvs.height - this.size ) / 2;
+            this.cam_z = 1;
+            this.container = new PaletteSquareFactory( this.size );
             this.history = new UndoHistory(
                 /// Undo.
                 ( a, b ) => {
@@ -902,12 +924,13 @@ import AV from '/build/av.module.js/av.module.js';
 
         /** Center the camera and all squares. */
         centerView() {
-            this.cam_x = ( this.output.cvs.width - SIZE ) / 2;
-            this.cam_y = ( this.output.cvs.height - SIZE ) / 2;
+            this.cam_x = ( this.output.cvs.width - this.size ) / 2;
+            this.cam_y = ( this.output.cvs.height - this.size ) / 2;
+            this.cam_z = 1;
             var min_x = 0, min_y = 0, max_x = 0, max_y = 0;
             this.container.forEach( ( square ) => {
-                const x = square.x / SIZE;
-                const y = square.y / SIZE;
+                const x = square.x / this.size;
+                const y = square.y / this.size;
                 min_x = Math.min( min_x, Math.floor( x ) );
                 max_x = Math.max( max_x, Math.floor( x ) + 1 );
                 min_y = Math.min( min_y, Math.floor( y ) );
@@ -936,8 +959,8 @@ import AV from '/build/av.module.js/av.module.js';
             gui.clearRect( 0, 0, vw, vh );
             /// Background pattern.
             ctx.strokeStyle = '#aaa';
-            for ( let y = vy % SIZE; y < vh; y += SIZE ) {
-                for ( let x = vx % SIZE; x < vw; x += SIZE ) {
+            for ( let y = vy % this.size; y < vh; y += this.size ) {
+                for ( let x = vx % this.size; x < vw; x += this.size ) {
                     ctx.beginPath();
                     ctx.moveTo( x, y - 4 );
                     ctx.lineTo( x, y + 4 );
@@ -1018,7 +1041,6 @@ import AV from '/build/av.module.js/av.module.js';
         /** Initialize the context menu. */
         initContextMenu() {
             var target, mouse_x, mouse_y, color = new Color(), hex;
-            const bar = $( '.button-bar' );
             const menu = $( '.menu' );
             menu.on( 'contextmenu', ( event ) => {
                 event.preventDefault();
@@ -1082,8 +1104,8 @@ import AV from '/build/av.module.js/av.module.js';
                 menu.removeClass( 'active' );
                 /// Get the pixel data before adding the square.
                 const point = this.output.ctx.getImageData( mouse_x, mouse_y, 1, 1 ).data;
-                const x = Math.floor( ( mouse_x - this.cam_x ) / SIZE ) * SIZE;
-                const y = Math.floor( ( mouse_y - this.cam_y ) / SIZE ) * SIZE;
+                const x = Math.floor( ( mouse_x - this.cam_x ) / this.size ) * this.size;
+                const y = Math.floor( ( mouse_y - this.cam_y ) / this.size ) * this.size;
                 const square = this.container.createSquare( x, y );
                 /// Set the color to that of any gradients beneath the point.
                 square.color.setRGB( point[ 0 ] / 255, point[ 1 ] / 255, point[ 2 ] / 255 );
@@ -1190,7 +1212,9 @@ import AV from '/build/av.module.js/av.module.js';
                 view_y = mouse_y - this.cam_y;
                 target_x = null;
                 target_y = null;
-                target = this.container.createSquare( view_x - SIZE / 2, view_y - SIZE / 2, color );
+                const nx = view_x - this.size / 2;
+                const ny = view_y - this.size / 2;
+                target = this.container.createSquare( nx, ny, color );
                 return target;
             };
 
@@ -1239,12 +1263,12 @@ import AV from '/build/av.module.js/av.module.js';
 
             overlay.draws[ 0 ] = ( ctx ) => {
                 if ( mouse_x === null || mouse_y === null ) return;
-                const x = Math.floor( ( mouse_x - this.cam_x ) / SIZE ) * SIZE + this.cam_x;
-                const y = Math.floor( ( mouse_y - this.cam_y ) / SIZE ) * SIZE + this.cam_y;
+                const x = Math.floor( ( mouse_x - this.cam_x ) / this.size ) * this.size + this.cam_x;
+                const y = Math.floor( ( mouse_y - this.cam_y ) / this.size ) * this.size + this.cam_y;
                 ctx.strokeStyle = '#777';
                 // ctx.globalAlpha = 0.25;
                 ctx.lineWidth = 0.5;
-                ctx.strokeRect( x, y, SIZE, SIZE );
+                ctx.strokeRect( x, y, this.size, this.size );
                 ctx.globalAlpha = 1;
             };
 
@@ -1341,8 +1365,8 @@ import AV from '/build/av.module.js/av.module.js';
                         if ( long ) break;
                         if ( target ) {
                             $cvs.addClass( 'grabbing' );
-                            target.x = mouse_x - this.cam_x - SIZE / 2;
-                            target.y = mouse_y - this.cam_y - SIZE / 2;
+                            target.x = mouse_x - this.cam_x - this.size / 2;
+                            target.y = mouse_y - this.cam_y - this.size / 2;
                         }
                         if ( !target || spacebar ) {
                             $cvs.addClass( 'drag' );
@@ -1399,13 +1423,13 @@ import AV from '/build/av.module.js/av.module.js';
                                     }
                                 } else {
                                     /// Snap the square to the grid.
-                                    const x = Math.round( target.x / SIZE ) * SIZE;
-                                    const y = Math.round( target.y / SIZE ) * SIZE;
+                                    const x = Math.round( target.x / this.size ) * this.size;
+                                    const y = Math.round( target.y / this.size ) * this.size;
                                     /// Check if the square will collide with another.
                                     /// Make sure the target itself isn't detected.
-                                    target.y += SIZE;
+                                    target.y += this.size;
                                     const detects = this.container.detectAll( x, y )[ 0 ];
-                                    target.y -= SIZE;
+                                    target.y -= this.size;
                                     if ( detects ) {
                                         /// Place the square back where it belongs.
                                         if ( target_x !== null && target_y !== null ) {
@@ -1445,6 +1469,15 @@ import AV from '/build/av.module.js/av.module.js';
                 }
                 button = null;
             } );
+            $cvs.on( 'wheel', ( event ) => {
+                if ( clicked ) return;
+                menu.removeClass( 'active' );
+                // const dx = Math.sign( event.originalEvent.deltaX );
+                const dy = Math.sign( event.originalEvent.deltaY );
+                const z = this.cam_z - dy * 0.25;
+                this.setZoom( z );
+            } );
+
         }
 
         /** Loads data from cookies.
@@ -1465,7 +1498,7 @@ import AV from '/build/av.module.js/av.module.js';
             data.forEach( ( obj ) => {
                 switch ( obj.type ) {
                     case 'square':
-                        const square = this.container.createSquare( obj.x, obj.y );
+                        const square = this.container.createSquare( obj.x * this.size, obj.y * this.size );
                         square.color.setValue( obj.color );
                         square.id = obj.id;
                         max_id = Math.max( max_id, square.id );
@@ -1473,9 +1506,10 @@ import AV from '/build/av.module.js/av.module.js';
                         obj.square = square;
                         break;
                     case 'meta':
-                        this.cam_x = obj.x;
-                        this.cam_y = obj.y;
-                        this.background_color = obj.background;
+                        if ( !isNaN( +obj.x ) ) this.cam_x = +obj.x;
+                        if ( !isNaN( +obj.y ) ) this.cam_y = +obj.y;
+                        if ( !isNaN( +obj.z ) ) this.setZoom( +obj.z );
+                        if ( typeof this.background_color !== 'undefined' ) this.background_color = obj.background;
                         break;
                 }
             } );
@@ -1495,8 +1529,9 @@ import AV from '/build/av.module.js/av.module.js';
         /** Resets the app. */
         reset() {
             this.container.squares = [];
-            this.cam_x = ( this.output.cvs.width - SIZE ) / 2;
-            this.cam_y = ( this.output.cvs.height - SIZE ) / 2;
+            this.cam_x = ( this.output.cvs.width - this.size ) / 2;
+            this.cam_y = ( this.output.cvs.height - this.size ) / 2;
+            this.cam_z = 1;
         }
 
         /** Saves the current squares to cookies.
@@ -1508,6 +1543,7 @@ import AV from '/build/av.module.js/av.module.js';
                 type: 'meta',
                 x: this.cam_x,
                 y: this.cam_y,
+                z: this.cam_z,
                 background: this.background_color
             } ];
             this.container.forEach( ( square ) => {
@@ -1515,8 +1551,8 @@ import AV from '/build/av.module.js/av.module.js';
                     type: 'square',
                     id: square.id,
                     color: square.color.getValue(),
-                    x: square.x,
-                    y: square.y,
+                    x: square._x,
+                    y: square._y,
                     links: []
                 };
                 [ 'left', 'top', 'right', 'down' ].forEach( ( side ) => {
@@ -1532,6 +1568,19 @@ import AV from '/build/av.module.js/av.module.js';
             Cookies.set( 'autosave', cookie );
             this.history.add( cookie );
             return true;
+        }
+
+        /** Sets the App.cam_z value.
+         * @param {number} zoom - The desired zoom multiplier.
+         */
+        setZoom( zoom ) {
+            this.cam_z = AV.clamp( zoom, 0.5, 2 );
+            this.size = 64 * this.cam_z;
+            this.container.size = this.size;
+            this.container.forEach( ( square ) => {
+                square.w = this.size;
+                square.h = this.size;
+            } );
         }
 
         /** Runs every frame. */
