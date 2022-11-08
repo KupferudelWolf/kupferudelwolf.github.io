@@ -966,12 +966,14 @@ import AV from '/build/av.module.js/av.module.js';
                         } else {
                             this.cam_x = mouse_x - view_x;
                             this.cam_y = mouse_y - view_y;
+                            this.save();
                         }
                         break;
                     case 2:
                         /// Middle click.
                         this.cam_x = mouse_x - view_x;
                         this.cam_y = mouse_y - view_y;
+                        this.save();
                         break;
                     default:
                         break;
