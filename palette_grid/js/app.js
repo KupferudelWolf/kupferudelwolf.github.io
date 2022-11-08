@@ -1018,7 +1018,7 @@ import AV from '/build/av.module.js/av.module.js';
         /** Initialize the context menu. */
         initContextMenu() {
             var target, mouse_x, mouse_y, color = new Color(), hex;
-
+            const bar = $( '.button-bar' );
             const menu = $( '.menu' );
             menu.on( 'contextmenu', ( event ) => {
                 event.preventDefault();
@@ -1042,12 +1042,6 @@ import AV from '/build/av.module.js/av.module.js';
                 target = t || null;
                 mouse_x = x;
                 mouse_y = y;
-                /// Bring up the context menu.
-                menu.addClass( 'active' );
-                menu.css( {
-                    'left': x,
-                    'top': y
-                } );
                 /// Get the pixel data.
                 const point = this.output.ctx.getImageData( mouse_x, mouse_y, 1, 1 ).data;
                 color.setRGB( point[ 0 ] / 255, point[ 1 ] / 255, point[ 2 ] / 255 );
@@ -1067,6 +1061,19 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( target ) {
                     menu_color.val( target.color.hex.slice( 0, 7 ) );
                 }
+                /// Make sure the menu does not go off the screen.
+                const menu_width = menu.width();
+                const menu_height = menu.height();
+                const screen_width = window.innerWidth;
+                const screen_height = window.innerHeight;// - bar.height();
+                x = Math.min( x + 1, screen_width - menu_width );
+                y = Math.min( y + 1, screen_height - menu_height );
+                /// Bring up the context menu.
+                menu.addClass( 'active' );
+                menu.css( {
+                    'left': x,
+                    'top': y
+                } );
             };
 
             menu_add.on( 'click', () => {
