@@ -868,8 +868,6 @@ import AV from '/build/av.module.js/av.module.js';
 
         /** Constructor. */
         constructor() {
-            this.background_color = '#cccccc';
-
             this.initCanvas();
             this.cam_x = ( this.output.cvs.width - SIZE ) / 2;
             this.cam_y = ( this.output.cvs.height - SIZE ) / 2;
@@ -895,6 +893,9 @@ import AV from '/build/av.module.js/av.module.js';
             if ( !this.load() ) {
                 /// Create an initial square if no data is available.
                 this.container.createSquare( 0, 0 ).color.setValue( Math.random() * 0xffffff );
+            }
+            if ( !this.background_color ) {
+                this.background_color = '#cccccc';
             }
             this.history.add( this.save( true ) );
         }
@@ -1028,6 +1029,7 @@ import AV from '/build/av.module.js/av.module.js';
             } );
 
             const menu_add = $( '.menu #ctrl-add' );
+            const menu_bg = $( '.menu #ctrl-bg' );
             const menu_clone = $( '.menu #ctrl-clone' );
             const menu_color = $( '.menu #ctrl-color' );
             const menu_copyhex = $( '.menu #ctrl-copyhex' );
@@ -1055,6 +1057,7 @@ import AV from '/build/av.module.js/av.module.js';
                 }
                 /// Toggle menu options.
                 menu_add.toggleClass( 'hidden', !!target );
+                menu_bg.val( this.background_color ).parent().toggleClass( 'hidden', !!hex );
                 menu_clone.toggleClass( 'hidden', !target );
                 menu_color.parent().toggleClass( 'hidden', !target );
                 menu_copyhex.toggleClass( 'disabled', !hex );
@@ -1081,6 +1084,11 @@ import AV from '/build/av.module.js/av.module.js';
                     /// Make the color random instead.
                     square.color.setValue( Math.random() * 0xffffff );
                 }
+                this.save();
+            } );
+
+            menu_bg.on( 'input change', () => {
+                this.background_color = menu_bg.val();
                 this.save();
             } );
 
@@ -1459,6 +1467,7 @@ import AV from '/build/av.module.js/av.module.js';
                     case 'meta':
                         this.cam_x = obj.x;
                         this.cam_y = obj.y;
+                        this.background_color = obj.background;
                         break;
                 }
             } );
@@ -1490,7 +1499,8 @@ import AV from '/build/av.module.js/av.module.js';
             const data = [ {
                 type: 'meta',
                 x: this.cam_x,
-                y: this.cam_y
+                y: this.cam_y,
+                background: this.background_color
             } ];
             this.container.forEach( ( square ) => {
                 const obj = {
