@@ -1071,6 +1071,7 @@ import AV from '/build/av.module.js/av.module.js';
                 Cookies.remove( 'data' );
                 return;
             }
+            const list_by_id = [];
             var max_id = 0;
             data.forEach( ( obj ) => {
                 switch ( obj.type ) {
@@ -1079,6 +1080,8 @@ import AV from '/build/av.module.js/av.module.js';
                         square.color.setValue( obj.color );
                         square.id = obj.id;
                         max_id = Math.max( max_id, square.id );
+                        list_by_id[ obj.id ] = square;
+                        obj.square = square;
                         break;
                     case 'meta':
                         this.cam_x = obj.x;
@@ -1087,6 +1090,15 @@ import AV from '/build/av.module.js/av.module.js';
                 }
             } );
             this.container.index = max_id + 1;
+            /// Load saved connections.
+            data.forEach( ( obj ) => {
+                if ( obj.type !== 'square' || !obj.links ) return;
+                obj.links.forEach( ( id ) => {
+                    const target = list_by_id[ id ];
+                    if ( !target ) return;
+                    obj.square.connect( target );
+                } );
+            } );
             return true;
         }
 
@@ -1103,12 +1115,12 @@ import AV from '/build/av.module.js/av.module.js';
                     id: square.id,
                     color: square.color.getValue(),
                     x: square.x,
-                    y: square.y
+                    y: square.y,
+                    links: []
                 };
                 [ 'left', 'top', 'right', 'down' ].forEach( ( side ) => {
                     const target = square.connections[ side ];
-                    if ( !target ) return;
-                    obj[ side ] = target.id;
+                    if ( target ) obj.links.push( target.id );
                 } );
                 data.push( obj );
             } );
