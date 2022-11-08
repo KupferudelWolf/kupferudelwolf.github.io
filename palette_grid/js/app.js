@@ -633,8 +633,8 @@ import AV from '/build/av.module.js/av.module.js';
          * @param {number} [y_off=0] - Shifts the Y position.
          */
         draw( ctx, gui, x_off = 0, y_off = 0 ) {
-            const w = this.w;
-            const h = this.h;
+            const w = this.w + 0.49;
+            const h = this.h + 0.49;
             const x1 = this.x + x_off;
             const y1 = this.y + y_off;
             // const x2 = x1 + w;
@@ -653,13 +653,13 @@ import AV from '/build/av.module.js/av.module.js';
                 }
                 const l = Math.max( Math.abs( a[ 0 ] - b[ 0 ] ), Math.abs( a[ 1 ] - b[ 1 ] ) ) / SIZE;
                 for ( let i = 1; i < l; ++i ) {
+                    /// Draw the gradient.
                     var t = i / l;
-                    // if ( targ.x < this.x || targ.y < this.y ) t = 1 - t;
                     const x = AV.lerp( a[ 0 ], b[ 0 ], t ) + x_off;
                     const y = AV.lerp( a[ 1 ], b[ 1 ], t ) + y_off;
                     this.color_cache.lerpColors( this.color, targ.color, t, true );
                     ctx.fillStyle = this.color_cache.hex;
-                    ctx.fillRect( x, y, SIZE, SIZE );
+                    ctx.fillRect( x, y, w, h );
                 }
             } );
             if ( !gui ) return;
