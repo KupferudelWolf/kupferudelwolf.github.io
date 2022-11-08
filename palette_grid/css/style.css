@@ -20,6 +20,38 @@ canvas.overlay {
 canvas.drag {
     cursor: grab;
 }
+canvas.grabbing {
+    cursor: grabbing;
+}
+
+.spacer {
+    flex-grow: 1;
+}
+
+.button-bar {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: calc(100vw - 80px);
+    height: 10vh;
+    padding: 20px 40px;
+    gap: 40px;
+    z-index: 899;
+    pointer-events: none;
+}
+.button-bar .button {
+    width: 8vh;
+    height: 8vh;
+    border-radius: 50%;
+    background-color: #bbbbbb;
+    pointer-events: auto;
+    cursor: pointer;
+}
+.button-bar .button.disabled {
+    pointer-events: none;
+}
 
 .menu {
     display: none;

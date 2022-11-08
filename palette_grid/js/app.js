@@ -876,6 +876,7 @@ import AV from '/build/av.module.js/av.module.js';
                 // ( obj_a, obj.b ) => { }
             );
             this.initContextMenu();
+            this.initButtons();
             this.initInput();
 
             /// Load from cookies.
@@ -1074,11 +1075,21 @@ import AV from '/build/av.module.js/av.module.js';
             } );
         }
 
+        /** Initialize the buttons. */
+        initButtons() {
+            $( '.button-bar .button' ).on( 'contextmenu', ( event ) => {
+                event.preventDefault();
+            } ).on( 'click', () => {
+                // console.log( 'a' );
+            } );
+        }
+
         /** Initialize mouse and keyboard input. */
         initInput() {
             const overlay = this.overlay;
             const $cvs = overlay.$;
             const menu = $( '.menu' );
+            const $bar = $( '.button-bar .button' );
             const color_cache = new Color();
             var button, clicked, long, spacebar, target, time,
                 mouse_x, mouse_y, start_x, start_y,
@@ -1087,6 +1098,7 @@ import AV from '/build/av.module.js/av.module.js';
                 disable_undo;
 
             this.createNewSquareAtMouse = ( color ) => {
+                $bar.addClass( 'disabled' );
                 disable_undo = true;
                 spacebar = false;
                 long = false;
@@ -1100,29 +1112,40 @@ import AV from '/build/av.module.js/av.module.js';
                 return target;
             };
 
-            /// Listen for the spacebar.
+            /// Listen for keypresses.
+            const menu_copypng = $( '.menu #ctrl-copypng' );
             document.body.onkeydown = ( event ) => {
                 spacebar = event.code === 'Space';
                 if ( spacebar ) {
                     $cvs.addClass( 'drag' );
+                    view_x = mouse_x - this.cam_x;
+                    view_y = mouse_y - this.cam_y;
                 }
-                if ( event.code === 'KeyZ' && event.ctrlKey && !disable_undo ) {
-                    if ( event.shiftKey ) {
-                        this.history.redo();
-                    } else {
-                        this.history.undo();
-                    }
-                }
-                if ( event.code === 'KeyV' && event.ctrlKey ) {
-                    /// Paste.
-                    navigator.clipboard.readText().then( ( text ) => {
-                        if ( !isNaN( '0x' + text ) ) {
-                            text = '#' + text;
-                        };
-                        if ( color_cache.set( text ) ) {
-                            this.createNewSquareAtMouse( color_cache );
+                if ( !event.ctrlKey ) return;
+                switch ( event.code ) {
+                    case 'KeyC':
+                        /// Copy the entire image.
+                        menu_copypng.trigger( 'click' );
+                        break;
+                    case 'KeyV':
+                        /// Paste.
+                        navigator.clipboard.readText().then( ( text ) => {
+                            if ( !isNaN( '0x' + text ) ) {
+                                text = '#' + text;
+                            }
+                            if ( color_cache.set( text ) ) {
+                                this.createNewSquareAtMouse( color_cache );
+                            }
+                        } );
+                        break;
+                    case 'KeyZ':
+                        if ( disable_undo ) break;
+                        if ( event.shiftKey ) {
+                            this.history.redo();
+                        } else {
+                            this.history.undo();
                         }
-                    } );
+                        break;
                 }
             };
             document.body.onkeyup = ( event ) => {
@@ -1152,8 +1175,9 @@ import AV from '/build/av.module.js/av.module.js';
                 this.gui_timer = Date.now();
                 /// Ignore if another mouse button is currently pressed.
                 if ( button ) return;
-                /// Deactivate the context menu.
+                /// Deactivate the context menu and buttons.
                 menu.removeClass( 'active' );
+                $bar.addClass( 'disabled' );
                 /// Keep track of which mouse button is being pressed.
                 button = event.which;
                 /// Record the current mouse position.
@@ -1177,7 +1201,7 @@ import AV from '/build/av.module.js/av.module.js';
                         /// Spacebar forces drag.
                         if ( spacebar ) {
                             $cvs.addClass( 'drag' );
-                            target = false;
+                            // target = false;
                             break;
                         }
                         long = true;
@@ -1221,7 +1245,7 @@ import AV from '/build/av.module.js/av.module.js';
                         /// Left click.
                         /// Spacebar forces drag.
                         if ( spacebar ) {
-                            target = false;
+                            // target = false;
                             overlay.draws[ 1 ] = () => { };
                             long = false;
                         }
@@ -1233,13 +1257,17 @@ import AV from '/build/av.module.js/av.module.js';
                         }
                         if ( long ) break;
                         if ( target ) {
+                            $cvs.addClass( 'grabbing' );
                             target.x = mouse_x - this.cam_x - SIZE / 2;
                             target.y = mouse_y - this.cam_y - SIZE / 2;
-                        } else {
+                        }
+                        if ( !target || spacebar ) {
                             $cvs.addClass( 'drag' );
                             this.cam_x = mouse_x - view_x;
                             this.cam_y = mouse_y - view_y;
-                            this.save();
+                            start_x = mouse_x
+                            start_y = mouse_y
+                            // this.save();
                         }
                         break;
                     case 2:
@@ -1255,13 +1283,16 @@ import AV from '/build/av.module.js/av.module.js';
             $cvs.on( 'mouseup mouseleave', ( event, prop ) => {
                 event.preventDefault();
                 $cvs.removeClass( 'drag' );
+                $cvs.removeClass( 'grabbing' );
                 disable_undo = false;
                 if ( !prop && event.which !== button ) {
                     if ( event.type === 'mouseleave' ) {
                         mouse_x = mouse_y = null;
+                        $bar.removeClass( 'disabled' );
                     }
                     return;
                 }
+                $bar.removeClass( 'disabled' );
                 switch ( ( prop && prop[ 0 ] ) || button ) {
                     case 1:
                         /// Left click.
