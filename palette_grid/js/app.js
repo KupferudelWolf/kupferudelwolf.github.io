@@ -803,6 +803,9 @@ import AV from '/build/av.module.js/av.module.js';
                 menu_delete.toggleClass( 'hidden', !target );
                 menu_delall.toggleClass( 'disabled', this.container.squares.length === 0 );
                 menu_delall.toggleClass( 'hidden', !!target );
+                if ( target ) {
+                    menu_color.val( target.color.hex );
+                }
             };
 
             menu_add.on( 'click', () => {
