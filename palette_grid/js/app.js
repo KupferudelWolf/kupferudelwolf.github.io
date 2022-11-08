@@ -872,6 +872,12 @@ import AV from '/build/av.module.js/av.module.js';
         overlay;
         /** @type {number} The size of one square (in pixels). */
         size;
+        /** @type {number} The maximum zoom multiplier. */
+        zoom_max;
+        /** @type {number} The minimum zoom multiplier. */
+        zoom_min;
+        /** @type {number} Step value for zoom multiplier. */
+        zoom_precision;
 
         /** Activates the context menu.
          * @param {number} x - X position on screen.
@@ -888,8 +894,12 @@ import AV from '/build/av.module.js/av.module.js';
 
         /** Constructor. */
         constructor() {
-            this.initCanvas();
             this.size = 64;
+            this.zoom_precision = 0.25;
+            this.zoom_min = 0.5;
+            this.zoom_max = 2;
+
+            this.initCanvas();
             this.cam_x = ( this.output.cvs.width - this.size ) / 2;
             this.cam_y = ( this.output.cvs.height - this.size ) / 2;
             this.cam_z = 1;
@@ -1474,8 +1484,7 @@ import AV from '/build/av.module.js/av.module.js';
                 menu.removeClass( 'active' );
                 // const dx = Math.sign( event.originalEvent.deltaX );
                 const dy = Math.sign( event.originalEvent.deltaY );
-                const z = this.cam_z - dy * 0.25;
-                this.setZoom( z );
+                this.setZoom( this.cam_z - dy * this.zoom_precision );
             } );
 
         }
@@ -1574,7 +1583,7 @@ import AV from '/build/av.module.js/av.module.js';
          * @param {number} zoom - The desired zoom multiplier.
          */
         setZoom( zoom ) {
-            this.cam_z = AV.clamp( zoom, 0.5, 2 );
+            this.cam_z = AV.clamp( zoom, this.zoom_min, this.zoom_max );
             this.size = 64 * this.cam_z;
             this.container.size = this.size;
             this.container.forEach( ( square ) => {
