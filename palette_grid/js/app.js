@@ -839,6 +839,8 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( menu_delall.hasClass( 'disabled' ) ) return;
                 menu.removeClass( 'active' );
                 this.container.squares = [];
+                this.cam_x = ( this.output.cvs.width - SIZE ) / 2;
+                this.cam_y = ( this.output.cvs.height - SIZE ) / 2;
             } );
 
             menu_delete.on( 'click', () => {
