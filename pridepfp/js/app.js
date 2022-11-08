@@ -417,7 +417,8 @@
         } );
 
         $( '#include-flag2' ).on( 'change', function () {
-            $( '#flag2' ).prop( 'disabled', !$( this ).attr( 'checked' ) );
+            console.log( $( this ).is( ':checked' ) );
+            $( '#flag2' ).prop( 'disabled', !$( this ).is( ':checked' ) );
             APP.splitFlag = $( this ).is( ':checked' );
         } );
 
