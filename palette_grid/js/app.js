@@ -431,7 +431,14 @@ import AV from '/build/av.module.js/av.module.js';
             this.cvs = cvs;
             this.ctx = ctx;
             this.$ = $( cvs );
-            this.draw = () => { };
+            this.draws = [];
+        }
+
+        /** Draw function. */
+        draw() {
+            this.draws.forEach( ( f ) => {
+                f( this.ctx, this );
+            } );
         }
     }
 
@@ -790,8 +797,8 @@ import AV from '/build/av.module.js/av.module.js';
             this.container.forEach( ( square ) => {
                 square.draw( ctx, gui, vx, vy );
             } );
-            this.output.draw( ctx );
-            this.overlay.draw( gui );
+            this.output.draw();
+            this.overlay.draw();
             const timer = Date.now() - this.gui_timer;
             const opacity = AV.clamp( 1 - ( timer - 3000 ) / 500 );
             this.overlay.$.css( 'opacity', opacity );
@@ -951,13 +958,14 @@ import AV from '/build/av.module.js/av.module.js';
 
         /** Initialize mouse and keyboard input. */
         initInput() {
-            const obj = this.overlay;
-            const $cvs = obj.$;
+            const overlay = this.overlay;
+            const $cvs = overlay.$;
             const menu = $( '.menu' );
             const color_cache = new Color();
             var button, clicked, long, spacebar, target, time,
                 mouse_x, mouse_y, start_x, start_y,
-                target_x, target_y, view_x, view_y;
+                target_x, target_y,
+                view_x = null, view_y = null;
 
             this.createNewSquareAtMouse = ( color ) => {
                 spacebar = false;
@@ -975,6 +983,9 @@ import AV from '/build/av.module.js/av.module.js';
             /// Listen for the spacebar.
             document.body.onkeydown = ( event ) => {
                 spacebar = event.code === 'Space';
+                if ( spacebar ) {
+                    $cvs.addClass( 'drag' );
+                }
                 if ( event.code === 'KeyV' && event.ctrlKey ) {
                     /// Paste.
                     navigator.clipboard.readText().then( ( text ) => {
@@ -988,7 +999,21 @@ import AV from '/build/av.module.js/av.module.js';
                 }
             };
             document.body.onkeyup = ( event ) => {
+                if ( event.code === 'Space' ) {
+                    $cvs.removeClass( 'drag' );
+                }
                 spacebar = false;
+            };
+
+            overlay.draws[ 0 ] = ( ctx ) => {
+                if ( mouse_x === null || mouse_y === null ) return;
+                const x = Math.floor( ( mouse_x - this.cam_x ) / SIZE ) * SIZE + this.cam_x;
+                const y = Math.floor( ( mouse_y - this.cam_y ) / SIZE ) * SIZE + this.cam_y;
+                ctx.strokeStyle = '#777';
+                // ctx.globalAlpha = 0.25;
+                ctx.lineWidth = 0.5;
+                ctx.strokeRect( x, y, SIZE, SIZE );
+                ctx.globalAlpha = 1;
             };
 
             $cvs.on( 'contextmenu', ( event ) => {
@@ -1024,13 +1049,14 @@ import AV from '/build/av.module.js/av.module.js';
                         clicked = true;
                         /// Spacebar forces drag.
                         if ( spacebar ) {
+                            $cvs.addClass( 'drag' );
                             target = false;
                             break;
                         }
                         long = true;
                         time = Date.now();
                         /// Long-click indicator and listener.
-                        obj.draw = ( ctx ) => {
+                        overlay.draws[ 1 ] = ( ctx ) => {
                             if ( !clicked ) return;
                             const t = ( Date.now() - time ) / 500;
                             ctx.strokeStyle = 'red';
@@ -1069,13 +1095,13 @@ import AV from '/build/av.module.js/av.module.js';
                         /// Spacebar forces drag.
                         if ( spacebar ) {
                             target = false;
-                            obj.draw = () => { };
+                            overlay.draws[ 1 ] = () => { };
                             long = false;
                         }
                         const dist = Math.sqrt( ( mouse_y - start_y ) ** 2 + ( mouse_x - start_x ) ** 2 );
                         if ( long && dist >= 2 ) {
                             /// Moved too far for a long-click.
-                            obj.draw = () => { };
+                            overlay.draws[ 1 ] = () => { };
                             long = false;
                         }
                         if ( long ) break;
@@ -1083,6 +1109,7 @@ import AV from '/build/av.module.js/av.module.js';
                             target.x = mouse_x - this.cam_x - SIZE / 2;
                             target.y = mouse_y - this.cam_y - SIZE / 2;
                         } else {
+                            $cvs.addClass( 'drag' );
                             this.cam_x = mouse_x - view_x;
                             this.cam_y = mouse_y - view_y;
                             this.save();
@@ -1100,7 +1127,13 @@ import AV from '/build/av.module.js/av.module.js';
             } );
             $cvs.on( 'mouseup mouseleave', ( event, prop ) => {
                 event.preventDefault();
-                if ( !prop && event.which !== button ) return;
+                $cvs.removeClass( 'drag' );
+                if ( !prop && event.which !== button ) {
+                    if ( event.type === 'mouseleave' ) {
+                        mouse_x = mouse_y = null;
+                    }
+                    return;
+                }
                 switch ( ( prop && prop[ 0 ] ) || button ) {
                     case 1:
                         /// Left click.
@@ -1152,9 +1185,9 @@ import AV from '/build/av.module.js/av.module.js';
                                 }
                             }
                         }
-                        obj.draw = () => { };
+                        overlay.draws[ 1 ] = () => { };
                         target = null;
-                        view_x = view_y = mouse_x = mouse_y = start_x = start_y = target_x = target_y = 0;
+                        view_x = view_y = start_x = start_y = target_x = target_y = 0;
                         clicked = long = false;
                         break;
                     case 2:
@@ -1164,6 +1197,9 @@ import AV from '/build/av.module.js/av.module.js';
                         break;
                     default:
                         break;
+                }
+                if ( event.type === 'mouseleave' ) {
+                    mouse_x = mouse_y = null;
                 }
                 button = null;
             } );

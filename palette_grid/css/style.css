@@ -17,6 +17,10 @@ canvas.overlay {
     z-index: -1;
 }
 
+canvas.drag {
+    cursor: grab;
+}
+
 .menu {
     display: none;
     position: absolute;
