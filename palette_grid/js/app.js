@@ -292,7 +292,10 @@ import AV from '/build/av.module.js/av.module.js';
         lerpHSL( color, t ) {
             const color_a = this.calcHSL();
             const color_b = color.calcHSL();
-            const h = AV.lerp( color_a.h, color_b.h, t );
+            // const h = AV.lerp( color_a.h, color_b.h, t );
+            const da = ( color_b.h - color_a.h ) % 1;
+            const dist = 2 * da % 1 - da;
+            const h = t * dist + color_a.h;
             const s = AV.lerp( color_a.s, color_b.s, t );
             const l = AV.lerp( color_a.l, color_b.l, t );
             const a = AV.lerp( color_a.a, color_b.a, t );
