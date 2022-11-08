@@ -672,6 +672,7 @@ import AV from '/build/av.module.js/av.module.js';
          * @param {number} [y_off=0] - Shifts the Y position.
          */
         draw( ctx, gui, x_off = 0, y_off = 0 ) {
+            /// Add a lil to help prevent gaps.
             const w = this.w + 0.49;
             const h = this.h + 0.49;
             const x1 = this.x + x_off;
@@ -702,27 +703,37 @@ import AV from '/build/av.module.js/av.module.js';
                 }
             } );
             if ( !gui ) return;
-            /// Draw the node dot.
-            const luma = this.color.getLuma();
-            gui.strokeStyle = luma < 0.5 ? 'white' : 'black';
-            gui.fillStyle = 'red';
-            gui.beginPath();
-            gui.arc( x1 + w / 2, y1 + h / 2, 8, 0, AV.RADIAN );
-            gui.fill();
 
             /// Draw the node connections.
-            gui.fillStyle = 'red';
-            gui.strokeStyle = 'red';
+            const luma = this.color.getLuma();
+            this.node_color = luma < 0.5 ? '#fff' : '#000';
+            gui.strokeStyle = this.node_color;
             gui.lineWidth = 2;
             [ 'left', 'top', 'bottom', 'right' ].forEach( ( key ) => {
                 const targ = this.connections[ key ];
                 if ( targ && this.id < targ.id ) {
+                    const x0 = this.x + x_off + SIZE / 2;
+                    const y0 = this.y + y_off + SIZE / 2;
+                    const x1 = targ.x + x_off + SIZE / 2;
+                    const y1 = targ.y + y_off + SIZE / 2;
+                    if ( targ.node_color && this.node_color !== targ.node_color ) {
+                        const grad = gui.createLinearGradient( x0, y0, x1, y1 );
+                        grad.addColorStop( 0, this.node_color );
+                        grad.addColorStop( 1, targ.node_color );
+                        gui.strokeStyle = grad;
+                    }
                     gui.beginPath()
-                    gui.moveTo( this.x + x_off + SIZE / 2, this.y + y_off + SIZE / 2 );
-                    gui.lineTo( targ.x + x_off + SIZE / 2, targ.y + y_off + SIZE / 2 );
+                    gui.moveTo( x0, y0 );
+                    gui.lineTo( x1, y1 );
                     gui.stroke();
                 }
             } );
+            /// Draw the node dot.
+            gui.fillStyle = this.color.hex;
+            gui.beginPath();
+            gui.arc( x1 + w / 2, y1 + h / 2, 8, 0, AV.RADIAN );
+            gui.fill();
+            gui.stroke();
         }
     }
 
