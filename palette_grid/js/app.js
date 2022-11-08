@@ -704,8 +704,11 @@ import AV from '/build/av.module.js/av.module.js';
             this.initContextMenu();
             this.initMouse();
 
-            /// Create an initial square.
-            this.container.createSquare( 0, 0 ).color.setValue( Math.random() * 0xffffff );
+            /// Load from cookies.
+            if ( !this.load() ) {
+                /// Create an initial square if no data is available.
+                this.container.createSquare( 0, 0 ).color.setValue( Math.random() * 0xffffff );
+            }
         }
 
         /** Updates the canvases. */
@@ -803,6 +806,7 @@ import AV from '/build/av.module.js/av.module.js';
                     /// Make the color random instead.
                     square.color.setValue( Math.random() * 0xffffff );
                 }
+                this.save();
             } );
 
             menu_color.on( 'input change', () => {
@@ -812,6 +816,7 @@ import AV from '/build/av.module.js/av.module.js';
                 const num = parseInt( hex.slice( 1 ), 16 );
                 target.color.setValue( num );
                 target.checkConnections();
+                this.save();
             } ).on( 'click', ( event ) => {
                 /// This prevents an infinite loop.
                 event.stopPropagation();
@@ -1014,6 +1019,7 @@ import AV from '/build/av.module.js/av.module.js';
                                     }
                                     /// Verify the current gradients.
                                     target.checkConnections();
+                                    this.save();
                                 }
                             }
                         }
@@ -1043,8 +1049,59 @@ import AV from '/build/av.module.js/av.module.js';
             window.requestAnimationFrame( step );
         }
 
-        /** Saves the  */
-        save() { }
+        /** Loads data from cookies. */
+        load() {
+            const cookie = Cookies.get( 'data' );
+            if ( !cookie ) return;
+            const data = JSON.parse( cookie );
+            if ( data.length === 0 ) {
+                Cookies.remove( 'data' );
+                return;
+            }
+            var max_id = 0;
+            data.forEach( ( obj ) => {
+                switch ( obj.type ) {
+                    case 'square':
+                        const square = this.container.createSquare( obj.x, obj.y );
+                        square.color.setValue( obj.color );
+                        square.id = obj.id;
+                        max_id = Math.max( max_id, square.id );
+                        break;
+                    case 'meta':
+                        this.cam_x = obj.x;
+                        this.cam_y = obj.y;
+                        break;
+                }
+            } );
+            this.container.index = max_id + 1;
+            return true;
+        }
+
+        /** Saves the current squares to cookies. */
+        save() {
+            const data = [ {
+                type: 'meta',
+                x: this.cam_x,
+                y: this.cam_y
+            } ];
+            this.container.forEach( ( square ) => {
+                const obj = {
+                    type: 'square',
+                    id: square.id,
+                    color: square.color.getValue(),
+                    x: square.x,
+                    y: square.y
+                };
+                [ 'left', 'top', 'right', 'down' ].forEach( ( side ) => {
+                    const target = square.connections[ side ];
+                    if ( !target ) return;
+                    obj[ side ] = target.id;
+                } );
+                data.push( obj );
+            } );
+            const cookie = JSON.stringify( data );
+            Cookies.set( 'data', cookie );
+        }
     }
 
     $( function () {
