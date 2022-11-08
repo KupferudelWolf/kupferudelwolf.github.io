@@ -42,14 +42,23 @@ canvas.grabbing {
     pointer-events: none;
 }
 .button-bar .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 8vh;
     height: 8vh;
     border-radius: 50%;
     background-color: #bbbbbb;
     pointer-events: auto;
     cursor: pointer;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .button-bar .button.disabled {
+    background-color: #aaaaaa;
+}
+.button-bar .button.ignored {
     pointer-events: none;
 }
 
@@ -77,6 +86,9 @@ canvas.grabbing {
     padding: 8px;
     cursor: pointer;
     gap: 8px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .menu > div input[type="color"] {

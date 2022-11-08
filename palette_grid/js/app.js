@@ -754,6 +754,8 @@ import AV from '/build/av.module.js/av.module.js';
         history;
         /** @type {number} Index of current place in history. */
         index;
+        /** @type {function} Runs on add, redo, and undo. */
+        onChange;
 
         /** Constructor.
          * @param {UndoHandler} func_undo - What happens to a stored action when moving in history.
@@ -762,6 +764,7 @@ import AV from '/build/av.module.js/av.module.js';
         constructor( func_undo, func_redo ) {
             this.index = -1;
             this.history = [];
+            this.onChange = () => { };
             this.func_undo = func_undo;
             switch ( typeof func_redo ) {
                 case 'undefined':
@@ -783,6 +786,7 @@ import AV from '/build/av.module.js/av.module.js';
             }
             this.history.push( state );
             this.index = this.history.length - 1;
+            this.onChange();
         }
 
         /** Clears the history. */
@@ -803,8 +807,10 @@ import AV from '/build/av.module.js/av.module.js';
             const end = this.history[ ++this.index ];
             if ( func_custom ) {
                 func_custom( start, end );
+                this.onChange();
             } else if ( this.func_redo ) {
                 this.func_redo( start, end );
+                this.onChange();
             }
         }
 
@@ -820,8 +826,10 @@ import AV from '/build/av.module.js/av.module.js';
             const end = this.history[ --this.index ];
             if ( func_custom ) {
                 func_custom( start, end );
+                this.onChange();
             } else if ( this.func_undo ) {
                 this.func_undo( start, end );
+                this.onChange();
             }
         }
     }
@@ -871,12 +879,16 @@ import AV from '/build/av.module.js/av.module.js';
                 ( a, b ) => {
                     this.load( b );
                     this.gui_timer = Date.now();
-                },
-                /// Redo.
-                // ( obj_a, obj.b ) => { }
+                }
             );
+            this.history.onChange = () => {
+                const l = this.history.history.length;
+                $( '#btn-undo' ).toggleClass( 'disabled', l <= 1 || this.history.index === 0 );
+                $( '#btn-redo' ).toggleClass( 'disabled', l <= 1 || this.history.index >= l - 1 );
+            };
+            this.history.onChange();
             this.initContextMenu();
-            this.initButtons();
+            this.initButtonBar();
             this.initInput();
 
             /// Load from cookies.
@@ -919,6 +931,39 @@ import AV from '/build/av.module.js/av.module.js';
             const timer = Date.now() - this.gui_timer;
             const opacity = AV.clamp( 1 - ( timer - 3000 ) / 500 );
             this.overlay.$.css( 'opacity', opacity );
+        }
+
+        /** Initialize the button bar. */
+        initButtonBar() {
+            $( '.button-bar .button' ).on( 'contextmenu', ( event ) => {
+                event.preventDefault();
+            } )
+
+            const menu_save = $( '.menu #ctrl-save' );
+
+            const button_clear = $( '.button-bar #btn-clear' );
+            const button_redo = $( '.button-bar #btn-redo' );
+            const button_save = $( '.button-bar #btn-save' );
+            const button_undo = $( '.button-bar #btn-undo' );
+
+            button_clear.on( 'click', () => {
+                if ( button_clear.hasClass( 'disabled' ) ) return;
+                this.reset();
+                /// Save to undo history but not to cookies.
+                this.history.add( this.save( true ) );
+            } );
+            button_redo.on( 'click', () => {
+                if ( button_redo.hasClass( 'disabled' ) ) return;
+                this.history.redo();
+            } );
+            button_save.on( 'click', () => {
+                if ( button_save.hasClass( 'disabled' ) ) return;
+                menu_save.trigger( 'click' );
+            } );
+            button_undo.on( 'click', () => {
+                if ( button_undo.hasClass( 'disabled' ) ) return;
+                this.history.undo();
+            } );
         }
 
         /** Initialize the canvases. */
@@ -1075,15 +1120,6 @@ import AV from '/build/av.module.js/av.module.js';
             } );
         }
 
-        /** Initialize the buttons. */
-        initButtons() {
-            $( '.button-bar .button' ).on( 'contextmenu', ( event ) => {
-                event.preventDefault();
-            } ).on( 'click', () => {
-                // console.log( 'a' );
-            } );
-        }
-
         /** Initialize mouse and keyboard input. */
         initInput() {
             const overlay = this.overlay;
@@ -1098,7 +1134,7 @@ import AV from '/build/av.module.js/av.module.js';
                 disable_undo;
 
             this.createNewSquareAtMouse = ( color ) => {
-                $bar.addClass( 'disabled' );
+                $bar.addClass( 'ignored' );
                 disable_undo = true;
                 spacebar = false;
                 long = false;
@@ -1177,7 +1213,7 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( button ) return;
                 /// Deactivate the context menu and buttons.
                 menu.removeClass( 'active' );
-                $bar.addClass( 'disabled' );
+                $bar.addClass( 'ignored' );
                 /// Keep track of which mouse button is being pressed.
                 button = event.which;
                 /// Record the current mouse position.
@@ -1288,11 +1324,11 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( !prop && event.which !== button ) {
                     if ( event.type === 'mouseleave' ) {
                         mouse_x = mouse_y = null;
-                        $bar.removeClass( 'disabled' );
+                        $bar.removeClass( 'ignored' );
                     }
                     return;
                 }
-                $bar.removeClass( 'disabled' );
+                $bar.removeClass( 'ignored' );
                 switch ( ( prop && prop[ 0 ] ) || button ) {
                     case 1:
                         /// Left click.
