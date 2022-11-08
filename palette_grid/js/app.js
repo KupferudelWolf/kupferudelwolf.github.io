@@ -484,6 +484,8 @@ import AV from '/build/av.module.js/av.module.js';
         color_cache;
         /** @type {object} Connected squares. */
         connections;
+        /** @type {number} Timer for UI opacity. */
+        gui_timer;
         /** @type {number} Unique index. */
         id;
         /** @type {boolean} Whether the square adjusts when moved. */
@@ -518,6 +520,8 @@ import AV from '/build/av.module.js/av.module.js';
                 'bottom': null
             };
             this.color_cache = new Color();
+
+            this.gui_timer = Date.now();
         }
 
         /** Check if this aligns with a specific square, and connects if so.
@@ -740,6 +744,9 @@ import AV from '/build/av.module.js/av.module.js';
             } );
             this.output.draw( ctx );
             this.overlay.draw( gui );
+            const timer = Date.now() - this.gui_timer;
+            const opacity = AV.clamp( 1 - ( timer - 3000 ) / 500 );
+            this.overlay.$.css( 'opacity', opacity );
         }
 
         /** Initialize the canvases. */
@@ -765,6 +772,10 @@ import AV from '/build/av.module.js/av.module.js';
             const menu = $( '.menu' );
             menu.on( 'contextmenu', ( event ) => {
                 event.preventDefault();
+            } );
+            menu.children().on( 'mouseover mousemove hover', () => {
+                /// Make the GUI visible.
+                this.gui_timer = Date.now();
             } );
 
             const menu_add = $( '.menu #ctrl-add' );
@@ -883,6 +894,8 @@ import AV from '/build/av.module.js/av.module.js';
             } );
             $cvs.on( 'mousedown', ( event ) => {
                 event.preventDefault();
+                /// Make the GUI visible.
+                this.gui_timer = Date.now();
                 /// Ignore if another mouse button is currently pressed.
                 if ( button ) return;
                 /// Deactivate the context menu.
@@ -943,6 +956,8 @@ import AV from '/build/av.module.js/av.module.js';
             } );
             $cvs.on( 'mouseover mousemove', ( event ) => {
                 event.preventDefault();
+                /// Make the GUI visible.
+                this.gui_timer = Date.now();
                 if ( !clicked ) return;
                 mouse_x = event.clientX;
                 mouse_y = event.clientY;
@@ -1044,15 +1059,6 @@ import AV from '/build/av.module.js/av.module.js';
             } );
         }
 
-        /** Runs every frame. */
-        run() {
-            const step = () => {
-                this.drawCanvas();
-                window.requestAnimationFrame( step );
-            };
-            window.requestAnimationFrame( step );
-        }
-
         /** Loads data from cookies. */
         load() {
             const cookie = Cookies.get( 'data' );
@@ -1105,6 +1111,15 @@ import AV from '/build/av.module.js/av.module.js';
             } );
             const cookie = JSON.stringify( data );
             Cookies.set( 'data', cookie );
+        }
+
+        /** Runs every frame. */
+        run() {
+            const step = () => {
+                this.drawCanvas();
+                window.requestAnimationFrame( step );
+            };
+            window.requestAnimationFrame( step );
         }
     }
 
