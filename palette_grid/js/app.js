@@ -899,6 +899,29 @@ import AV from '/build/av.module.js/av.module.js';
             this.history.add( this.save( true ) );
         }
 
+        /** Center the camera and all squares. */
+        centerView() {
+            this.cam_x = ( this.output.cvs.width - SIZE ) / 2;
+            this.cam_y = ( this.output.cvs.height - SIZE ) / 2;
+            var min_x = 0, min_y = 0, max_x = 0, max_y = 0;
+            this.container.forEach( ( square ) => {
+                const x = square.x / SIZE;
+                const y = square.y / SIZE;
+                min_x = Math.min( min_x, Math.floor( x ) );
+                max_x = Math.max( max_x, Math.floor( x ) + 1 );
+                min_y = Math.min( min_y, Math.floor( y ) );
+                max_y = Math.max( max_y, Math.floor( y ) + 1 );
+            } );
+            const width = max_x - min_x;
+            const height = max_y - min_y;
+            this.container.forEach( ( square ) => {
+                const x = AV.map( square.x / 64, min_x, max_x, -width / 2, width / 2 );
+                const y = AV.map( square.y / 64, min_y, max_y, -height / 2, height / 2 );
+                square.x = Math.round( x ) * 64;
+                square.y = Math.round( y ) * 64;
+            } );
+        }
+
         /** Updates the canvases. */
         drawCanvas() {
             const vw = this.output.cvs.width;
@@ -941,27 +964,36 @@ import AV from '/build/av.module.js/av.module.js';
 
             const menu_save = $( '.menu #ctrl-save' );
 
+            const button_center = $( '.button-bar #btn-center' );
             const button_clear = $( '.button-bar #btn-clear' );
             const button_redo = $( '.button-bar #btn-redo' );
             const button_save = $( '.button-bar #btn-save' );
             const button_undo = $( '.button-bar #btn-undo' );
 
+            button_center.on( 'click', () => {
+                if ( button_center.hasClass( 'disabled' ) ) return;
+                this.centerView();
+            } );
             button_clear.on( 'click', () => {
                 if ( button_clear.hasClass( 'disabled' ) ) return;
+                /// Remove everything.
                 this.reset();
                 /// Save to undo history but not to cookies.
                 this.history.add( this.save( true ) );
             } );
             button_redo.on( 'click', () => {
                 if ( button_redo.hasClass( 'disabled' ) ) return;
+                /// Redo.
                 this.history.redo();
             } );
             button_save.on( 'click', () => {
                 if ( button_save.hasClass( 'disabled' ) ) return;
+                /// Save PNG.
                 menu_save.trigger( 'click' );
             } );
             button_undo.on( 'click', () => {
                 if ( button_undo.hasClass( 'disabled' ) ) return;
+                /// Undo.
                 this.history.undo();
             } );
         }
@@ -1106,8 +1138,7 @@ import AV from '/build/av.module.js/av.module.js';
                 menu.removeClass( 'active' );
                 target.delete();
                 target = null;
-                /// Save to undo history but not to cookies.
-                this.history.add( this.save( true ) );
+                this.save();
             } );
 
             const export_link = $( '<a>' ).get( 0 );
@@ -1405,7 +1436,7 @@ import AV from '/build/av.module.js/av.module.js';
          * @returns {boolean} Whether the load was successful.
          */
         load( custom_cookie ) {
-            const cookie = custom_cookie || Cookies.get( 'data' );
+            const cookie = custom_cookie || Cookies.get( 'autosave' );
             if ( !cookie ) return false;
             const data = JSON.parse( cookie );
             if ( data.length === 0 ) {
@@ -1480,7 +1511,7 @@ import AV from '/build/av.module.js/av.module.js';
             if ( no_cookie ) {
                 return cookie;
             }
-            Cookies.set( 'data', cookie );
+            Cookies.set( 'autosave', cookie );
             this.history.add( cookie );
             return true;
         }
