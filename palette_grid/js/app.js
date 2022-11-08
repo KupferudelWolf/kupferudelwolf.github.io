@@ -526,8 +526,6 @@ import AV from '/build/av.module.js/av.module.js';
         color_cache;
         /** @type {object} Connected squares. */
         connections;
-        /** @type {number} Timer for UI opacity. */
-        gui_timer;
         /** @type {number} Unique index. */
         id;
         /** @type {boolean} Whether the square adjusts when moved. */
@@ -737,14 +735,111 @@ import AV from '/build/av.module.js/av.module.js';
         }
     }
 
-    /** Main function. */
+    /** Allows undoing and redoing things.
+     * @class
+     */
+    class UndoHistory {
+        /** UndoHandler function.
+         * @callback UndoHandler
+         * @param {any} from - Data of starting state.
+         * @param {any} to - Data of ending state.
+         */
+
+        /** @type {UndoHandler|undefined} */
+        func_redo;
+        /** @type {UndoHandler} */
+        func_undo;
+
+        /** @type {any[]} Undo history. */
+        history;
+        /** @type {number} Index of current place in history. */
+        index;
+
+        /** Constructor.
+         * @param {UndoHandler} func_undo - What happens to a stored action when moving in history.
+         * @param {UndoHandler} [func_redo] - What happens instead to a stored action specifically when moving forward in history.
+         */
+        constructor( func_undo, func_redo ) {
+            this.index = -1;
+            this.history = [];
+            this.func_undo = func_undo;
+            switch ( typeof func_redo ) {
+                case 'undefined':
+                    this.func_redo = func_undo;
+                    break;
+                case 'function':
+                    this.func_redo = func_redo;
+                    break
+            }
+        }
+
+        /** Add something to the history.
+         * @param {any} state - The history state to add.
+         */
+        add( state ) {
+            if ( this.index !== this.history.length - 1 ) {
+                /// Remove redo history.
+                this.history = this.history.slice( 0, this.index + 1 );
+            }
+            this.history.push( state );
+            this.index = this.history.length - 1;
+        }
+
+        /** Clears the history. */
+        clear() {
+            this.index = -1;
+            this.history = [];
+        }
+
+        /** Travels forward in history.
+         * @param {UndoHandler} [func_custom] - An alternative function to run.
+         */
+        redo( func_custom ) {
+            if ( this.index === this.history.length - 1 ) {
+                console.warn( 'Nothing left to redo.' );
+                return;
+            }
+            const start = this.history[ this.index ];
+            const end = this.history[ ++this.index ];
+            if ( func_custom ) {
+                func_custom( start, end );
+            } else if ( this.func_redo ) {
+                this.func_redo( start, end );
+            }
+        }
+
+        /** Travels back in history.
+         * @param {UndoHandler} [func_custom] - An alternative function to run.
+         */
+        undo( func_custom ) {
+            if ( this.index === 0 ) {
+                console.warn( 'Nothing left to undo.' );
+                return;
+            }
+            const start = this.history[ this.index ];
+            const end = this.history[ --this.index ];
+            if ( func_custom ) {
+                func_custom( start, end );
+            } else if ( this.func_undo ) {
+                this.func_undo( start, end );
+            }
+        }
+    }
+
+    /** Main function.
+     * @class
+     */
     class App {
         /** @type {string} The background color (in #rrggbb format). */
         background_color;
-        /** @type Negative X position for canvas space. */
+        /** @type {number} Negative X position for canvas space. */
         cam_x;
-        /** @type Negative Y position for canvas space. */
+        /** @type {number} Negative Y position for canvas space. */
         cam_y;
+        /** @type {number} Timer for UI opacity. */
+        gui_timer;
+        /** @type {History} Undo history. */
+        history;
         /** @type {CanvasObject} Output image. */
         output;
         /** @type {CanvasObject} UI image. */
@@ -771,6 +866,15 @@ import AV from '/build/av.module.js/av.module.js';
             this.cam_x = ( this.output.cvs.width - SIZE ) / 2;
             this.cam_y = ( this.output.cvs.height - SIZE ) / 2;
             this.container = new PaletteSquareFactory();
+            this.history = new UndoHistory(
+                /// Undo.
+                ( a, b ) => {
+                    this.load( b );
+                    this.gui_timer = Date.now();
+                },
+                /// Redo.
+                // ( obj_a, obj.b ) => { }
+            );
             this.initContextMenu();
             this.initInput();
 
@@ -779,6 +883,7 @@ import AV from '/build/av.module.js/av.module.js';
                 /// Create an initial square if no data is available.
                 this.container.createSquare( 0, 0 ).color.setValue( Math.random() * 0xffffff );
             }
+            this.history.add( this.save( true ) );
         }
 
         /** Updates the canvases. */
@@ -944,9 +1049,9 @@ import AV from '/build/av.module.js/av.module.js';
             menu_delall.on( 'click', () => {
                 if ( menu_delall.hasClass( 'disabled' ) ) return;
                 menu.removeClass( 'active' );
-                this.container.squares = [];
-                this.cam_x = ( this.output.cvs.width - SIZE ) / 2;
-                this.cam_y = ( this.output.cvs.height - SIZE ) / 2;
+                this.reset();
+                /// Save to undo history but not to cookies.
+                this.history.add( this.save( true ) );
             } );
 
             menu_delete.on( 'click', () => {
@@ -955,6 +1060,8 @@ import AV from '/build/av.module.js/av.module.js';
                 menu.removeClass( 'active' );
                 target.delete();
                 target = null;
+                /// Save to undo history but not to cookies.
+                this.history.add( this.save( true ) );
             } );
 
             const export_link = $( '<a>' ).get( 0 );
@@ -976,9 +1083,11 @@ import AV from '/build/av.module.js/av.module.js';
             var button, clicked, long, spacebar, target, time,
                 mouse_x, mouse_y, start_x, start_y,
                 target_x, target_y,
-                view_x = null, view_y = null;
+                view_x = null, view_y = null,
+                disable_undo;
 
             this.createNewSquareAtMouse = ( color ) => {
+                disable_undo = true;
                 spacebar = false;
                 long = false;
                 clicked = true;
@@ -996,6 +1105,13 @@ import AV from '/build/av.module.js/av.module.js';
                 spacebar = event.code === 'Space';
                 if ( spacebar ) {
                     $cvs.addClass( 'drag' );
+                }
+                if ( event.code === 'KeyZ' && event.ctrlKey && !disable_undo ) {
+                    if ( event.shiftKey ) {
+                        this.history.redo();
+                    } else {
+                        this.history.undo();
+                    }
                 }
                 if ( event.code === 'KeyV' && event.ctrlKey ) {
                     /// Paste.
@@ -1139,6 +1255,7 @@ import AV from '/build/av.module.js/av.module.js';
             $cvs.on( 'mouseup mouseleave', ( event, prop ) => {
                 event.preventDefault();
                 $cvs.removeClass( 'drag' );
+                disable_undo = false;
                 if ( !prop && event.which !== button ) {
                     if ( event.type === 'mouseleave' ) {
                         mouse_x = mouse_y = null;
@@ -1216,15 +1333,19 @@ import AV from '/build/av.module.js/av.module.js';
             } );
         }
 
-        /** Loads data from cookies. */
-        load() {
-            const cookie = Cookies.get( 'data' );
-            if ( !cookie ) return;
+        /** Loads data from cookies.
+         * @param {string} [custom_cookie] - Stringified data to read instead of cookies.
+         * @returns {boolean} Whether the load was successful.
+         */
+        load( custom_cookie ) {
+            const cookie = custom_cookie || Cookies.get( 'data' );
+            if ( !cookie ) return false;
             const data = JSON.parse( cookie );
             if ( data.length === 0 ) {
                 Cookies.remove( 'data' );
-                return;
+                return false;
             }
+            this.reset();
             const list_by_id = [];
             var max_id = 0;
             data.forEach( ( obj ) => {
@@ -1256,8 +1377,18 @@ import AV from '/build/av.module.js/av.module.js';
             return true;
         }
 
-        /** Saves the current squares to cookies. */
-        save() {
+        /** Resets the app. */
+        reset() {
+            this.container.squares = [];
+            this.cam_x = ( this.output.cvs.width - SIZE ) / 2;
+            this.cam_y = ( this.output.cvs.height - SIZE ) / 2;
+        }
+
+        /** Saves the current squares to cookies.
+         * @param {boolean} [no_cookie] - Returns the stringified data instead of saving it to cookies.
+         * @returns {string|boolean}
+         */
+        save( no_cookie ) {
             const data = [ {
                 type: 'meta',
                 x: this.cam_x,
@@ -1279,7 +1410,12 @@ import AV from '/build/av.module.js/av.module.js';
                 data.push( obj );
             } );
             const cookie = JSON.stringify( data );
+            if ( no_cookie ) {
+                return cookie;
+            }
             Cookies.set( 'data', cookie );
+            this.history.add( cookie );
+            return true;
         }
 
         /** Runs every frame. */
