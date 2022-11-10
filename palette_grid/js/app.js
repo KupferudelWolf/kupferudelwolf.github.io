@@ -1125,9 +1125,9 @@ import AV from '/build/av.module.js/av.module.js';
                 this.save();
             } );
 
-            menu_bg.on( 'input change', () => {
+            menu_bg.on( 'input change', ( event ) => {
                 this.background_color = menu_bg.val();
-                this.save();
+                if ( event.type === 'change' ) this.save();
             } );
 
             menu_clone.on( 'click', () => {
@@ -1137,14 +1137,14 @@ import AV from '/build/av.module.js/av.module.js';
                 this.createNewSquareAtMouse( target.color );
             } );
 
-            menu_color.on( 'input change', () => {
+            menu_color.on( 'input change', ( event ) => {
                 /// Change the color.
                 if ( !target ) return;
                 const hex = menu_color.val();
                 const num = parseInt( hex.slice( 1 ), 16 );
                 target.color.setValue( num );
                 target.checkConnections();
-                this.save();
+                if ( event.type === 'change' ) this.save();
             } ).on( 'click', ( event ) => {
                 /// This prevents an infinite loop.
                 event.stopPropagation();
