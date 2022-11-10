@@ -445,9 +445,9 @@ import AV from '/build/av.module.js/av.module.js';
      * @class
      */
     class PaletteSquareFactory {
-        /** @type {number} Unique index for created connections. */
+        /** @type {number} Unique index for identifying connections. */
         id_c;
-        /** @type {number} Unique index for created squares. */
+        /** @type {number} Unique index for identifying squares. */
         id_s;
         /** @type {PaletteSquare[]} An array of all PaletteSquare instances. */
         squares;
@@ -535,7 +535,9 @@ import AV from '/build/av.module.js/av.module.js';
         color;
         /** @type {PaletteSquareConnection[]} Connected squares: top, right, bottom, left. */
         connections;
-        /** @type {number} Unique index. */
+        /** @type {PaletteSquareFactory} The factory class that created this square. */
+        container;
+        /** @type {number} Unique identifying index. */
         id;
         /** @type {boolean} Whether the square adjusts when moved. */
         locked;
@@ -549,7 +551,7 @@ import AV from '/build/av.module.js/av.module.js';
          * @param {number} prop.w - The square's width.
          * @param {number} prop.h - The square's height.
          * @param {boolean} [prop.locked] - Whether the square adjusts when moved.
-         * @param {boolean} prop.index - Unique index.
+         * @param {boolean} prop.index - Unique identifying index.
          */
         constructor( prop ) {
             this.color = prop.color;
@@ -591,49 +593,12 @@ import AV from '/build/av.module.js/av.module.js';
             const y = Math.sign( target.y - this.y );
             /// Check if they are aligned.
             if ( Math.abs( x ) === Math.abs( y ) ) return null;
-            /// Find which side to connect.
-            // var side, invs;
-            // if ( x === -1 ) side = 'left', invs = 'right';
-            // if ( y === -1 ) side = 'top', invs = 'bottom';
-            // if ( x === 1 ) side = 'right', invs = 'left';
-            // if ( y === 1 ) side = 'bottom', invs = 'top';
-            // if ( !side ) return null;
-            // /// Ignore if a connection already exists.
-            // if ( this.connections[ side ] ) return null;
-            // if ( target.connections[ invs ] ) return null;
-            // /// Connect the squares.
-            // this.connections[ side ] = target;
-            // target.connections[ invs ] = this;
-            // return side;
             const connection = new PaletteSquareConnection( this, target );
             return connection;
         }
 
         /** Verify that all connections are still valid. */
         checkConnections() {
-            // const detached = [];
-            // [ 'left', 'top', 'bottom', 'right' ].forEach( ( key ) => {
-            //     const target = this.connections[ key ];
-            //     if ( !target ) return;
-            //     const dir = ( key === 'left' || key === 'right' ) ? 'x' : 'y';
-            //     const sgn = ( key === 'left' || key === 'top' ) ? -1 : 1;
-            //     const dir_inv = ( key === 'left' || key === 'right' ) ? 'y' : 'x';
-            //     if ( Math.sign( target[ dir ] - this[ dir ] ) !== sgn || target[ dir_inv ] - this[ dir_inv ] !== 0 ) {
-            //         /// The squares are misaligned.
-            //         switch ( key ) {
-            //             case 'left': target.connections.right = null; break;
-            //             case 'top': target.connections.bottom = null; break;
-            //             case 'right': target.connections.left = null; break;
-            //             case 'bottom': target.connections.top = null; break;
-            //         }
-            //         this.connections[ key ] = null;
-            //         detached.push( target );
-            //     }
-            // } );
-            // /// See if any of the formally connected squares can connect via another side.
-            // detached.forEach( ( square ) => {
-            //     this.connect( square );
-            // } );
             this.connections.forEach( ( conn ) => {
                 if ( conn ) conn.check();
             } );
@@ -660,9 +625,6 @@ import AV from '/build/av.module.js/av.module.js';
                 } );
                 conn.delete();
             } );
-            // this.x = this.w / Math.PI;
-            // this.y = this.h / Math.PI;
-            // this.checkConnections();
             /// Connect squares that were connected to this one, if possible.
             old_conns.forEach( ( a ) => {
                 old_conns.forEach( ( b ) => {
@@ -729,6 +691,12 @@ import AV from '/build/av.module.js/av.module.js';
     class PaletteSquareConnection {
         /** @type {Color} Cached Color object. */
         color_cache;
+        /** @type {PaletteSquareFactory} The factory class that created this square. */
+        container;
+        /** @type {number} Unique identifying index. */
+        id;
+        /** @type {PaletteSquare[]} The squares this connection is connecting. */
+        squares;
 
         /** Constructor.
          * @param {PaletteSquare} sq_a - A square to connect.
@@ -748,9 +716,16 @@ import AV from '/build/av.module.js/av.module.js';
          * @returns {boolean}
          */
         check() {
-            const pts = this.getPoints();
-            const sq_a = pts[ 0 ];
-            const sq_b = pts[ 1 ];
+            var sq_a = this.squares[ 0 ];
+            var sq_b = this.squares[ 1 ];
+            if ( !sq_a || !sq_b ) {
+                this.delete();
+                return false;
+            }
+            if ( sq_b.x < sq_a.x || sq_b.y < sq_a.y ) {
+                sq_a = this.squares[ 1 ];
+                sq_b = this.squares[ 0 ];
+            }
             const x_aligned = sq_a.x === sq_b.x;
             const y_aligned = sq_a.y === sq_b.y;
             if ( x_aligned === y_aligned ) {
@@ -758,11 +733,9 @@ import AV from '/build/av.module.js/av.module.js';
                 return false;
             }
             this.disconnect();
-            this.axis = pts[ 2 ].axis;
-            this.axis_inverse = pts[ 2 ].inverse;
             /// 0: top, 1: right, 2: bottom, 3: left.
-            const ind_a = this.axis === 'x' ? 1 : 2;
-            const ind_b = this.axis === 'x' ? 0 : 3;
+            const ind_a = x_aligned ? 1 : 2;
+            const ind_b = x_aligned ? 0 : 3;
             if ( sq_a.connections[ ind_a ] || sq_b.connections[ ind_b ] ) {
                 /// One or both of the squares has a connection that's in the way.
                 this.delete();
@@ -772,11 +745,12 @@ import AV from '/build/av.module.js/av.module.js';
             return true;
         }
 
+        /** Deletes this connection. */
         delete() {
             this.disconnect();
             this.squares = [];
             const new_conns = [];
-            this.container.connections.forEach( ( conn, ind ) => {
+            this.container.connections.forEach( ( conn ) => {
                 if ( conn && conn.id !== this.id ) {
                     new_conns.push( conn );
                 }
@@ -784,6 +758,7 @@ import AV from '/build/av.module.js/av.module.js';
             this.container.connections = [ ...new_conns ];
         };
 
+        /** Disconnects this connection from its squares. */
         disconnect() {
             this.squares.forEach( ( square ) => {
                 square.connections.forEach( ( conn, ind ) => {
@@ -794,20 +769,19 @@ import AV from '/build/av.module.js/av.module.js';
             } );
         }
 
+        /** Draws the connection.
+         * @param {CanvasRenderingContext2D} ctx - The canvas context to draw the gradient on.
+         * @param {CanvasRenderingContext2D} [gui] - The canvas context to draw GUI elements on.
+         * @param {number} [x_off=0] - Shifts the X position.
+         * @param {number} [y_off=0] - Shifts the Y position.
+         */
         draw( ctx, gui, x_off = 0, y_off = 0 ) {
-            // const x1 = this.x + x_off;
-            // const y1 = this.y + y_off;
-            const pts = this.getPoints();
             const sq_a = this.squares[ 0 ];
             const sq_b = this.squares[ 1 ];
-
             if ( !sq_a && !sq_b ) {
                 this.delete();
                 return;
             }
-
-            this.axis = pts[ 2 ].axis;
-            this.axis_inverse = pts[ 2 ].inverse;
 
             /// Draw the gradients.
             const diff_x = Math.abs( sq_b.x - sq_a.x );
@@ -849,28 +823,6 @@ import AV from '/build/av.module.js/av.module.js';
             gui.moveTo( x0, y0 );
             gui.lineTo( x1, y1 );
             gui.stroke();
-        }
-
-        getPoints() {
-            var sq_a = this.squares[ 0 ],
-                sq_b = this.squares[ 1 ];
-            const out = [ sq_a, sq_b, {
-                axis: null,
-                inverse: null,
-                dist: null
-            } ];
-            if ( !sq_a || !sq_b ) {
-                return out;
-            }
-            const dir = sq_a.x === sq_b.x ? 'y' : 'x';
-            if ( sq_a[ dir ] > sq_b[ dir ] ) {
-                out[ 0 ] = sq_b;
-                out[ 1 ] = sq_a;
-            }
-            out[ 2 ].axis = dir;
-            out[ 2 ].inverse = dir === 'x' ? 'y' : 'x';
-            out[ 2 ].dist = out[ 1 ][ dir ] - out[ 0 ][ dir ];
-            return out;
         }
     }
 
