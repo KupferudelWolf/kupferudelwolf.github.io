@@ -445,8 +445,10 @@ import AV from '/build/av.module.js/av.module.js';
      * @class
      */
     class PaletteSquareFactory {
+        /** @type {number} Unique index for created connections. */
+        id_c;
         /** @type {number} Unique index for created squares. */
-        index;
+        id_s;
         /** @type {PaletteSquare[]} An array of all PaletteSquare instances. */
         squares;
 
@@ -455,7 +457,9 @@ import AV from '/build/av.module.js/av.module.js';
          */
         constructor( size ) {
             this.squares = [];
-            this.index = 0;
+            this.connections = [];
+            this.id_c = 0;
+            this.id_s = 0;
             this.size = size;
         }
 
@@ -477,7 +481,7 @@ import AV from '/build/av.module.js/av.module.js';
                 y: y,
                 w: this.size,
                 h: this.size,
-                index: this.index++
+                index: this.id_s++
             } );
             obj.container = this;
             this.squares.push( obj );
@@ -494,16 +498,23 @@ import AV from '/build/av.module.js/av.module.js';
          */
         detectAll( x, y ) {
             const out = [];
-            this.forEach( ( square ) => {
+            this.forEachSquare( ( square ) => {
                 if ( square.detect( x, y ) ) out.push( square );
             } );
             return out;
         }
 
+        /** Iterates through all connections.
+         * @param {forEachCallback} callback - Callback function.
+         */
+        forEachConnection( callback ) {
+            this.connections.forEach( callback );
+        }
+
         /** Iterates through all squares.
          * @param {forEachCallback} callback - Callback function.
          */
-        forEach( callback ) {
+        forEachSquare( callback ) {
             this.squares.forEach( callback );
         }
     }
@@ -522,9 +533,7 @@ import AV from '/build/av.module.js/av.module.js';
         h;
         /** @type {Color} The color of the square. */
         color;
-        /** @type {Color} Cached Color object. */
-        color_cache;
-        /** @type {object} Connected squares. */
+        /** @type {PaletteSquareConnection[]} Connected squares: top, right, bottom, left. */
         connections;
         /** @type {number} Unique index. */
         id;
@@ -553,13 +562,7 @@ import AV from '/build/av.module.js/av.module.js';
 
             this.locked = prop.locked || false;
 
-            this.connections = {
-                'left': null,
-                'top': null,
-                'right': null,
-                'bottom': null
-            };
-            this.color_cache = new Color();
+            this.connections = [ null, null, null, null ];
 
             this.gui_timer = Date.now();
         }
@@ -581,7 +584,7 @@ import AV from '/build/av.module.js/av.module.js';
 
         /** Check if this aligns with a specific square, and connects if so.
          * @param {PaletteSquare} target - The square to attempt to link.
-         * @returns {string|null} The side this square attached to, if any.
+         * @returns {PaletteSquareConnection|null} The square's connection, if any.
          */
         connect( target ) {
             const x = Math.sign( target.x - this.x );
@@ -589,46 +592,51 @@ import AV from '/build/av.module.js/av.module.js';
             /// Check if they are aligned.
             if ( Math.abs( x ) === Math.abs( y ) ) return null;
             /// Find which side to connect.
-            var side, invs;
-            if ( x === -1 ) side = 'left', invs = 'right';
-            if ( y === -1 ) side = 'top', invs = 'bottom';
-            if ( x === 1 ) side = 'right', invs = 'left';
-            if ( y === 1 ) side = 'bottom', invs = 'top';
-            if ( !side ) return null;
-            /// Ignore if a connection already exists.
-            if ( this.connections[ side ] ) return null;
-            if ( target.connections[ invs ] ) return null;
-            /// Connect the squares.
-            this.connections[ side ] = target;
-            target.connections[ invs ] = this;
-            return side;
+            // var side, invs;
+            // if ( x === -1 ) side = 'left', invs = 'right';
+            // if ( y === -1 ) side = 'top', invs = 'bottom';
+            // if ( x === 1 ) side = 'right', invs = 'left';
+            // if ( y === 1 ) side = 'bottom', invs = 'top';
+            // if ( !side ) return null;
+            // /// Ignore if a connection already exists.
+            // if ( this.connections[ side ] ) return null;
+            // if ( target.connections[ invs ] ) return null;
+            // /// Connect the squares.
+            // this.connections[ side ] = target;
+            // target.connections[ invs ] = this;
+            // return side;
+            const connection = new PaletteSquareConnection( this, target );
+            return connection;
         }
 
         /** Verify that all connections are still valid. */
         checkConnections() {
-            const detached = [];
-            [ 'left', 'top', 'bottom', 'right' ].forEach( ( key ) => {
-                const target = this.connections[ key ];
-                if ( !target ) return;
-                const dir = ( key === 'left' || key === 'right' ) ? 'x' : 'y';
-                const sgn = ( key === 'left' || key === 'top' ) ? -1 : 1;
-                const dir_inv = ( key === 'left' || key === 'right' ) ? 'y' : 'x';
-                if ( Math.sign( target[ dir ] - this[ dir ] ) !== sgn || target[ dir_inv ] - this[ dir_inv ] !== 0 ) {
-                    /// The squares are misaligned.
-                    switch ( key ) {
-                        case 'left': target.connections.right = null; break;
-                        case 'top': target.connections.bottom = null; break;
-                        case 'right': target.connections.left = null; break;
-                        case 'bottom': target.connections.top = null; break;
-                    }
-                    this.connections[ key ] = null;
-                    detached.push( target );
-                }
+            // const detached = [];
+            // [ 'left', 'top', 'bottom', 'right' ].forEach( ( key ) => {
+            //     const target = this.connections[ key ];
+            //     if ( !target ) return;
+            //     const dir = ( key === 'left' || key === 'right' ) ? 'x' : 'y';
+            //     const sgn = ( key === 'left' || key === 'top' ) ? -1 : 1;
+            //     const dir_inv = ( key === 'left' || key === 'right' ) ? 'y' : 'x';
+            //     if ( Math.sign( target[ dir ] - this[ dir ] ) !== sgn || target[ dir_inv ] - this[ dir_inv ] !== 0 ) {
+            //         /// The squares are misaligned.
+            //         switch ( key ) {
+            //             case 'left': target.connections.right = null; break;
+            //             case 'top': target.connections.bottom = null; break;
+            //             case 'right': target.connections.left = null; break;
+            //             case 'bottom': target.connections.top = null; break;
+            //         }
+            //         this.connections[ key ] = null;
+            //         detached.push( target );
+            //     }
+            // } );
+            // /// See if any of the formally connected squares can connect via another side.
+            // detached.forEach( ( square ) => {
+            //     this.connect( square );
+            // } );
+            this.connections.forEach( ( conn ) => {
+                if ( conn ) conn.check();
             } );
-            /// See if any of the formally connected squares can connect via another side.
-            detached.forEach( ( square ) => {
-                this.connect( square );
-            } )
         }
 
         /** Deletes this square. */
@@ -636,25 +644,28 @@ import AV from '/build/av.module.js/av.module.js';
             const new_list = [];
             const id = this.id;
             /// Make a list of every other square.
-            this.container.forEach( ( target ) => {
+            this.container.forEachSquare( ( target ) => {
                 if ( target.id !== id ) {
                     new_list.push( target );
                 }
             } );
             this.container.squares = [ ...new_list ];
             /// See what is currently connected to this square.
-            const connections = [];
-            [ 'left', 'top', 'right', 'down' ].forEach( ( side ) => {
-                const target = this.connections[ side ];
-                if ( target ) connections.push( target );
+            /// Delete connections to the selected square.
+            const old_conns = [];
+            this.connections.forEach( ( conn ) => {
+                if ( !conn ) return;
+                conn.squares.forEach( ( sq ) => {
+                    if ( sq && sq.id !== this.id ) old_conns.push( sq );
+                } );
+                conn.delete();
             } );
-            /// Break connections to the selected square.
-            this.x = this.w / Math.PI;
-            this.y = this.h / Math.PI;
-            this.checkConnections();
+            // this.x = this.w / Math.PI;
+            // this.y = this.h / Math.PI;
+            // this.checkConnections();
             /// Connect squares that were connected to this one, if possible.
-            connections.forEach( ( a ) => {
-                connections.forEach( ( b ) => {
+            old_conns.forEach( ( a ) => {
+                old_conns.forEach( ( b ) => {
                     a.connect( b );
                 } );
             } );
@@ -695,59 +706,171 @@ import AV from '/build/av.module.js/av.module.js';
             // const y2 = y1 + h;
             ctx.fillStyle = this.color.hex;
             ctx.fillRect( x1, y1, w, h );
-            /// Draw the gradients.
-            [ 'left', 'top', 'bottom', 'right' ].forEach( ( key ) => {
-                const targ = this.connections[ key ];
-                if ( !targ || this.id > targ.id ) return;
-                const a = [ this.x, this.y ];
-                const b = [ targ.x, targ.y ];
-                if ( Math.abs( a[ 0 ] - b[ 0 ] ) > this.w / 2 && Math.abs( a[ 1 ] - b[ 1 ] ) > this.h / 2 ) {
-                    /// Only draw the gradient if the squares are roughly aligned.
-                    return;
-                }
-                const l = Math.max( Math.abs( a[ 0 ] - b[ 0 ] ), Math.abs( a[ 1 ] - b[ 1 ] ) ) / this.w;
-                for ( let i = 1; i < l; ++i ) {
-                    /// Draw the gradient.
-                    var t = i / l;
-                    const x = AV.lerp( a[ 0 ], b[ 0 ], t ) + x_off;
-                    const y = AV.lerp( a[ 1 ], b[ 1 ], t ) + y_off;
-                    this.color_cache.lerpColors( this.color, targ.color, t, true );
-                    ctx.fillStyle = this.color_cache.hex;
-                    ctx.fillRect( x, y, w, h );
-                }
-            } );
+
             if ( !gui ) return;
 
-            /// Draw the node connections.
+            /// Draw the node dot.
             const luma = this.color.getLuma();
             this.node_color = luma < 0.5 ? '#fff' : '#000';
+
+            gui.fillStyle = this.color.hex;
             gui.strokeStyle = this.node_color;
             gui.lineWidth = 2;
-            [ 'left', 'top', 'bottom', 'right' ].forEach( ( key ) => {
-                const targ = this.connections[ key ];
-                if ( targ && this.id < targ.id ) {
-                    const x0 = this.x + x_off + this.w / 2;
-                    const y0 = this.y + y_off + this.h / 2;
-                    const x1 = targ.x + x_off + this.w / 2;
-                    const y1 = targ.y + y_off + this.h / 2;
-                    if ( targ.node_color && this.node_color !== targ.node_color ) {
-                        const grad = gui.createLinearGradient( x0, y0, x1, y1 );
-                        grad.addColorStop( 0, this.node_color );
-                        grad.addColorStop( 1, targ.node_color );
-                        gui.strokeStyle = grad;
-                    }
-                    gui.beginPath()
-                    gui.moveTo( x0, y0 );
-                    gui.lineTo( x1, y1 );
-                    gui.stroke();
-                }
-            } );
-            /// Draw the node dot.
-            gui.fillStyle = this.color.hex;
             gui.beginPath();
             gui.arc( x1 + w / 2, y1 + h / 2, 8, 0, AV.RADIAN );
             gui.fill();
             gui.stroke();
+        }
+    }
+
+    /** Connection between two squares.
+     * @class
+     */
+    class PaletteSquareConnection {
+        /** @type {Color} Cached Color object. */
+        color_cache;
+
+        /** Constructor.
+         * @param {PaletteSquare} sq_a - A square to connect.
+         * @param {PaletteSquare} sq_b - A square to connect.
+         */
+        constructor( sq_a, sq_b ) {
+            this.color_cache = new Color();
+
+            this.container = sq_a.container;
+            this.container.connections.push( this );
+            this.id = this.container.id_c++;
+            this.squares = [ sq_a, sq_b ];
+            this.check();
+        }
+
+        /** Checks whether the connection is valid; updates sides if so, removes self if not.
+         * @returns {boolean}
+         */
+        check() {
+            const pts = this.getPoints();
+            const sq_a = pts[ 0 ];
+            const sq_b = pts[ 1 ];
+            const x_aligned = sq_a.x === sq_b.x;
+            const y_aligned = sq_a.y === sq_b.y;
+            if ( x_aligned === y_aligned ) {
+                this.delete();
+                return false;
+            }
+            this.disconnect();
+            this.axis = pts[ 2 ].axis;
+            this.axis_inverse = pts[ 2 ].inverse;
+            /// 0: top, 1: right, 2: bottom, 3: left.
+            const ind_a = this.axis === 'x' ? 1 : 2;
+            const ind_b = this.axis === 'x' ? 0 : 3;
+            if ( sq_a.connections[ ind_a ] || sq_b.connections[ ind_b ] ) {
+                /// One or both of the squares has a connection that's in the way.
+                this.delete();
+                return false;
+            }
+            sq_a.connections[ ind_a ] = sq_b.connections[ ind_b ] = this;
+            return true;
+        }
+
+        delete() {
+            this.disconnect();
+            this.squares = [];
+            const new_conns = [];
+            this.container.connections.forEach( ( conn, ind ) => {
+                if ( conn && conn.id !== this.id ) {
+                    new_conns.push( conn );
+                }
+            } );
+            this.container.connections = [ ...new_conns ];
+        };
+
+        disconnect() {
+            this.squares.forEach( ( square ) => {
+                square.connections.forEach( ( conn, ind ) => {
+                    if ( !conn || conn.id === this.id ) {
+                        square.connections[ ind ] = null;
+                    }
+                } );
+            } );
+        }
+
+        draw( ctx, gui, x_off = 0, y_off = 0 ) {
+            // const x1 = this.x + x_off;
+            // const y1 = this.y + y_off;
+            const pts = this.getPoints();
+            const sq_a = this.squares[ 0 ];
+            const sq_b = this.squares[ 1 ];
+
+            if ( !sq_a && !sq_b ) {
+                this.delete();
+                return;
+            }
+
+            this.axis = pts[ 2 ].axis;
+            this.axis_inverse = pts[ 2 ].inverse;
+
+            /// Draw the gradients.
+            const diff_x = Math.abs( sq_b.x - sq_a.x );
+            const diff_y = Math.abs( sq_b.y - sq_a.y );
+            /// Only draw the gradient if the squares are roughly aligned.
+            if ( diff_x > sq_a.w / 2 && diff_y > sq_a.h / 2 ) {
+                // return;
+            }
+            const ang = Math.atan2( diff_y, diff_x );
+            ctx.globalAlpha = Math.cos( ang * 2 ) ** 4;
+            const dist = AV.dist( sq_a.x, sq_a.y, sq_b.x, sq_b.y );
+            for ( let l = dist / sq_a.w, i = 1 - l % 1; i < l; ++i ) {
+                const t = i / l;
+                /// Draw the gradient.
+                const x = AV.lerp( sq_a.x, sq_b.x, t ) + x_off;
+                const y = AV.lerp( sq_a.y, sq_b.y, t ) + y_off;
+                this.color_cache.lerpColors( sq_a.color, sq_b.color, t, true );
+                ctx.fillStyle = this.color_cache.hex;
+                ctx.fillRect( x, y, sq_a.w, sq_a.h );
+            }
+            ctx.globalAlpha = 1;
+
+            if ( !gui ) return;
+
+            /// Draw the node connections.
+            gui.strokeStyle = sq_a.node_color || sq_b.node_color || this.node_color;
+            gui.lineWidth = 2;
+            const x0 = sq_a.x + x_off + sq_a.w / 2;
+            const y0 = sq_a.y + y_off + sq_a.h / 2;
+            const x1 = sq_b.x + x_off + sq_b.w / 2;
+            const y1 = sq_b.y + y_off + sq_b.h / 2;
+            if ( sq_a.node_color && sq_a.node_color !== sq_b.node_color ) {
+                const grad = gui.createLinearGradient( x0, y0, x1, y1 );
+                grad.addColorStop( 0, sq_a.node_color );
+                grad.addColorStop( 1, sq_b.node_color );
+                gui.strokeStyle = grad;
+            }
+            gui.beginPath()
+            gui.moveTo( x0, y0 );
+            gui.lineTo( x1, y1 );
+            gui.stroke();
+        }
+
+        getPoints() {
+            var sq_a = this.squares[ 0 ],
+                sq_b = this.squares[ 1 ];
+            const out = [ sq_a, sq_b, {
+                axis: null,
+                inverse: null,
+                dist: null
+            } ];
+            if ( !sq_a || !sq_b ) {
+                return out;
+            }
+            const dir = sq_a.x === sq_b.x ? 'y' : 'x';
+            if ( sq_a[ dir ] > sq_b[ dir ] ) {
+                out[ 0 ] = sq_b;
+                out[ 1 ] = sq_a;
+            }
+            out[ 2 ].axis = dir;
+            out[ 2 ].inverse = dir === 'x' ? 'y' : 'x';
+            out[ 2 ].dist = out[ 1 ][ dir ] - out[ 0 ][ dir ];
+            return out;
         }
     }
 
@@ -939,7 +1062,7 @@ import AV from '/build/av.module.js/av.module.js';
             this.cam_y = ( this.output.cvs.height - this.size ) / 2;
             this.cam_z = 1;
             var min_x = 0, min_y = 0, max_x = 0, max_y = 0;
-            this.container.forEach( ( square ) => {
+            this.container.forEachSquare( ( square ) => {
                 const x = square.x / this.size;
                 const y = square.y / this.size;
                 min_x = Math.min( min_x, Math.floor( x ) );
@@ -949,7 +1072,7 @@ import AV from '/build/av.module.js/av.module.js';
             } );
             const width = max_x - min_x;
             const height = max_y - min_y;
-            this.container.forEach( ( square ) => {
+            this.container.forEachSquare( ( square ) => {
                 const x = AV.map( square.x / 64, min_x, max_x, -width / 2, width / 2 );
                 const y = AV.map( square.y / 64, min_y, max_y, -height / 2, height / 2 );
                 square.x = Math.round( x ) * 64;
@@ -981,7 +1104,10 @@ import AV from '/build/av.module.js/av.module.js';
                 }
             }
             /// Squares and GUI elements.
-            this.container.forEach( ( square ) => {
+            this.container.forEachConnection( ( connection ) => {
+                connection.draw( ctx, gui, vx, vy );
+            } );
+            this.container.forEachSquare( ( square ) => {
                 square.draw( ctx, gui, vx, vy );
             } );
             this.output.draw();
@@ -1259,6 +1385,10 @@ import AV from '/build/av.module.js/av.module.js';
                             }
                         } );
                         break;
+                    case 'KeyY':
+                        if ( disable_undo ) break;
+                        this.history.redo();
+                        break;
                     case 'KeyZ':
                         if ( disable_undo ) break;
                         if ( event.shiftKey ) {
@@ -1288,7 +1418,7 @@ import AV from '/build/av.module.js/av.module.js';
                 // ctx.globalAlpha = 0.25;
                 ctx.lineWidth = 0.5;
                 ctx.strokeRect( x, y, this.size, this.size );
-                ctx.globalAlpha = 1;
+                // ctx.globalAlpha = 1;
             };
 
             $cvs.on( 'contextmenu', ( event ) => {
@@ -1516,15 +1646,15 @@ import AV from '/build/av.module.js/av.module.js';
             }
             this.reset();
             const list_by_id = [];
-            var max_id = 0;
+            var max_id = -1;
             data.forEach( ( obj ) => {
                 switch ( obj.type ) {
                     case 'square':
-                        const square = this.container.createSquare( obj.x * this.size, obj.y * this.size );
-                        square.color.setValue( obj.color );
+                        const square = this.container.createSquare( obj.x * this.size, obj.y * this.size, obj.color );
                         square.id = obj.id;
+                        if ( typeof square.id === 'undefined' ) square.id = max_id + 1;
                         max_id = Math.max( max_id, square.id );
-                        list_by_id[ obj.id ] = square;
+                        list_by_id[ square.id ] = square;
                         obj.square = square;
                         break;
                     case 'meta':
@@ -1535,7 +1665,7 @@ import AV from '/build/av.module.js/av.module.js';
                         break;
                 }
             } );
-            this.container.index = max_id + 1;
+            this.container.id_s = max_id + 1;
             /// Load saved connections.
             data.forEach( ( obj ) => {
                 if ( obj.type !== 'square' || !obj.links ) return;
@@ -1550,7 +1680,12 @@ import AV from '/build/av.module.js/av.module.js';
 
         /** Resets the app. */
         reset() {
-            this.container.squares = [];
+            this.container.forEachSquare( ( square ) => {
+                square.delete();
+            } );
+            this.container.forEachConnection( ( connection ) => {
+                connection.delete();
+            } );
             this.cam_x = ( this.output.cvs.width - this.size ) / 2;
             this.cam_y = ( this.output.cvs.height - this.size ) / 2;
             this.cam_z = 1;
@@ -1569,7 +1704,7 @@ import AV from '/build/av.module.js/av.module.js';
                 z: this.cam_z,
                 background: this.background_color
             } ];
-            this.container.forEach( ( square ) => {
+            this.container.forEachSquare( ( square ) => {
                 const obj = {
                     type: 'square',
                     id: square.id,
@@ -1578,9 +1713,11 @@ import AV from '/build/av.module.js/av.module.js';
                     y: square._y,
                     links: []
                 };
-                [ 'left', 'top', 'right', 'down' ].forEach( ( side ) => {
-                    const target = square.connections[ side ];
-                    if ( target ) obj.links.push( target.id );
+                square.connections.forEach( ( target ) => {
+                    if ( !target ) return;
+                    var id = target.squares[ 0 ].id;
+                    if ( id === obj.id ) id = target.squares[ 1 ].id;
+                    obj.links.push( id );
                 } );
                 data.push( obj );
             } );
@@ -1600,7 +1737,7 @@ import AV from '/build/av.module.js/av.module.js';
             this.cam_z = AV.clamp( zoom, this.zoom_min, this.zoom_max );
             this.size = 64 * this.cam_z;
             this.container.size = this.size;
-            this.container.forEach( ( square ) => {
+            this.container.forEachSquare( ( square ) => {
                 square.w = this.size;
                 square.h = this.size;
             } );
