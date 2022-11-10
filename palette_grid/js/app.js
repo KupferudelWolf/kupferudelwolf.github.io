@@ -494,12 +494,15 @@ import AV from '/build/av.module.js/av.module.js';
         /** Finds all squares beneath a given point.
          * @param {number} x - The x value to test.
          * @param {number} y - The y value to test.
-         * @returns {PaletteSquare[]} The detected squares.
+         * @returns {[PaletteSquare, PaletteConnection]} The detected squares.
          */
         detectAll( x, y ) {
             const out = [];
             this.forEachSquare( ( square ) => {
                 if ( square.detect( x, y ) ) out.push( square );
+            } );
+            this.forEachConnection( ( conn ) => {
+                if ( conn.detect( x, y ) ) out.push( conn );
             } );
             return out;
         }
@@ -533,7 +536,7 @@ import AV from '/build/av.module.js/av.module.js';
         h;
         /** @type {Color} The color of the square. */
         color;
-        /** @type {PaletteSquareConnection[]} Connected squares: top, right, bottom, left. */
+        /** @type {PaletteConnection[]} Connected squares: top, right, bottom, left. */
         connections;
         /** @type {PaletteSquareFactory} The factory class that created this square. */
         container;
@@ -586,14 +589,14 @@ import AV from '/build/av.module.js/av.module.js';
 
         /** Check if this aligns with a specific square, and connects if so.
          * @param {PaletteSquare} target - The square to attempt to link.
-         * @returns {PaletteSquareConnection|null} The square's connection, if any.
+         * @returns {PaletteConnection|null} The square's connection, if any.
          */
         connect( target ) {
             const x = Math.sign( target.x - this.x );
             const y = Math.sign( target.y - this.y );
             /// Check if they are aligned.
             if ( Math.abs( x ) === Math.abs( y ) ) return null;
-            const connection = new PaletteSquareConnection( this, target );
+            const connection = new PaletteConnection( this, target );
             return connection;
         }
 
@@ -639,8 +642,8 @@ import AV from '/build/av.module.js/av.module.js';
          * @returns {boolean} Whether the point is within this square.
          */
         detect( x, y ) {
-            if ( x < this.x || x > this.x + this.w - 1 ) return false;
-            if ( y < this.y || y > this.y + this.h - 1 ) return false;
+            if ( x < this.x || x >= this.x + this.w ) return false;
+            if ( y < this.y || y >= this.y + this.h ) return false;
             return true;
         }
 
@@ -685,10 +688,10 @@ import AV from '/build/av.module.js/av.module.js';
         }
     }
 
-    /** Connection between two squares.
+    /** A connection between two squares.
      * @class
      */
-    class PaletteSquareConnection {
+    class PaletteConnection {
         /** @type {Color} Cached Color object. */
         color_cache;
         /** @type {PaletteSquareFactory} The factory class that created this square. */
@@ -758,6 +761,31 @@ import AV from '/build/av.module.js/av.module.js';
             this.container.connections = [ ...new_conns ];
         };
 
+        /** Determines whether a point is within this connection's range.
+         * @param {number} x - The x value to test.
+         * @param {number} y - The y value to test.
+         * @returns {boolean} Whether the point is within this connection's range.
+         */
+        detect( x, y ) {
+            var sq_a = this.squares[ 0 ];
+            var sq_b = this.squares[ 1 ];
+            if ( !sq_a || !sq_b ) return false;
+            var x0 = Math.min( sq_a.x, sq_b.x ),
+                y0 = Math.min( sq_a.y, sq_b.y ),
+                x1 = Math.max( sq_a.x, sq_b.x ),
+                y1 = Math.max( sq_a.y, sq_b.y );
+            if ( sq_a.x === sq_b.x ) {
+                y0 += sq_a.h;
+                x1 += sq_a.w;
+            } else {
+                x0 += sq_a.w;
+                y1 += sq_a.h;
+            }
+            if ( x < x0 || x >= x1 ) return false;
+            if ( y < y0 || y >= y1 ) return false;
+            return true;
+        }
+
         /** Disconnects this connection from its squares. */
         disconnect() {
             this.squares.forEach( ( square ) => {
@@ -800,7 +828,7 @@ import AV from '/build/av.module.js/av.module.js';
                 const y = AV.lerp( sq_a.y, sq_b.y, t ) + y_off;
                 this.color_cache.lerpColors( sq_a.color, sq_b.color, t, true );
                 ctx.fillStyle = this.color_cache.hex;
-                ctx.fillRect( x, y, sq_a.w, sq_a.h );
+                ctx.fillRect( x, y, sq_a.w + 0.49, sq_a.h + 0.49 );
             }
             ctx.globalAlpha = 1;
 
@@ -1075,7 +1103,7 @@ import AV from '/build/av.module.js/av.module.js';
                 event.preventDefault();
             } )
 
-            const menu_save = $( '.menu #ctrl-save' );
+            const menu_save = $( '.menu #menu-save' );
 
             const button_center = $( '.button-bar #btn-center' );
             const button_clear = $( '.button-bar #btn-clear' );
@@ -1137,18 +1165,23 @@ import AV from '/build/av.module.js/av.module.js';
                 this.gui_timer = Date.now();
             } );
 
-            const menu_add = $( '.menu #ctrl-add' );
-            const menu_bg = $( '.menu #ctrl-bg' );
-            const menu_clone = $( '.menu #ctrl-clone' );
-            const menu_color = $( '.menu #ctrl-color' );
-            const menu_copyhex = $( '.menu #ctrl-copyhex' );
-            const menu_copypng = $( '.menu #ctrl-copypng' );
-            const menu_delall = $( '.menu #ctrl-delall' );
-            const menu_delete = $( '.menu #ctrl-delete' );
-            const menu_save = $( '.menu #ctrl-save' );
+            const menu_add = $( '.menu #menu-add' );
+            const menu_bg = $( '.menu #menu-bg' );
+            const menu_clone = $( '.menu #menu-clone' );
+            const menu_color = $( '.menu #menu-color' );
+            const menu_copyhex = $( '.menu #menu-copyhex' );
+            const menu_copypng = $( '.menu #menu-copypng' );
+            const menu_delall = $( '.menu #menu-delall' );
+            const menu_delete = $( '.menu #menu-delete' );
+            const menu_disconnect = $( '.menu #menu-disconnect' );
+            const menu_save = $( '.menu #menu-save' );
 
             this.activateMenu = ( x, y, t ) => {
                 target = t || null;
+                const target_none = !target;
+                const target_any = !target_none;
+                const target_square = target instanceof PaletteSquare;
+                const target_connection = target instanceof PaletteConnection;
                 mouse_x = x;
                 mouse_y = y;
                 /// Get the pixel data.
@@ -1159,16 +1192,18 @@ import AV from '/build/av.module.js/av.module.js';
                     hex = null;
                 }
                 /// Toggle menu options.
-                menu_add.toggleClass( 'hidden', !!target );
+                menu_add.toggleClass( 'hidden', target_square );
                 menu_bg.val( this.background_color ).parent().toggleClass( 'hidden', !!hex );
-                menu_clone.toggleClass( 'hidden', !target );
-                menu_color.parent().toggleClass( 'hidden', !target );
+                menu_clone.toggleClass( 'hidden', !target_square );
+                menu_color.parent().toggleClass( 'hidden', target_none );
                 menu_copyhex.toggleClass( 'disabled', !hex );
-                menu_delete.toggleClass( 'hidden', !target );
+                menu_delete.toggleClass( 'hidden', !target_square );
                 menu_delall.toggleClass( 'disabled', this.container.squares.length === 0 );
-                menu_delall.toggleClass( 'hidden', !!target );
-                if ( target ) {
-                    menu_color.val( target.color.hex.slice( 0, 7 ) );
+                menu_delall.toggleClass( 'hidden', target_any );
+                menu_disconnect.toggleClass( 'hidden', !target_connection );
+                if ( hex ) {
+                    if ( target_square ) hex = target.color.hex.slice( 0, 7 );
+                    menu_color.val( hex );
                 }
                 /// Make sure the menu does not go off the screen.
                 const menu_width = menu.width();
@@ -1188,6 +1223,7 @@ import AV from '/build/av.module.js/av.module.js';
             menu_add.on( 'click', () => {
                 /// Create a new square.
                 if ( menu_add.hasClass( 'disabled' ) ) return;
+                if ( target instanceof PaletteSquare ) return;
                 menu.removeClass( 'active' );
                 /// Get the pixel data before adding the square.
                 const point = this.output.ctx.getImageData( mouse_x, mouse_y, 1, 1 ).data;
@@ -1199,6 +1235,14 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( square.color.hex === this.background_color + 'ff' ) {
                     /// Make the color random instead.
                     square.color.setValue( Math.random() * 0xffffff );
+                }
+                if ( target instanceof PaletteConnection ) {
+                    /// Make this new square a part of the connection.
+                    const sq_a = target.squares[ 0 ];
+                    const sq_b = target.squares[ 1 ];
+                    target.delete();
+                    square.connect( sq_a );
+                    square.connect( sq_b );
                 }
                 this.save();
             } );
@@ -1258,7 +1302,16 @@ import AV from '/build/av.module.js/av.module.js';
 
             menu_delete.on( 'click', () => {
                 /// Delete the selected square.
-                if ( !target ) return;
+                if ( !( target instanceof PaletteSquare ) ) return;
+                menu.removeClass( 'active' );
+                target.delete();
+                target = null;
+                this.save();
+            } );
+
+            menu_disconnect.on( 'click', () => {
+                /// Delete the selected square.
+                if ( !( target instanceof PaletteConnection ) ) return;
                 menu.removeClass( 'active' );
                 target.delete();
                 target = null;
@@ -1306,7 +1359,7 @@ import AV from '/build/av.module.js/av.module.js';
             };
 
             /// Listen for keypresses.
-            const menu_copypng = $( '.menu #ctrl-copypng' );
+            const menu_copypng = $( '.menu #menu-copypng' );
             document.body.onkeydown = ( event ) => {
                 spacebar = event.code === 'Space';
                 if ( spacebar ) {
@@ -1395,9 +1448,9 @@ import AV from '/build/av.module.js/av.module.js';
                 view_y = mouse_y - this.cam_y;
                 /// Check whether any squares are beneath the pointer.
                 target = null;
-                const squares = this.container.detectAll( view_x, view_y );
-                if ( squares.length > 0 ) {
-                    target = squares[ squares.length - 1 ];
+                const detects = this.container.detectAll( view_x, view_y );
+                if ( detects.length > 0 ) {
+                    target = detects[ 0 ];
                     target_x = target.x;
                     target_y = target.y;
                 }
@@ -1468,6 +1521,21 @@ import AV from '/build/av.module.js/av.module.js';
                             /// Moved too far for a long-click.
                             overlay.draws[ 1 ] = () => { };
                             long = false;
+                            if ( target instanceof PaletteConnection ) {
+                                const point = this.output.ctx.getImageData( start_x, start_y, 1, 1 ).data;
+                                target_x = start_x - this.cam_x;
+                                target_x = Math.floor( target_x / this.size ) * this.size;
+                                target_y = start_y - this.cam_y;
+                                target_y = Math.floor( target_y / this.size ) * this.size;
+                                const sq_a = target.squares[ 0 ];
+                                const sq_b = target.squares[ 1 ];
+                                target.delete();
+                                target = this.container.createSquare( target_x, target_y );
+                                target.color.setRGB( point[ 0 ] / 255, point[ 1 ] / 255, point[ 2 ] / 255 );
+                                target.connect( sq_a );
+                                target.connect( sq_b );
+                                target_x = target_y = null;
+                            }
                         }
                         if ( long ) break;
                         if ( target ) {
@@ -1535,7 +1603,7 @@ import AV from '/build/av.module.js/av.module.js';
                                     target.y += this.size;
                                     const detects = this.container.detectAll( x, y )[ 0 ];
                                     target.y -= this.size;
-                                    if ( detects ) {
+                                    if ( detects instanceof PaletteSquare ) {
                                         /// Place the square back where it belongs.
                                         if ( target_x !== null && target_y !== null ) {
                                             target.x = target_x;
@@ -1546,6 +1614,8 @@ import AV from '/build/av.module.js/av.module.js';
                                         /// See if the squares can connect.
                                         target.connect( detects );
                                         /// Verify the current connections.
+                                        target.checkConnections();
+                                        this.save();
                                     } else {
                                         /// Place the square.
                                         target.x = x;
