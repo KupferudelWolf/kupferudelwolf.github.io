@@ -596,6 +596,7 @@ import AV from '/build/av.module.js/av.module.js';
             const y = Math.sign( target.y - this.y );
             /// Check if they are aligned.
             if ( Math.abs( x ) === Math.abs( y ) ) return null;
+            /// Create the connection.
             const connection = new PaletteConnection( this, target );
             return connection;
         }
@@ -841,7 +842,7 @@ import AV from '/build/av.module.js/av.module.js';
             const y0 = sq_a.y + y_off + sq_a.h / 2;
             const x1 = sq_b.x + x_off + sq_b.w / 2;
             const y1 = sq_b.y + y_off + sq_b.h / 2;
-            if ( sq_a.node_color && sq_a.node_color !== sq_b.node_color ) {
+            if ( sq_a.node_color && sq_b.node_color && sq_a.node_color !== sq_b.node_color ) {
                 const grad = gui.createLinearGradient( x0, y0, x1, y1 );
                 grad.addColorStop( 0, sq_a.node_color );
                 grad.addColorStop( 1, sq_b.node_color );
@@ -1416,6 +1417,7 @@ import AV from '/build/av.module.js/av.module.js';
             };
 
             overlay.draws[ 0 ] = ( ctx ) => {
+                /// Square outline on hover.
                 if ( mouse_x === null || mouse_y === null ) return;
                 const x = Math.floor( ( mouse_x - this.cam_x ) / this.size ) * this.size + this.cam_x;
                 const y = Math.floor( ( mouse_y - this.cam_y ) / this.size ) * this.size + this.cam_y;
@@ -1572,6 +1574,8 @@ import AV from '/build/av.module.js/av.module.js';
                     }
                     return;
                 }
+                mouse_x = event.clientX;
+                mouse_y = event.clientY;
                 $bar.removeClass( 'ignored' );
                 switch ( ( prop && prop[ 0 ] ) || button ) {
                     case 1:
@@ -1616,6 +1620,43 @@ import AV from '/build/av.module.js/av.module.js';
                                         /// Verify the current connections.
                                         target.checkConnections();
                                         this.save();
+                                    } else if ( detects instanceof PaletteConnection ) {
+                                        const sq_a = detects.squares[ 0 ];
+                                        const sq_b = detects.squares[ 1 ];
+                                        const matches_id = sq_a.id === target.id || sq_b.id === target.id;
+                                        const dir = sq_a.x - sq_b.x === 0 ? 'x' : 'y';
+                                        const is_parallel = sq_a[ dir ] === ( sq_a.x - sq_b.x === 0 ? target_x : target_y );
+                                        if ( target_x === null || target_y === null ) {
+                                            target.delete();
+                                        } else if ( matches_id || is_parallel ) {
+                                            /// Already connected, or would intersect with connection.
+                                            /// Just place the square back where it was.
+                                            target.x = target_x;
+                                            target.y = target_y;
+                                        } else {
+                                            const px = mouse_x - start_x + view_x + this.cam_x;
+                                            const py = mouse_y - start_y + view_y + this.cam_y;
+                                            target.x = target_x;
+                                            target.y = target_y;
+                                            /// Refresh the canvas.
+                                            this.drawCanvas();
+                                            const point = this.output.ctx.getImageData( px, py, 1, 1 ).data;
+                                            /// Make a new square here to connect with.
+                                            const square = this.container.createSquare( x, y );
+                                            square.color.setRGB( point[ 0 ] / 255, point[ 1 ] / 255, point[ 2 ] / 255 );
+                                            const connection = square.connect( target );
+                                            if ( connection ) {
+                                                /// Make a three-way connection.
+                                                detects.delete();
+                                                square.connect( sq_a );
+                                                square.connect( sq_b );
+                                                target.checkConnections();
+                                                this.save();
+                                            } else {
+                                                square.delete();
+                                                target.checkConnections();
+                                            }
+                                        }
                                     } else {
                                         /// Place the square.
                                         target.x = x;
