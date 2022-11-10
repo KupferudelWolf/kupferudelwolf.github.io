@@ -1593,14 +1593,17 @@ import AV from '/build/av.module.js/av.module.js';
                                         }
                                         /// See if the squares can connect.
                                         target.connect( detects );
+                                        /// Verify the current connections.
                                     } else {
                                         /// Place the square.
                                         target.x = x;
                                         target.y = y;
+                                        if ( target_x !== x || target_y !== y ) {
+                                            /// The square has been moved.
+                                            target.checkConnections();
+                                            this.save();
+                                        }
                                     }
-                                    /// Verify the current gradients.
-                                    target.checkConnections();
-                                    this.save();
                                 }
                             }
                         }
