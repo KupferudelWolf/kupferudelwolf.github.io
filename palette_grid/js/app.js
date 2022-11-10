@@ -998,7 +998,6 @@ import AV from '/build/av.module.js/av.module.js';
 
         /** Constructor. */
         constructor() {
-            this.size = 64;
             this.zoom_precision = 0.25;
             this.zoom_min = 0.5;
             this.zoom_max = 2;
@@ -1007,6 +1006,7 @@ import AV from '/build/av.module.js/av.module.js';
             this.cam_x = ( this.output.cvs.width - this.size ) / 2;
             this.cam_y = ( this.output.cvs.height - this.size ) / 2;
             this.cam_z = 1;
+            this.size = 64 * this.cam_z;
             this.container = new PaletteSquareFactory( this.size );
             this.history = new UndoHistory(
                 /// Undo.
@@ -1054,10 +1054,10 @@ import AV from '/build/av.module.js/av.module.js';
             const width = max_x - min_x;
             const height = max_y - min_y;
             this.container.forEachSquare( ( square ) => {
-                const x = AV.map( square.x / 64, min_x, max_x, -width / 2, width / 2 );
-                const y = AV.map( square.y / 64, min_y, max_y, -height / 2, height / 2 );
-                square.x = Math.round( x ) * 64;
-                square.y = Math.round( y ) * 64;
+                const x = AV.map( square.x / this.size, min_x, max_x, -width / 2, width / 2 );
+                const y = AV.map( square.y / this.size, min_y, max_y, -height / 2, height / 2 );
+                square.x = Math.round( x ) * this.size;
+                square.y = Math.round( y ) * this.size;
             } );
         }
 
