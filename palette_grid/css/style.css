@@ -90,6 +90,7 @@ canvas.grabbing {
 
 .menu > div {
     display: flex;
+    overflow: hidden;
     align-items: center;
     height: 32px;
     padding: 8px;
@@ -100,18 +101,34 @@ canvas.grabbing {
     user-select: none;
 }
 
-.menu > div input[type="color"] {
+.menu > div > * {
+    width: 100%;
+}
+
+.menu > div:hover {
+    background-color: #ddd;
+}
+.menu > div.hidden {
+    display: none;
+}
+.menu > div.disabled {
+    color: #bbb;
+}
+
+.menu input[type="color"] {
     /* appearance: none; */
     /* border: none; */
-    height: 32px;
     width: 32px;
+    height: 32px;
+    min-width: 32px;
     padding: 0;
     margin: 0;
+    cursor: pointer;
 }
-.menu > div input[type="color"]::-webkit-color-swatch-wrapper {
+.menu input[type="color"]::-webkit-color-swatch-wrapper {
     padding: 4px;
 }
-.menu > div input[type="color"]::-webkit-color-swatch {
+.menu input[type="color"]::-webkit-color-swatch {
     /* border: none; */
 }
 
@@ -125,4 +142,32 @@ canvas.grabbing {
 
 .menu > div.disabled {
     color: #bbb;
+}
+
+.menu .toggle {
+    appearance: none;
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    background: white;
+    width: 48px;
+    height: 32px;
+    cursor: pointer;
+    pointer-events: none;
+}
+.menu .toggle::-webkit-slider-runnable-track {
+    background: white;
+    border: solid 1px #4f4f4f;
+    border-radius: 2px;
+}
+.menu .toggle:focus {
+    outline: none;
+}
+.menu .toggle::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    border-radius: 0;
+    width: 16px;
+    height: 32px;
+    background-color: #aaa;
 }

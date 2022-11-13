@@ -699,6 +699,8 @@ import AV from '/build/av.module.js/av.module.js';
         container;
         /** @type {number} Unique identifying index. */
         id;
+        /** @type {'rgb'|'hsl'} Gradient type. */
+        mode;
         /** @type {PaletteSquare[]} The squares this connection is connecting. */
         squares;
 
@@ -712,6 +714,7 @@ import AV from '/build/av.module.js/av.module.js';
             this.container = sq_a.container;
             this.container.connections.push( this );
             this.id = this.container.id_c++;
+            this.mode = 'hsl';
             this.squares = [ sq_a, sq_b ];
             this.check();
         }
@@ -827,7 +830,7 @@ import AV from '/build/av.module.js/av.module.js';
                 /// Draw the gradient.
                 const x = AV.lerp( sq_a.x, sq_b.x, t ) + x_off;
                 const y = AV.lerp( sq_a.y, sq_b.y, t ) + y_off;
-                this.color_cache.lerpColors( sq_a.color, sq_b.color, t, true );
+                this.color_cache.lerpColors( sq_a.color, sq_b.color, t, this.mode === 'hsl' );
                 ctx.fillStyle = this.color_cache.hex;
                 ctx.fillRect( x, y, sq_a.w + 0.49, sq_a.h + 0.49 );
             }
@@ -1166,6 +1169,31 @@ import AV from '/build/av.module.js/av.module.js';
                 this.gui_timer = Date.now();
             } );
 
+            $( '.toggle' ).each( function () {
+                const element = $( this );
+                const values = element.siblings( '.toggle-value' );
+                if ( values.length < 2 ) return;
+                values.hide();
+                const vals = [
+                    values.first(),
+                    values.last()
+                ];
+                vals[ +element.val() ].show();
+                // element.on( 'click input change', onChange );
+                element.parent().on( 'update', function () {
+                    const val = element.val();
+                    vals[ val ].show();
+                    vals[ 1 - val ].hide();
+                } ).on( 'click', function ( event ) {
+                    event.preventDefault();
+                    if ( event.which !== 1 ) return;
+                    const val = 1 - element.val();
+                    element.val( val );
+                    $( this ).trigger( 'update' );
+                    return false;
+                } );
+            } );
+
             const menu_add = $( '.menu #menu-add' );
             const menu_bg = $( '.menu #menu-bg' );
             const menu_clone = $( '.menu #menu-clone' );
@@ -1175,6 +1203,7 @@ import AV from '/build/av.module.js/av.module.js';
             const menu_delall = $( '.menu #menu-delall' );
             const menu_delete = $( '.menu #menu-delete' );
             const menu_disconnect = $( '.menu #menu-disconnect' );
+            const menu_mode = $( '.menu #menu-mode' );
             const menu_save = $( '.menu #menu-save' );
 
             this.activateMenu = ( x, y, t ) => {
@@ -1202,9 +1231,14 @@ import AV from '/build/av.module.js/av.module.js';
                 menu_delall.toggleClass( 'disabled', this.container.squares.length === 0 );
                 menu_delall.toggleClass( 'hidden', target_any );
                 menu_disconnect.toggleClass( 'hidden', !target_connection );
+                menu_mode.parent().toggleClass( 'hidden', !target_connection );
                 if ( hex ) {
                     if ( target_square ) hex = target.color.hex.slice( 0, 7 );
                     menu_color.val( hex );
+                }
+                if ( target_connection ) {
+                    menu_mode.val( target.mode === 'hsl' ? 1 : 0 );
+                    menu_mode.parent().trigger( 'update' );
                 }
                 /// Make sure the menu does not go off the screen.
                 const menu_width = menu.width();
@@ -1316,6 +1350,13 @@ import AV from '/build/av.module.js/av.module.js';
                 menu.removeClass( 'active' );
                 target.delete();
                 target = null;
+                this.save();
+            } );
+
+            menu_mode.parent().on( 'click', () => {
+                if ( !( target instanceof PaletteConnection ) ) return;
+                const val = menu_mode.val();
+                target.mode = val > 0.5 ? 'hsl' : 'rgb';
                 this.save();
             } );
 
@@ -1735,10 +1776,17 @@ import AV from '/build/av.module.js/av.module.js';
             /// Load saved connections.
             data.forEach( ( obj ) => {
                 if ( obj.type !== 'square' || !obj.links ) return;
-                obj.links.forEach( ( id ) => {
+                obj.links.forEach( ( val ) => {
+                    var id = val,
+                        mode = 'hsl';
+                    if ( val instanceof Object ) {
+                        id = val.id;
+                        mode = val.mode;
+                    }
                     const target = list_by_id[ id ];
                     if ( !target ) return;
-                    obj.square.connect( target );
+                    const conn = obj.square.connect( target );
+                    conn.mode = mode;
                 } );
             } );
             return true;
@@ -1781,9 +1829,12 @@ import AV from '/build/av.module.js/av.module.js';
                 };
                 square.connections.forEach( ( target ) => {
                     if ( !target ) return;
-                    var id = target.squares[ 0 ].id;
-                    if ( id === obj.id ) id = target.squares[ 1 ].id;
-                    obj.links.push( id );
+                    var sq = target.squares[ 0 ];
+                    if ( sq.id === obj.id ) sq = target.squares[ 1 ];
+                    obj.links.push( {
+                        id: sq.id,
+                        mode: target.mode || 'hsl'
+                    } );
                 } );
                 data.push( obj );
             } );
