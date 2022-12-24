@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>
+		Logographer
+	</title>
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="/build/jquery.min.js" type="text/javascript"></script>
+	<script src="build/simplify.js" type="text/javascript"></script>
+	<script src="js/app.js" type="module"></script>
+</head>
+
+<body>
+	<div class="container">
+		<div class="panel canvas-container">
+			<div class="controls">
+				<label for="mode">Mode:</label>
+				<input type="range" class="toggle" value="0" min="0" max="1" id="mode" />
+			</div>
+			<canvas id="canvas" width="256" height="256"></canvas>
+			<div class="controls">
+				<input type="submit" id="undo" value="Undo" />
+				<input type="submit" id="redo" value="Redo" />
+			</div>
+			<div class="controls">
+				<input type="submit" id="save" value="Save" />
+				<input type="submit" id="restore" value="Restore" />
+				<input type="submit" id="clear" value="Clear" />
+			</div>
+		</div>
+		<div class="panel">
+			<canvas id="saved" width="64" height="64"></canvas>
+			<div class="row">
+				<label for="translation">Translation:</label>
+				<input type="text" id="translation" list="translation-data" />
+				<datalist id="translation-data">
+					<option value="Option A">
+					<option value="Option B">
+					<option value="Option C">
+					<option value="Misc">
+				</datalist>
+			</div>
+			<div class="row">
+				<label for="stroke-width">Stroke Width:</label>
+				<input type="range" value="20" min="1" max="50" id="stroke-width" />
+			</div>
+			<div class="row">
+				<label for="stroke-redux">Reduction:</label>
+				<input type="range" value="0.02" min="0" max="0.5" step="0.01" id="stroke-redux" />
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

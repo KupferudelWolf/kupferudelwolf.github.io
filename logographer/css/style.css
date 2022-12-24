@@ -1,0 +1,50 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.container {
+    display: flex;
+    background-color: antiquewhite;
+}
+.panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 1em;
+}
+.panel.canvas-container {
+    align-items: center;
+    gap: 1em;
+}
+.row {
+    height: 1.5em;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    align-items: center;
+    gap: 1em;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+}
+
+.spacer {
+    flex-grow: 100;
+}
+
+canvas#canvas {
+    background-color: white;
+    border: 2px solid #a89765;
+    cursor: crosshair;
+}
+
+canvas#saved {
+    border: 1px dotted #a89765;
+    width: 1.5em;
+    height: 1.5em;
+}
