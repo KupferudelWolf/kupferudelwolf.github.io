@@ -3,18 +3,48 @@
 import AV from '/build/av.module.js/av.module.js';
 
 ( function () {
+    /** @class */
+    class Word {
+        constructor() {
+            this.translations = [ ...arguments ];
+            this.strokes = [];
+        }
+
+        draw( ctx ) {
+            const width = ctx.canvas.width;
+            const height = ctx.canvas.height;
+            ctx.clearRect( 0, 0, width, height );
+            this.strokes.forEach( ( stroke ) => {
+                ctx.beginPath();
+                let lineTo = 'moveTo';
+                stroke.forEach( ( point ) => {
+                    ctx[ lineTo ]( point.x * width, point.y * height );
+                    lineTo = 'lineTo';
+                } );
+                ctx.stroke();
+            } );
+        }
+
+        iterate( perPoint, perStroke = () => { } ) {
+            this.strokes.forEach( ( stroke ) => {
+                perStroke( stroke );
+                stroke.forEach( ( point ) => {
+                    perPoint( point, stroke );
+                } );
+            } );
+        }
+    }
 
     /** @class */
     class App {
         constructor() {
             this.key = '';
             this.lexicon = [
-                {
-                    translations: [ 'test' ],
-                    strokes: [],
-                    saved: [ [ { "x": 0.33984375, "y": 0.515625 }, { "x": 0.671875, "y": 0.51171875 } ], [ { "x": 0.19140625, "y": 0.234375 }, { "x": 0.81640625, "y": 0.23046875 } ], [ { "x": 0.1953125, "y": 0.25390625 }, { "x": 0.3359375, "y": 0.50390625 } ], [ { "x": 0.68359375, "y": 0.51953125 }, { "x": 0.56640625, "y": 0.7734375 } ] ]
-                }
+                new Word( 'moon', 'soul' )
             ];
+            this.lexicon[ 0 ].strokes = [ [ { "x": 0.33984375, "y": 0.515625 }, { "x": 0.671875, "y": 0.51171875 } ], [ { "x": 0.19140625, "y": 0.234375 }, { "x": 0.81640625, "y": 0.23046875 } ], [ { "x": 0.1953125, "y": 0.25390625 }, { "x": 0.3359375, "y": 0.50390625 } ], [ { "x": 0.68359375, "y": 0.51953125 }, { "x": 0.56640625, "y": 0.7734375 } ] ];
+
+            this.active_word = new Word();
 
             this.cvs = $( 'canvas#canvas' ).get( 0 );
             this.ctx = this.cvs.getContext( '2d' );
@@ -31,33 +61,6 @@ import AV from '/build/av.module.js/av.module.js';
             return JSON.parse( JSON.stringify( obj ) );
         }
 
-        /** */
-        drawStrokes( ctx, index ) {
-            const width = ctx.canvas.width;
-            const height = ctx.canvas.height;
-            const word = this.lexicon[ index ];
-            ctx.clearRect( 0, 0, width, height );
-            word.strokes.forEach( ( stroke ) => {
-                ctx.beginPath();
-                let lineTo = 'moveTo';
-                stroke.forEach( ( point ) => {
-                    ctx[ lineTo ]( point.x * width, point.y * height );
-                    lineTo = 'lineTo';
-                } );
-                ctx.stroke();
-            } );
-        }
-
-        iterateStrokes( index, perPoint, perStroke = () => { } ) {
-            const word = this.lexicon[ index ];
-            word.strokes.forEach( ( stroke ) => {
-                perStroke( stroke );
-                stroke.forEach( ( point ) => {
-                    perPoint( point, stroke );
-                } );
-            } );
-        }
-
         /** Initializes canvases and controls. */
         initControls() {
             const cvs = this.cvs;
@@ -71,14 +74,14 @@ import AV from '/build/av.module.js/av.module.js';
             };
             const draw = () => {
                 snap_radius = Math.max( 20, stroke );
+                ctx.fillStyle = 'black';
                 ctx.strokeStyle = 'black';
                 ctx.lineWidth = stroke;
-                this.drawStrokes( ctx, index );
+                this.active_word.draw( ctx );
                 if ( mode !== 'edit' ) return;
-                // const ring_width =
                 ctx.lineWidth = Math.max( 20, ctx.lineWidth );
                 ctx.strokeStyle = 'red';
-                this.iterateStrokes( index, ( point ) => {
+                this.active_word.iterate( ( point ) => {
                     ctx.beginPath();
                     ctx.arc( point.x * width, point.y * height, 1, 0, AV.RADIAN );
                     ctx.closePath();
@@ -91,23 +94,20 @@ import AV from '/build/av.module.js/av.module.js';
                 snap_radius = 20,
                 reduction = 0.02,
                 index = 0,
-                word = this.lexicon[ index ],
-                mode = modes[ 0 ];
+                mode = modes[ 0 ],
+                drawing, dragging, start_x, start_y,
+                points = [];
 
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            ctx.lineWidth = stroke;
-            ctx.fillStyle = 'black';
 
             this.ctx_saved.strokeStyle = 'black';
             this.ctx_saved.lineCap = 'round';
             this.ctx_saved.lineJoin = 'round';
             this.ctx_saved.lineWidth = 2;
-            word.strokes = this.copy( word.saved );
-            this.drawStrokes( this.ctx_saved, index );
+            this.active_word.strokes = this.copy( this.lexicon[ index ].strokes );
+            this.lexicon[ index ].draw( this.ctx_saved, index );
 
-            var drawing, dragging, start_x, start_y,
-                points = [];
             $( cvs ).on( 'mousedown', ( event ) => {
                 points = [];
                 let x = start_x = event.offsetX,
@@ -117,7 +117,7 @@ import AV from '/build/av.module.js/av.module.js';
                     brush( x, y );
                     points.push( { x: x / width, y: y / height } );
                 } else if ( mode === 'edit' ) {
-                    this.iterateStrokes( index, ( point, stroke ) => {
+                    this.active_word.iterate( ( point, stroke ) => {
                         if ( dragging ) return;
                         const dist = AV.dist( x, y, point.x * width, point.y * height );
                         if ( dist <= snap_radius ) {
@@ -142,7 +142,7 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( !drawing && !dragging ) return;
                 drawing = dragging = false;
                 if ( mode === 'draw' ) {
-                    word.strokes.push( window.simplify( points, reduction, true ) );
+                    this.active_word.strokes.push( window.simplify( points, reduction, true ) );
                     draw();
                 }
             } );
@@ -155,42 +155,42 @@ import AV from '/build/av.module.js/av.module.js';
             } );
 
             $( 'input#undo' ).on( 'click', () => {
-                if ( !word.strokes.length ) return;
-                this.history.push( word.strokes.pop() );
+                if ( !this.active_word.strokes.length ) return;
+                this.history.push( this.active_word.strokes.pop() );
                 draw();
                 points = [];
             } );
             $( 'input#redo' ).on( 'click', () => {
                 if ( !this.history.length ) return;
-                word.strokes.push( this.history.pop() );
+                this.active_word.strokes.push( this.history.pop() );
                 draw();
                 points = [];
             } );
             $( 'input#clear' ).on( 'click', () => {
+                this.active_word.strokes = [];
                 ctx.clearRect( 0, 0, width, height );
-                word.strokes = [];
                 points = [];
             } );
             $( 'input#restore' ).on( 'click', () => {
-                word.strokes = this.copy( word.saved );
+                this.active_word.strokes = this.copy( this.lexicon[ index ].strokes );
                 this.history = [];
                 draw();
             } ).click();
             $( 'input#save' ).on( 'click', () => {
-                word.saved = this.copy( word.strokes );
+                this.lexicon[ index ].strokes = this.copy( this.active_word.strokes );
                 this.history = [];
                 draw();
-                this.drawStrokes( this.ctx_saved, index );
+                this.lexicon[ index ].draw( this.ctx_saved );
             } );
 
             $( 'input#stroke-redux' ).val( reduction ).on( 'input change', ( event ) => {
                 reduction = $( event.target ).val();
-                if ( !word.strokes.length || !points.length ) return;
-                word.strokes[ word.strokes.length - 1 ] = window.simplify( points, reduction, true );
+                if ( !this.active_word.strokes.length || !points.length ) return;
+                this.active_word.strokes[ this.active_word.strokes.length - 1 ] = window.simplify( points, reduction, true );
                 draw();
             } );
             $( 'input#stroke-width' ).val( stroke ).on( 'input change', ( event ) => {
-                ctx.lineWidth = stroke = $( event.target ).val();
+                stroke = $( event.target ).val();
                 draw();
             } );
 
