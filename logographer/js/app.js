@@ -3,16 +3,35 @@
 import AV from '/build/av.module.js/av.module.js';
 
 ( function () {
+    /** A normalized 2D point.
+     * @typedef {object} Point
+     * @prop {number} x - The horizontal position.
+     * @prop {number} y - The vertical position.
+     */
+    /** A list of points that create a stroke.
+     * @typedef {Point[]} Stroke
+     */
+
     /** @class */
-    class Word {
+    class Symbol {
+        /** Creates a new symbol object.
+         * @param {...string} args - Words this symbol should represent.
+         */
         constructor() {
             this.translations = [ ...arguments ];
+            /** @prop {Stroke[]} - The symbol's strokes. */
             this.strokes = [];
+            /** @prop {object} - Various data about this symbol. */
             this.params = {
+                /** @prop {number} - How much wider the symbol should be than long. */
                 aspect: 1
             };
         }
 
+        /** Draw this stroke.
+         * @param {CanvasRenderingContext2D} ctx - The context to draw onto.
+         * @param {boolean} [preserve_drawing] - If true, then the canvas will not be cleared first.
+         */
         draw( ctx, preserve_drawing ) {
             const width = ctx.canvas.width;
             const height = ctx.canvas.height;
@@ -28,11 +47,15 @@ import AV from '/build/av.module.js/av.module.js';
             } );
         }
 
+        /** Run a function for each point in this shape.
+         * @param {function(Point, number, Stroke):void} perPoint - Function to run for every point.
+         * @param {function(Stroke, number):void} [perStroke] - Function to run for every stroke.
+         */
         iterate( perPoint, perStroke = () => { } ) {
-            this.strokes.forEach( ( stroke ) => {
-                perStroke( stroke );
-                stroke.forEach( ( point ) => {
-                    perPoint( point, stroke );
+            this.strokes.forEach( ( stroke, index ) => {
+                perStroke( stroke, index );
+                stroke.forEach( ( point, index ) => {
+                    perPoint( point, index, stroke );
                 } );
             } );
         }
@@ -41,25 +64,37 @@ import AV from '/build/av.module.js/av.module.js';
     /** @class */
     class App {
         constructor() {
+            /** @prop {string} - Symbol container. */
             this.key = '';
+            /** @prop {Symbol[]} - Symbol container. */
             this.lexicon = [
-                new Word( 'moon', 'soul' )
+                new Symbol( 'moon', 'soul' )
             ];
             this.lexicon[ 0 ].strokes = [ [ { "x": 0.3125, "y": 0.5 }, { "x": 0.6875, "y": 0.5 } ], [ { "x": 0.125, "y": 0.125 }, { "x": 0.875, "y": 0.125 } ], [ { "x": 0.125, "y": 0.125 }, { "x": 0.3125, "y": 0.5 } ], [ { "x": 0.6875, "y": 0.5 }, { "x": 0.5, "y": 0.875 } ] ];
 
-            this.active_word = new Word();
+            /** @prop {Symbol} - The word that the user is editting. */
+            this.active_word = new Symbol();
 
+            /** @prop {HTMLCanvasElement} - The editing canvas. */
             this.cvs = $( 'canvas#canvas' ).get( 0 );
+            /** @prop {CanvasRenderingContext2D} - The context for the editing canvas. */
             this.ctx = this.cvs.getContext( '2d' );
 
+            /** @prop {HTMLCanvasElement} - Displays the saved symbol as text. */
             this.cvs_saved = $( 'canvas#saved' ).get( 0 );
+            /** @prop {CanvasRenderingContext2D} - Context for the saved symbol. */
             this.ctx_saved = this.cvs_saved.getContext( '2d' );
 
+            /** @prop {Point[]} - Undo history. */
             this.history = [];
 
             this.initControls();
         }
 
+        /** Returns a deep copy of a given object.
+         * @param {*} obj - The variable to copy, such as an array or an object.
+         * @returns {*} The copied variable.
+         */
         copy( obj ) {
             return JSON.parse( JSON.stringify( obj ) );
         }
@@ -169,7 +204,7 @@ import AV from '/build/av.module.js/av.module.js';
                     brush( x, y );
                     points.push( { x: x / width, y: y / height } );
                 } else if ( mode === 'edit' ) {
-                    this.active_word.iterate( ( point, stroke ) => {
+                    this.active_word.iterate( ( point, index, stroke ) => {
                         if ( dragging ) return;
                         const dist = AV.dist( x, y, point.x * width, point.y * height );
                         if ( dist <= click_radius ) {
