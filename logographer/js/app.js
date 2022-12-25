@@ -141,7 +141,7 @@ import AV from '/build/av.module.js/av.module.js';
                         ctx.fillStyle = 'white';
                         ctx.fillRect( 0.125 * width, 0.125 * height, 0.75 * width, 0.75 * height );
 
-                        if ( snapping ) {
+                        if ( snapping || shift_key ) {
                             ctx.strokeStyle = 'lightgrey';
                             ctx.lineWidth = 1;
                             const dx = 0.75 * width / ( snap_rows - 1 );
@@ -189,7 +189,7 @@ import AV from '/build/av.module.js/av.module.js';
                 snap_rows = 3,
                 aspect = 1,
                 mode = mode_names[ 0 ],
-                drawing, dragging, start_x, start_y,
+                drawing, dragging, shift_key,
                 points = [];
 
             this.active_word.strokes = this.copy( this.lexicon[ index ].strokes );
@@ -197,8 +197,8 @@ import AV from '/build/av.module.js/av.module.js';
 
             $( cvs ).on( 'mousedown', ( event ) => {
                 points = [];
-                let x = start_x = event.offsetX,
-                    y = start_y = event.offsetY;
+                let x = event.offsetX,
+                    y = event.offsetY;
                 if ( mode === 'draw' ) {
                     drawing = true;
                     brush( x, y );
@@ -225,7 +225,7 @@ import AV from '/build/av.module.js/av.module.js';
                         if ( !dragging ) return;
                         dragging.x = x / width;
                         dragging.y = y / height;
-                        if ( snapping ) {
+                        if ( snapping === !shift_key ) {
                             var diff;
                             diff = Infinity;
                             for ( let ix = 0; ix < snap_cols; ++ix ) {
@@ -339,6 +339,10 @@ import AV from '/build/av.module.js/av.module.js';
             } );
 
             document.body.onkeydown = ( event ) => {
+                if ( event.shiftKey ) {
+                    shift_key = true;
+                    draw();
+                }
                 if ( !event.ctrlKey ) return;
                 /// Control + Key.
                 switch ( event.code ) {
@@ -366,7 +370,7 @@ import AV from '/build/av.module.js/av.module.js';
                         $( 'input#redo' ).click();
                         break;
                     case 'KeyZ':
-                        if ( event.shiftKey ) {
+                        if ( shift_key ) {
                             $( 'input#redo' ).click();
                         } else {
                             $( 'input#undo' ).click();
@@ -377,6 +381,10 @@ import AV from '/build/av.module.js/av.module.js';
                         return;
                 }
                 event.preventDefault();
+            };
+            document.body.onkeyup = ( event ) => {
+                shift_key = event.shiftKey;
+                draw();
             };
         }
 
