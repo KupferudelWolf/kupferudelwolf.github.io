@@ -1,6 +1,7 @@
 /*jshint esversion: 7*/
 
 import AV from '/build/av.module.js/av.module.js';
+import UndoHistory from '/build/av.module.js/av.undo.module.js';
 
 ( function () {
     /** A normalized 2D point.
@@ -10,7 +11,7 @@ import AV from '/build/av.module.js/av.module.js';
      */
     /** A list of points that create a stroke.
      * @typedef {Point[]} Stroke
-     */
+    */
 
     /** @class */
     class Symbol {
@@ -28,7 +29,18 @@ import AV from '/build/av.module.js/av.module.js';
             };
         }
 
-        /** Draw this stroke.
+        /** Deletes a stroke.
+         * @param {number} index - The index of the stroke to delete.
+         */
+        delete( ind ) {
+            const strokes = [];
+            this.strokes.forEach( ( stroke, index ) => {
+                if ( index !== ind ) strokes.push( stroke );
+            } );
+            this.strokes = strokes;
+        }
+
+        /** Draw this symbol.
          * @param {CanvasRenderingContext2D} ctx - The context to draw onto.
          * @param {boolean} [preserve_drawing] - If true, then the canvas will not be cleared first.
          */
@@ -48,14 +60,14 @@ import AV from '/build/av.module.js/av.module.js';
         }
 
         /** Run a function for each point in this shape.
-         * @param {function(Point, number, Stroke):void} perPoint - Function to run for every point.
+         * @param {function(Point, number, Stroke, number):void} perPoint - Function to run for every point.
          * @param {function(Stroke, number):void} [perStroke] - Function to run for every stroke.
          */
         iterate( perPoint, perStroke = () => { } ) {
-            this.strokes.forEach( ( stroke, index ) => {
-                perStroke( stroke, index );
-                stroke.forEach( ( point, index ) => {
-                    perPoint( point, index, stroke );
+            this.strokes.forEach( ( stroke, index_stroke ) => {
+                perStroke( stroke, index_stroke );
+                stroke.forEach( ( point, index_point ) => {
+                    perPoint( point, index_point, stroke, index_stroke );
                 } );
             } );
         }
@@ -85,8 +97,8 @@ import AV from '/build/av.module.js/av.module.js';
             /** @prop {CanvasRenderingContext2D} - Context for the saved symbol. */
             this.ctx_saved = this.cvs_saved.getContext( '2d' );
 
-            /** @prop {Point[]} - Undo history. */
-            this.history = [];
+            /** @prop {UndoHistory} - Undo history. */
+            this.history = new UndoHistory();
 
             this.initControls();
         }
@@ -95,7 +107,7 @@ import AV from '/build/av.module.js/av.module.js';
          * @param {*} obj - The variable to copy, such as an array or an object.
          * @returns {*} The copied variable.
          */
-        copy( obj ) {
+        clone( obj ) {
             return JSON.parse( JSON.stringify( obj ) );
         }
 
@@ -178,6 +190,12 @@ import AV from '/build/av.module.js/av.module.js';
                 }
             };
 
+            this.history.onChange = ( strokes ) => {
+                this.active_word.strokes = this.clone( strokes );
+                points = [];
+                draw();
+            };
+
             var width = cvs.width,
                 height = cvs.height,
                 stroke = 20,
@@ -192,29 +210,36 @@ import AV from '/build/av.module.js/av.module.js';
                 drawing, dragging, shift_key,
                 points = [];
 
-            this.active_word.strokes = this.copy( this.lexicon[ index ].strokes );
+            this.active_word.strokes = this.clone( this.lexicon[ index ].strokes );
             drawIcon();
 
             $( cvs ).on( 'mousedown', ( event ) => {
                 points = [];
-                let x = event.offsetX,
-                    y = event.offsetY;
-                if ( mode === 'draw' ) {
-                    drawing = true;
-                    brush( x, y );
-                    points.push( { x: x / width, y: y / height } );
-                } else if ( mode === 'edit' ) {
-                    this.active_word.iterate( ( point, index, stroke ) => {
-                        if ( dragging ) return;
-                        const dist = AV.dist( x, y, point.x * width, point.y * height );
-                        if ( dist <= click_radius ) {
-                            dragging = point;
-                        }
-                    } );
+                var x = event.offsetX,
+                    y = event.offsetY,
+                    dist;
+                switch ( mode ) {
+                    case 'draw':
+                        drawing = true;
+                        brush( x, y );
+                        points.push( { x: x / width, y: y / height } );
+                        break;
+                    case 'edit':
+                        this.active_word.iterate( ( point, index, stroke, index_stroke ) => {
+                            if ( dragging ) return;
+                            dist = AV.dist( x, y, point.x * width, point.y * height );
+                            if ( dist <= click_radius ) {
+                                dragging = point;
+                                points = this.clone( stroke );
+                                editing_index = index_stroke;
+                            }
+                        } );
+                        break;
                 }
             } ).on( 'mousemove mouseover', ( event ) => {
-                let x = event.offsetX,
-                    y = event.offsetY;
+                var x = event.offsetX,
+                    y = event.offsetY,
+                    diff;
                 switch ( mode ) {
                     case 'draw':
                         if ( !drawing ) return;
@@ -226,7 +251,6 @@ import AV from '/build/av.module.js/av.module.js';
                         dragging.x = x / width;
                         dragging.y = y / height;
                         if ( snapping === !shift_key ) {
-                            var diff;
                             diff = Infinity;
                             for ( let ix = 0; ix < snap_cols; ++ix ) {
                                 const px = AV.map( ix, 0, snap_cols - 1, width * 0.125, width * 0.875 );
@@ -252,10 +276,15 @@ import AV from '/build/av.module.js/av.module.js';
             } ).on( 'mouseup mouseleave', () => {
                 if ( !drawing && !dragging ) return;
                 drawing = dragging = false;
-                if ( mode === 'draw' ) {
-                    this.active_word.strokes.push( window.simplify( points, reduction, true ) );
-                    draw();
+                switch ( mode ) {
+                    case 'draw':
+                        this.active_word.strokes.push( window.simplify( points, reduction, true ) );
+                        draw();
+                        break;
+                    case 'edit':
+                        break;
                 }
+                this.history.add( this.clone( this.active_word.strokes ) );
             } );
 
             $( 'input#mode' ).on( 'input change', ( event ) => {
@@ -266,32 +295,26 @@ import AV from '/build/av.module.js/av.module.js';
             } );
 
             $( 'input#undo' ).on( 'click', () => {
-                if ( !this.active_word.strokes.length ) return;
-                this.history.push( this.active_word.strokes.pop() );
-                draw();
-                points = [];
+                this.history.undo();
             } );
             $( 'input#redo' ).on( 'click', () => {
-                if ( !this.history.length ) return;
-                this.active_word.strokes.push( this.history.pop() );
-                draw();
-                points = [];
+                this.history.redo();
             } );
             $( 'input#clear' ).on( 'click', () => {
+                if ( !this.active_word.strokes.length ) return;
                 this.active_word.strokes = [];
-                ctx.clearRect( 0, 0, width, height );
-                points = [];
+                draw();
+                this.history.add( this.clone( this.active_word.strokes ) );
             } );
             $( 'input#restore' ).on( 'click', () => {
-                this.active_word.strokes = this.copy( this.lexicon[ index ].strokes );
-                this.history = [];
+                this.active_word.strokes = this.clone( this.lexicon[ index ].strokes );
                 draw();
+                this.history.add( this.clone( this.active_word.strokes ) );
             } ).click();
             $( 'input#save' ).on( 'click', () => {
                 console.log( JSON.stringify( this.active_word.strokes ) );
-                this.lexicon[ index ].strokes = this.copy( this.active_word.strokes );
+                this.lexicon[ index ].strokes = this.clone( this.active_word.strokes );
                 this.lexicon[ index ].params.aspect = aspect;
-                this.history = [];
                 draw();
                 drawIcon();
             } );
