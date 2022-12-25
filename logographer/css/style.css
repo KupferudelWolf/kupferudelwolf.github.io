@@ -26,6 +26,9 @@ body {
     align-items: center;
     gap: 1em;
 }
+.row.fourths {
+    grid-template-columns: 1fr 0.666667fr 0.666667fr 0.666667fr;
+}
 
 .controls {
     display: flex;
