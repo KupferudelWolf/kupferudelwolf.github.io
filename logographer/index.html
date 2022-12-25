@@ -20,7 +20,9 @@
 				<label for="mode">Mode:</label>
 				<input type="range" class="toggle" value="0" min="0" max="1" id="mode" />
 			</div>
-			<canvas id="canvas" width="256" height="256"></canvas>
+			<div class="canvas-box">
+				<canvas id="canvas" width="256" height="256"></canvas>
+			</div>
 			<div class="controls">
 				<input type="submit" id="undo" value="Undo" />
 				<input type="submit" id="redo" value="Redo" />
@@ -50,6 +52,10 @@
 			<div class="row">
 				<label for="stroke-redux">Reduction:</label>
 				<input type="range" value="0.02" min="0" max="0.5" step="0.01" id="stroke-redux" />
+			</div>
+			<div class="row">
+				<label for="aspect">Shape:</label>
+				<input type="range" value="1" min="0" max="2" step="0.01" id="aspect" />
 			</div>
 			<div class="row fourths">
 				<label for="snapping">Snapping:</label>

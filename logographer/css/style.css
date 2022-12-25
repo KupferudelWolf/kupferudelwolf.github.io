@@ -19,6 +19,13 @@ body {
     align-items: center;
     gap: 1em;
 }
+.panel.panel.canvas-container .canvas-box {
+    width: 260px;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .row {
     height: 1.5em;
     display: grid;
@@ -39,6 +46,7 @@ body {
 .spacer {
     flex-grow: 100;
 }
+
 
 canvas#canvas {
     background-color: white;

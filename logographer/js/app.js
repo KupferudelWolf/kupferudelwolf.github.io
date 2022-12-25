@@ -8,6 +8,9 @@ import AV from '/build/av.module.js/av.module.js';
         constructor() {
             this.translations = [ ...arguments ];
             this.strokes = [];
+            this.params = {
+                aspect: 1
+            };
         }
 
         draw( ctx, preserve_drawing ) {
@@ -65,17 +68,31 @@ import AV from '/build/av.module.js/av.module.js';
         initControls() {
             const cvs = this.cvs;
             const ctx = this.ctx;
-            const width = cvs.width;
-            const height = cvs.height;
             const mode_names = [ 'draw', 'edit' ];
             const brush = ( x, y ) => {
                 ctx.beginPath();
                 ctx.arc( x, y, stroke / 2, 0, AV.RADIAN );
                 ctx.fill();
             };
+            const drawIcon = () => {
+                const $cvs = $( this.cvs_saved );
+                $cvs.css( {
+                    'height': $cvs.height(),
+                    'width': $cvs.height() * aspect
+                } );
+                this.cvs_saved.width = $cvs.width();
+                this.cvs_saved.height = $cvs.height();
+                this.ctx_saved.strokeStyle = 'black';
+                this.ctx_saved.lineCap = 'round';
+                this.ctx_saved.lineJoin = 'round';
+                this.ctx_saved.lineWidth = 1;
+                this.lexicon[ index ].draw( this.ctx_saved );
+            };
             const draw = () => {
                 click_radius = Math.max( 20, stroke );
 
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
                 switch ( mode ) {
                     case 'draw':
                         ctx.fillStyle = 'black';
@@ -87,24 +104,24 @@ import AV from '/build/av.module.js/av.module.js';
                         ctx.fillStyle = 'lightgrey';
                         ctx.fillRect( 0, 0, width, height );
                         ctx.fillStyle = 'white';
-                        ctx.fillRect( 32, 32, width - 64, height - 64 );
+                        ctx.fillRect( 0.125 * width, 0.125 * height, 0.75 * width, 0.75 * height );
 
                         if ( snapping ) {
                             ctx.strokeStyle = 'lightgrey';
                             ctx.lineWidth = 1;
-                            const dx = ( width - 64 ) / ( snap_rows - 1 );
-                            const dy = ( height - 64 ) / ( snap_cols - 1 );
+                            const dx = 0.75 * width / ( snap_rows - 1 );
+                            const dy = 0.75 * height / ( snap_cols - 1 );
                             for ( let y = 0; y < snap_cols - 1; ++y ) {
                                 ctx.beginPath();
-                                ctx.moveTo( 32, y * dy + 32 );
-                                ctx.lineTo( width - 32, y * dy + 32 );
+                                ctx.moveTo( 0.125 * width, y * dy + 0.125 * height );
+                                ctx.lineTo( 0.875 * width, y * dy + 0.125 * height );
                                 ctx.closePath();
                                 ctx.stroke();
                             }
                             for ( let x = 0; x < snap_rows - 1; ++x ) {
                                 ctx.beginPath();
-                                ctx.moveTo( x * dx + 32, 0 );
-                                ctx.lineTo( x * dx + 32, height - 32 );
+                                ctx.moveTo( x * dx + 0.125 * width, 0.125 * height );
+                                ctx.lineTo( x * dx + 0.125 * width, 0.875 * height );
                                 ctx.closePath();
                                 ctx.stroke();
                             }
@@ -126,26 +143,22 @@ import AV from '/build/av.module.js/av.module.js';
                 }
             };
 
-            var stroke = 20,
+            var width = cvs.width,
+                height = cvs.height,
+                stroke = 20,
                 click_radius = 20,
                 reduction = 0.02,
                 index = 0,
                 snapping = true,
                 snap_cols = 3,
                 snap_rows = 3,
+                aspect = 1,
                 mode = mode_names[ 0 ],
                 drawing, dragging, start_x, start_y,
                 points = [];
 
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-
-            this.ctx_saved.strokeStyle = 'black';
-            this.ctx_saved.lineCap = 'round';
-            this.ctx_saved.lineJoin = 'round';
-            this.ctx_saved.lineWidth = 2;
             this.active_word.strokes = this.copy( this.lexicon[ index ].strokes );
-            this.lexicon[ index ].draw( this.ctx_saved, index );
+            drawIcon();
 
             $( cvs ).on( 'mousedown', ( event ) => {
                 points = [];
@@ -181,7 +194,7 @@ import AV from '/build/av.module.js/av.module.js';
                             var diff;
                             diff = Infinity;
                             for ( let ix = 0; ix < snap_cols; ++ix ) {
-                                const px = AV.map( ix, 0, snap_cols - 1, 32, width - 32 );
+                                const px = AV.map( ix, 0, snap_cols - 1, width * 0.125, width * 0.875 );
                                 const dx = Math.abs( x - px );
                                 if ( dx < diff ) {
                                     diff = dx;
@@ -190,7 +203,7 @@ import AV from '/build/av.module.js/av.module.js';
                             }
                             diff = Infinity;
                             for ( let iy = 0; iy < snap_rows; ++iy ) {
-                                const py = AV.map( iy, 0, snap_rows - 1, 32, height - 32 );
+                                const py = AV.map( iy, 0, snap_rows - 1, height * 0.125, height * 0.875 );
                                 const dy = Math.abs( y - py );
                                 if ( dy < diff ) {
                                     diff = dy;
@@ -242,19 +255,29 @@ import AV from '/build/av.module.js/av.module.js';
             $( 'input#save' ).on( 'click', () => {
                 console.log( JSON.stringify( this.active_word.strokes ) );
                 this.lexicon[ index ].strokes = this.copy( this.active_word.strokes );
+                this.lexicon[ index ].params.aspect = aspect;
                 this.history = [];
                 draw();
-                this.lexicon[ index ].draw( this.ctx_saved );
+                drawIcon();
             } );
 
-            $( 'input#stroke-redux' ).val( reduction ).on( 'input change', ( event ) => {
-                reduction = $( event.target ).val();
-                if ( !this.active_word.strokes.length || !points.length ) return;
-                this.active_word.strokes[ this.active_word.strokes.length - 1 ] = window.simplify( points, reduction, true );
-                draw();
-            } );
-            $( 'input#stroke-width' ).val( stroke ).on( 'input change', ( event ) => {
-                stroke = $( event.target ).val();
+            $( 'input#aspect' ).val( aspect ).on( 'input change', ( event ) => {
+                aspect = $( event.target ).val();
+                if ( aspect < 0.5 ) {
+                    aspect = 0.5;
+                    $( event.target ).val( 0.5 );
+                }
+                if ( Math.abs( 1 - aspect ) <= 0.1 ) {
+                    aspect = 1;
+                    $( event.target ).val( 1 );
+                }
+                if ( aspect >= 1 ) {
+                    cvs.width = width = 256;
+                    cvs.height = height = width / aspect;
+                } else {
+                    cvs.height = height = 256;
+                    cvs.width = width = height * aspect;
+                }
                 draw();
             } );
             $( 'input#snapping' ).attr( 'checked', snapping ).on( 'change', ( event ) => {
@@ -267,6 +290,16 @@ import AV from '/build/av.module.js/av.module.js';
             } );
             $( 'input#snap-rows' ).val( snap_rows ).on( 'input change', ( event ) => {
                 snap_rows = $( event.target ).val();
+                draw();
+            } );
+            $( 'input#stroke-redux' ).val( reduction ).on( 'input change', ( event ) => {
+                reduction = $( event.target ).val();
+                if ( !this.active_word.strokes.length || !points.length ) return;
+                this.active_word.strokes[ this.active_word.strokes.length - 1 ] = window.simplify( points, reduction, true );
+                draw();
+            } );
+            $( 'input#stroke-width' ).val( stroke ).on( 'input change', ( event ) => {
+                stroke = $( event.target ).val();
                 draw();
             } );
 
