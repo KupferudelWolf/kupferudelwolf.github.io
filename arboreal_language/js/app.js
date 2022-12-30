@@ -10,26 +10,26 @@ import AV from '/build/av.module.js/av.module.js';
     };
 
     /** @class */
+    const ALL_LANGS = [];
     const ALL_WORDS = [];
     class Dictionary {
-        constructor( language, xml ) {
-            this.name = [ language ];
+        constructor( xml ) {
             this.lexicon = [];
-            this.color = 'white';
-            this.ipa = [];
 
-            if ( xml ) {
-                this.name = getArrayFromXML( xml, 'name' );
-                this.color = getArrayFromXML( xml, 'color' )[ 0 ];
-                [ ...xml.getElementsByTagName( 'ipa' ) ].forEach( ( ipa ) => {
-                    const value = ipa.getElementsByTagName( 'value' )[ 0 ];
-                    const roma = ipa.getElementsByTagName( 'roma' )[ 0 ];
-                    this.ipa.push( {
-                        value: value.innerHTML,
-                        roma: roma ? roma.innerHTML : null
-                    } );
+            this.name = getArrayFromXML( xml, 'name' );
+            this.color = getArrayFromXML( xml, 'color' )[ 0 ] || 'white';
+            this.id = +xml.id;
+            ALL_LANGS[ this.id ] = this;
+
+            this.ipa = [];
+            [ ...xml.getElementsByTagName( 'ipa' ) ].forEach( ( ipa ) => {
+                const value = ipa.getElementsByTagName( 'value' )[ 0 ];
+                const roma = ipa.getElementsByTagName( 'roma' )[ 0 ];
+                this.ipa.push( {
+                    value: value.innerHTML,
+                    roma: roma ? roma.innerHTML : null
                 } );
-            }
+            } );
 
             $( '<option>' )
                 .val( this.name[ 0 ] )
@@ -110,7 +110,6 @@ import AV from '/build/av.module.js/av.module.js';
     /** @class */
     class App {
         constructor() {
-            this.language = {};
             this.index = 56;
             this.container = $( '.etymology-container' );
             this.svg = document.getElementById( 'arrows' );
@@ -597,8 +596,9 @@ import AV from '/build/av.module.js/av.module.js';
                         const langs = $( xml ).children().children( 'language' );
                         langs.each( ( ind, lang_xml ) => {
                             // const elem = $( lang_xml );
-                            const name = lang_xml.getElementsByTagName( 'name' )[ 0 ].innerHTML;
-                            this.language[ name ] = new Dictionary( name, lang_xml );
+                            // const name = lang_xml.getElementsByTagName( 'name' )[ 0 ].innerHTML;
+                            // this.language[ name ] = new Dictionary( name, lang_xml );
+                            new Dictionary( lang_xml );
                         } );
                         defer.resolve();
                     }
@@ -617,11 +617,13 @@ import AV from '/build/av.module.js/av.module.js';
                         const lexicon = $( xml ).children( 'lexicon' );
                         const words = lexicon.children( 'word' );
                         words.each( ( index, word ) => {
-                            const lang = word.getElementsByTagName( 'language' )[ 0 ].innerHTML;
-                            var dictionary = this.language[ lang ];
+                            const lang_id = word.getElementsByTagName( 'language' )[ 0 ].innerHTML;
+                            var dictionary = ALL_LANGS[ lang_id ];
+                            // var dictionary = this.language[ lang_id ];
                             if ( !dictionary ) {
-                                console.warning( `Language "${ lang }" was not found in languages.xml.` );
-                                dictionary = this.language[ lang ] = new Dictionary( lang );
+                                console.error( `Language with ID #${ lang_id } was not found in languages.xml.` );
+                                // dictionary = this.language[ lang_id ] = new Dictionary( lang );
+                                return;
                             }
                             dictionary.newWord( word );
                         } );
@@ -632,8 +634,7 @@ import AV from '/build/av.module.js/av.module.js';
             };
 
             const linkEtymology = () => {
-                for ( const key in this.language ) {
-                    const dict = this.language[ key ];
+                ALL_LANGS.forEach( ( dict ) => {
                     dict.lexicon.forEach( ( word ) => {
                         word.etymology.forEach( ( val, ind, arr ) => {
                             if ( val instanceof Word ) return;
@@ -642,7 +643,7 @@ import AV from '/build/av.module.js/av.module.js';
                             parent.children.push( word );
                         } );
                     } );
-                }
+                } );
             };
 
             loadLanguages()
@@ -662,12 +663,12 @@ import AV from '/build/av.module.js/av.module.js';
     $( function () {
         const APP = new App();
         APP.load().then( () => {
-            console.log( APP.language );
-            // for ( const ind in APP.language ) {
-            //     const dict = APP.language[ ind ];
-            //     console.log( dict.language, dict.age );
-            // }
             APP.update();
+            const obj = {};
+            ALL_LANGS.forEach( ( lang ) => {
+                obj[ lang.name[ 0 ] ] = lang;
+            } );
+            console.log( obj );
         } );
     } );
 } )();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
 <dictionaries>
-    <language>
+    <language id="1">
         <name>Ancient Glyphic</name>
         <color>#bdbdbf</color>
         <ipa><value>&#x6d;</value><roma>m</roma></ipa>
@@ -15,7 +15,7 @@
         <ipa><value>&#x29c;</value><roma>h</roma></ipa>
         <ipa><value>&#x26f;</value><roma>u</roma></ipa>
     </language>
-    <language>
+    <language id="2">
         <name>Common Arboreal</name>
         <name>Glyphics</name>
         <color>#d0d1ef</color>
@@ -35,9 +35,10 @@
         <ipa><value>&#x29c;</value><roma>h</roma></ipa>
         <ipa><value>&#x78;</value><roma>kh</roma></ipa>
     </language>
-    <language>
+    <language id="3">
         <name>Proto-Yarla</name>
         <color>#cee0f0</color>
+        <type>abugida</type>
         <ipa><value>&#x288;</value><roma>t</roma></ipa>
         <ipa><value>&#x278;</value><roma>w</roma></ipa>
         <ipa><value>&#x273;</value><roma>n</roma></ipa>
@@ -57,9 +58,10 @@
         <ipa><value>&#x78;</value><roma>kh</roma></ipa>
         <ipa><value>&#x282;&#x78;</value><roma>sk</roma></ipa>
     </language>
-    <language>
+    <language id="4">
         <name>Old Yarla</name>
         <color>#cee0f0</color>
+        <type>abugida</type>
         <ipa><value>&#x6a;</value><roma>y</roma></ipa>
         <ipa><value>&#x288;</value><roma>t</roma></ipa>
         <ipa><value>&#x256;</value><roma>d</roma></ipa>
@@ -79,10 +81,11 @@
         <ipa><value>&#x258;</value><roma>e</roma></ipa>
         <ipa><value>&#x69;</value><roma>i</roma></ipa>
     </language>
-    <language>
+    <language id="5">
         <name>Yarla</name>
         <name>Modern Yarla</name>
         <color>#b7d4ef</color>
+        <type>abugida</type>
         <ipa><value>&#x278;</value><roma>w</roma></ipa>
         <ipa><value>&#x288;</value><roma>t</roma></ipa>
         <ipa><value>&#x256;</value><roma>d</roma></ipa>
