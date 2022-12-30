@@ -1,3 +1,69 @@
+/*
+    Charis SIL project (https://software.sil.org/charis/).
+    Copyright (c) 1997-2022 SIL International (http://www.sil.org/) with Reserved
+    Font Names "Charis" and "SIL". This Font Software is licensed under the SIL
+    Open Font License, Version 1.1 (http://scripts.sil.org/OFL).
+*/
+
+/* use Charis SIL - Regular in .woff2 format */
+@font-face {
+    font-family: CharisSILW;
+    src: url(/build/fonts/CharisSIL-6.101/web/CharisSIL-Regular.woff2);
+}
+/* use Charis SIL - Italic in .woff2 format */
+@font-face {
+    font-family: CharisSILW;
+    font-style: italic;
+    src: url(/build/fonts/CharisSIL-6.101/web/CharisSIL-Italic.woff2);
+}
+/* use Charis SIL - Bold in .woff2 format */
+@font-face {
+    font-family: CharisSILW;
+    font-weight: bold;
+    src: url(/build/fonts/CharisSIL-6.101/web/CharisSIL-Bold.woff2);
+}
+/* use Charis SIL - Bold Italic in .woff2 format */
+@font-face {
+    font-family: CharisSILW;
+    font-weight: bold;
+    font-style: italic;
+    src: url(/build/fonts/CharisSIL-6.101/web/CharisSIL-BoldItalic.woff2);
+}
+
+/*
+    Andika project (https://software.sil.org/andika/).
+    Copyright (c) 2004-2022 SIL International (http://www.sil.org/) with Reserved
+    Font Names "Andika" and "SIL". This Font Software is licensed under the SIL
+    Open Font License, Version 1.1 (http://scripts.sil.org/OFL).
+*/
+
+/* use Andika - Regular in .woff format */
+@font-face {
+    font-family: AndikaW;
+    src: url(/build/fonts/Andika-6.101/web/Andika-Regular.woff2);
+}
+/* use Andika - Italic in .woff2 format */
+@font-face {
+    font-family: AndikaW;
+    font-style: italic;
+    src: url(/build/fonts/Andika-6.101/web/Andika-Italic.woff2);
+}
+/* use Andika - Bold in .woff2 format */
+@font-face {
+    font-family: AndikaW;
+    font-weight: bold;
+    src: url(/build/fonts/Andika-6.101/web/Andika-Bold.woff2);
+}
+/* use Andika - Bold Italic in .woff2 format */
+@font-face {
+    font-family: AndikaW;
+    font-weight: bold;
+    font-style: italic;
+    src: url(/build/fonts/Andika-6.101/web/Andika-BoldItalic.woff2);
+}
+
+
+
 body {
     width: 100vw;
     height: 100vh;
@@ -84,10 +150,8 @@ body {
     margin-bottom: 0.25em;
 }
 .etymology-container .word .ipa {
-    font-family: sans-serif;
-    font-style: italic;
     font-size: 1.125vmin;
-    font-weight: 400;
+    /* font-weight: 400; */
     margin: 0.25em;
 }
 .etymology-container .word *:empty {
@@ -109,6 +173,12 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 4vmin;
+}
+
+.etymology-container .word .ipa,
+.keyboard-ipa button,
+#input-ipa {
+    font-family: AndikaW, CharisSILW, sans-serif;
 }
 
 
@@ -201,10 +271,6 @@ body {
     padding: 0;
     text-align: center;
     overflow: hidden;
-}
-.keyboard-ipa button,
-#input-ipa {
-    font-family: sans-serif;
 }
 .keyboard-ipa button {
     background-color: lightgrey;
