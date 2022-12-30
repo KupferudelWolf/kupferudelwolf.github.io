@@ -114,6 +114,9 @@ import AV from '/build/av.module.js/av.module.js';
             this.container = $( '.etymology-container' );
             this.svg = document.getElementById( 'arrows' );
             this.initControls();
+            $( window ).on( 'resize', () => {
+                this.drawSVG();
+            } );
         }
 
         initControls() {
@@ -291,7 +294,7 @@ import AV from '/build/av.module.js/av.module.js';
         }
 
         updateTree() {
-            this.container.find( 'polyline, .etymology, .word, .children' ).remove();
+            this.container.find( '.etymology, .word, .children' ).remove();
             $( '.input-tags ul' ).empty();
             var timeout;
             const active_word = ALL_WORDS[ this.index ];
@@ -426,6 +429,9 @@ import AV from '/build/av.module.js/av.module.js';
                 this.svg.appendChild( line );
             };
             this.drawSVG = function () {
+                [ ...this.svg.getElementsByTagName( 'polyline' ) ].forEach( ( elem ) => {
+                    elem.remove();
+                } );
                 this.svg.setAttribute( 'width', this.container.width() + '' );
                 this.svg.setAttribute( 'height', this.container.height() + '' );
                 const rect_svg = this.svg.getBoundingClientRect();
