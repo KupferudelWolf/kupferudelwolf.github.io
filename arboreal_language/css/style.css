@@ -90,6 +90,9 @@ body {
     font-weight: 400;
     margin: 0.25em;
 }
+.etymology-container .word *:empty {
+    display: none;
+}
 
 .etymology-container .children, .etymology {
     display: flex;
