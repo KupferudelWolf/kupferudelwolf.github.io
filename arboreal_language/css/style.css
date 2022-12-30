@@ -136,6 +136,7 @@ body {
     box-sizing: border-box;
     background-color: white;
     transition: bottom 0.75s;
+    border-top: 4px solid grey;
 }
 .keyboard-container.active {
     bottom: 0;
