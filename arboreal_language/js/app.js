@@ -347,12 +347,10 @@ import AV from '/build/av.module.js/av.module.js';
                     .addClass( 'translations' )
                     .text( word.translations.join( '; ' ) )
                     .appendTo( button );
-                if ( word.ipa ) {
-                    $( '<span>' )
-                        .addClass( 'ipa' )
-                        .text( word.ipa )
-                        .appendTo( header );
-                }
+                $( '<span>' )
+                    .addClass( 'ipa' )
+                    .text( word.ipa )
+                    .appendTo( header );
                 button.css( 'background-color', word.dictionary.color );
                 return button;
             };
