@@ -2,7 +2,7 @@
 <!DOCTYPE xml>
 <dictionaries>
     <language id="1">
-        <name>Ancient Glyphic</name>
+        <name>Ancient Glyphics</name>
         <color>#bdbdbf</color>
         <ipa><value>&#x6d;</value><roma>m</roma></ipa>
         <ipa><value>&#x73;</value><roma>s</roma></ipa>
@@ -37,6 +37,7 @@
     </language>
     <language id="3">
         <name>Proto-Yarla</name>
+        <category>Yarla</category>
         <color>#cee0f0</color>
         <type>abugida</type>
         <ipa><value>&#x288;</value><roma>t</roma></ipa>
@@ -60,6 +61,7 @@
     </language>
     <language id="4">
         <name>Old Yarla</name>
+        <category>Yarla</category>
         <color>#cee0f0</color>
         <type>abugida</type>
         <ipa><value>&#x6a;</value><roma>y</roma></ipa>
@@ -83,6 +85,7 @@
     </language>
     <language id="5">
         <name>Yarla</name>
+        <category>Yarla</category>
         <name>Modern Yarla</name>
         <color>#b7d4ef</color>
         <type>abugida</type>

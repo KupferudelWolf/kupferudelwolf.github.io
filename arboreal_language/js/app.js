@@ -32,8 +32,8 @@ import AV from '/build/av.module.js/av.module.js';
             } );
 
             $( '<option>' )
-                .val( this.name[ 0 ] )
-                .text( this.name[ 0 ] )
+                .val( this.id )
+                .text( this.name.join( ' / ' ) )
                 .appendTo( 'select#input-lang' );
         }
 
@@ -261,13 +261,20 @@ import AV from '/build/av.module.js/av.module.js';
                 } );
             };
 
-            const input_word = $( '#input-word' )
+            const input_lang = $( '#input-lang' );
+            input_lang.on( 'input change', () => {
+                const word = ALL_WORDS[ this.index ];
+                word.dictionary = ALL_LANGS[ input_lang.val() ];
+                $( `#${ word.id }` ).css( 'background-color', word.dictionary.color );
+            } );
+
+            const input_word = $( '#input-word' );
             input_word.on( 'tag:change', ( event ) => {
                 const word = ALL_WORDS[ this.index ];
                 word.name = getValue( input_word );
                 $( `#${ word.id } .name` ).text( word.name[ 0 ] );
             } );
-            const input_translation = $( '#input-translation' )
+            const input_translation = $( '#input-translation' );
             input_translation.on( 'tag:change', ( event ) => {
                 const word = ALL_WORDS[ this.index ];
                 word.translations = getValue( input_translation );
@@ -283,7 +290,7 @@ import AV from '/build/av.module.js/av.module.js';
             } );
         }
 
-        update() {
+        updateTree() {
             this.container.find( 'polyline, .etymology, .word, .children' ).remove();
             $( '.input-tags ul' ).empty();
             var timeout;
@@ -296,7 +303,7 @@ import AV from '/build/av.module.js/av.module.js';
                 button.on( 'click', () => {
                     clearTimeout( timeout );
                     this.index = +word.id;
-                    this.update();
+                    this.updateTree();
 
                     // const original = {
                     //     left: this.container.css( 'left' ),
@@ -376,7 +383,7 @@ import AV from '/build/av.module.js/av.module.js';
                 return elem_word;
             };
 
-            $( '#input-lang' ).val( active_word.dictionary.name );
+            $( '#input-lang' ).val( active_word.dictionary.id );
             $( '#input-word' ).trigger( 'tag:add', [ active_word.name ] );
             $( '#input-ipa' ).val( active_word.ipa );
             $( '#input-translation' ).trigger( 'tag:add', [ active_word.translations ] );
@@ -439,146 +446,6 @@ import AV from '/build/av.module.js/av.module.js';
                 } );
             };
             this.drawSVG();
-        }
-
-        draw_old() {
-            $( '.container .word' ).detach();
-            $( '.container .row' ).detach();
-            var timeout;
-            const container = $( '.container' );
-            const makeElement = ( word ) => {
-                const elem = $( '<button>' );
-                elem.addClass( 'word' );
-                elem.addClass( `id-${ this.index }` );
-                elem.on( 'click', () => {
-                    clearTimeout( timeout );
-                    const width = window.innerWidth;
-                    const height = window.innerHeight;
-                    const offset = elem.offset();
-                    const left = offset.left + ( elem.outerWidth() - width ) / 2;
-                    const top = offset.top + ( elem.outerHeight() - height ) / 2;
-                    container.css( {
-                        'transition': 'none',
-                        'left': left + 'px',
-                        'top': top + 'px'
-                    } );
-                    timeout = setTimeout( () => {
-                        container.css( {
-                            'transition': 'left 1s, top 1s',
-                            'left': '0px',
-                            'top': '0px'
-                        } );
-                    }, 10 );
-                    this.index = +word.id;
-                    this.update();
-                } );
-                const header = $( '<div>' )
-                    .addClass( 'name' )
-                    .text( word.name[ 0 ] )
-                    .appendTo( elem );
-                $( '<div>' )
-                    .addClass( 'translations' )
-                    .text( word.translations.join( '; ' ) )
-                    .appendTo( elem );
-                if ( word.ipa ) {
-                    $( '<span>' )
-                        .addClass( 'ipa' )
-                        .text( `/${ word.ipa }/` )
-                        .appendTo( header );
-                }
-                var color = '';
-                switch ( word.language ) {
-                    case 'Ancient Glyphic':
-                        color = '#bdbdbf';
-                        break;
-                    case 'Common Arboreal':
-                        color = '#d0d1ef';
-                        break;
-                    case 'Proto-Yarla':
-                        color = '#cee0f0';
-                        break;
-                    case 'Old Yarla':
-                        color = '#cee0f0';
-                        break;
-                    case 'Yarla':
-                        color = '#b7d4ef';
-                        break;
-                }
-                elem.css( 'background-color', color );
-                return elem;
-            };
-
-            const word = ALL_WORDS[ this.index ];
-            const elem = makeElement( word );
-            const row = $( '<div>' );
-            row.addClass( 'row' );
-            row.attr( 'data-order', 0 );
-            row.appendTo( container );
-            elem.appendTo( row );
-            const parents = [];
-            const children = [];
-            word.etymology.forEach( ( parent ) => {
-                const elem = makeElement( parent );
-                var elem_row = $( `.row[data-order=-1]` );
-                // const age = word.age - parent.age;
-                // var elem_row = $( `.row[data-order=${ age }]` );
-                if ( !elem_row.length ) {
-                    elem_row = $( '<div>' );
-                    elem_row.addClass( 'row' );
-                    elem_row.attr( 'data-order', -1 );
-                    elem_row.appendTo( container );
-                    // elem_row.attr( 'data-order', age );
-                    // if ( age < 0 ) {
-                    parents.push( elem );
-                    // } else if ( age > 0 ) {
-                    //     children.push( elem );
-                    // }
-                }
-                elem.appendTo( elem_row );
-            } );
-            word.children.forEach( ( child ) => {
-                const elem = makeElement( child );
-                var elem_row = $( `.row[data-order=1]` );
-                // const age = word.age - child.age;
-                // var elem_row = $( `.row[data-order=${ age }]` );
-                if ( !elem_row.length ) {
-                    elem_row = $( '<div>' );
-                    elem_row.addClass( 'row' );
-                    elem_row.attr( 'data-order', 1 );
-                    // elem_row.attr( 'data-order', age );
-                    elem_row.appendTo( container );
-                    // if ( age < 0 ) {
-                    //     parents.push( elem );
-                    // } else if ( age > 0 ) {
-                    children.push( elem );
-                    // }
-                }
-                elem.appendTo( elem_row );
-            } );
-
-            const sorted = $( $( '.container .row' ).toArray().sort( function ( a, b ) {
-                var aVal = parseInt( a.getAttribute( 'data-order' ) ),
-                    bVal = parseInt( b.getAttribute( 'data-order' ) );
-                return aVal - bVal;
-            } ) );
-            $( '.container' ).children().detach();
-            $( '.container' ).append( sorted );
-
-            if ( parents.length > children.length ) {
-                for ( let i = 0, l = parents.length - children.length; i < l; ++i ) {
-                    $( '<div>' )
-                        .addClass( 'row' )
-                        .addClass( 'a' )
-                        .appendTo( container );
-                }
-            } else if ( parents.length < children.length ) {
-                for ( let i = 0, l = children.length - parents.length; i < l; ++i ) {
-                    $( '<div>' )
-                        .addClass( 'row' )
-                        .addClass( 'b' )
-                        .prependTo( container );
-                }
-            }
         }
 
         load() {
@@ -663,7 +530,7 @@ import AV from '/build/av.module.js/av.module.js';
     $( function () {
         const APP = new App();
         APP.load().then( () => {
-            APP.update();
+            APP.updateTree();
             const obj = {};
             ALL_LANGS.forEach( ( lang ) => {
                 obj[ lang.name[ 0 ] ] = lang;
