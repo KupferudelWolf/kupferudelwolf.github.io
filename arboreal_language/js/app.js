@@ -210,7 +210,7 @@ import AV from '/build/av.module.js/av.module.js';
             /** @type {number} The ID of the currently active {@link Word}. */
             this.index = 56;
             /** @type {jQuery} Where to create the etymology graph. */
-            this.tree_container = $( '.etymology-container' );
+            this.$tree_container = $( '.etymology-container' );
             /** @type {SVGElement} Where to draw arrows for the etymology graph. */
             this.tree_svg = document.getElementById( 'arrows' );
             /** Initialize the control panel. */
@@ -523,30 +523,30 @@ import AV from '/build/av.module.js/av.module.js';
                     /** Position the tree with the selected node in the center. */
                     // clearTimeout( timeout );
                     // const original = {
-                    //     left: this.tree_container.css( 'left' ),
-                    //     top: this.tree_container.css( 'top' )
+                    //     left: this.$tree_container.css( 'left' ),
+                    //     top: this.$tree_container.css( 'top' )
                     // };
                     // console.log( original );
-                    // this.tree_container.css( {
+                    // this.$tree_container.css( {
                     //     'transition': 'none',
                     //     'left': '0px',
                     //     'top': '0px'
                     // } );
                     // const elem = $( `#${ word.id }` );
-                    // const offset = this.tree_container.offset();
+                    // const offset = this.$tree_container.offset();
                     // // const offset = {
-                    // //     left: parseFloat( this.tree_container.css( 'left' ) ),
-                    // //     top: parseFloat( this.tree_container.css( 'top' ) )
+                    // //     left: parseFloat( this.$tree_container.css( 'left' ) ),
+                    // //     top: parseFloat( this.$tree_container.css( 'top' ) )
                     // // };
                     // const position = elem.position();
-                    // const left = ( this.tree_container.outerWidth() - elem.outerWidth() ) / 2 - position.left - offset.left;
-                    // const top = ( this.tree_container.outerHeight() - elem.outerHeight() ) / 2 - position.top - offset.top;
-                    // this.tree_container.css( {
+                    // const left = ( this.$tree_container.outerWidth() - elem.outerWidth() ) / 2 - position.left - offset.left;
+                    // const top = ( this.$tree_container.outerHeight() - elem.outerHeight() ) / 2 - position.top - offset.top;
+                    // this.$tree_container.css( {
                     //     'left': original.left,
                     //     'top': original.top
                     // } );
                     // setTimeout( () => {
-                    //     this.tree_container.css( {
+                    //     this.$tree_container.css( {
                     //         'transition': 'left 1s, top 1s',
                     //         'left': left + 'px',
                     //         'top': top + 'px'
@@ -579,8 +579,9 @@ import AV from '/build/av.module.js/av.module.js';
 
             /** Override with createTreeNode() in scope. */
             this.updateTree = function () {
+                const $frame = this.$tree_container.parent();
                 /** Remove the current etymmology tree. */
-                this.tree_container.find( '.etymology, .word, .children' ).remove();
+                this.$tree_container.find( '.etymology, .word, .children' ).remove();
                 /** Remove the current input tags. */
                 $( '.input-tags ul' ).empty();
                 // /** @type {number} Timeout ID. */
@@ -632,13 +633,33 @@ import AV from '/build/av.module.js/av.module.js';
                     }
                 };
                 /** Create the node tree. */
-                createEtymology( active_word, this.tree_container );
+                createEtymology( active_word, this.$tree_container );
 
+                /** @type {jQuery} The node containing the active word. */
+                const $active_node = $( `#${ active_word.id }` );
                 /** Highlight the selected word's node. */
-                $( `#${ active_word.id }` ).css( 'border-width', '3px' );
+                $active_node.css( 'border-width', '3px' );
 
                 /** Draw arrows connecting the nodes. */
                 this.drawTreeSVG();
+
+                /** @type {object} Left and top values of the node within its container. */
+                const node_pos = $active_node.position();
+                /** @type {number} Horizontal position of the center of the node. */
+                const node_x = node_pos.left + $active_node.width() / 2;
+                /** @type {number} Vertical position of the center of the node. */
+                const node_y = node_pos.top + $active_node.height() / 2;
+                /** @type {number} Width of the node's container. */
+                const frame_width = this.$tree_container.innerWidth();
+                /** @type {number} Height of the node's container. */
+                const frame_height = this.$tree_container.innerHeight();
+                /** @type {number} Max horizontal scroll value. */
+                const scr_x_max = $frame[ 0 ].scrollWidth - $frame[ 0 ].clientWidth;
+                /** @type {number} Max vertical scroll value. */
+                const scr_y_max = $frame[ 0 ].scrollHeight - $frame[ 0 ].clientHeight;
+                /** Center the scroll position on the selected node. */
+                $frame.scrollLeft( scr_x_max * node_x / frame_width );
+                $frame.scrollTop( scr_y_max * node_y / frame_height );
             };
             this.updateTree();
         }
@@ -648,8 +669,8 @@ import AV from '/build/av.module.js/av.module.js';
             [ ...this.tree_svg.getElementsByTagName( 'polyline' ) ].forEach( ( elem ) => {
                 elem.remove();
             } );
-            this.tree_svg.setAttribute( 'width', this.tree_container.width() + '' );
-            this.tree_svg.setAttribute( 'height', this.tree_container.height() + '' );
+            this.tree_svg.setAttribute( 'width', this.$tree_container.width() + '' );
+            this.tree_svg.setAttribute( 'height', this.$tree_container.height() + '' );
             const rect_svg = this.tree_svg.getBoundingClientRect();
             $( '.branch' ).each( ( ind, elem ) => {
                 /** @type {jQuery} The starting element. */
