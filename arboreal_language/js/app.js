@@ -497,8 +497,7 @@ import AV from '/build/av.module.js/av.module.js';
 
                 /** Select the clicked word. */
                 $btn.on( 'click', () => {
-                    this.index = +word.id;
-                    this.updateTree();
+                    this.select( word );
 
                     /** Position the tree with the selected node in the center. */
                     // clearTimeout( timeout );
@@ -537,15 +536,15 @@ import AV from '/build/av.module.js/av.module.js';
                 const $header = $( '<div>' )
                     .addClass( 'header' )
                     .appendTo( $btn );
-                /** IPA. */
-                $( '<span>' )
-                    .addClass( 'ipa' )
-                    .text( word.ipa )
-                    .appendTo( $header );
                 /** Word. */
                 $( '<span>' )
                     .addClass( 'name' )
                     .text( word.name[ 0 ] )
+                    .appendTo( $header );
+                /** IPA. */
+                $( '<span>' )
+                    .addClass( 'ipa' )
+                    .text( word.ipa )
                     .appendTo( $header );
                 /** Translations. */
                 $( '<div>' )
@@ -556,69 +555,71 @@ import AV from '/build/av.module.js/av.module.js';
                 $btn.css( 'background-color', word.dictionary.color );
                 return $btn;
             };
-            /**
-             * @param {Word} word - The word.
-             * @param {jQuery} element - The container that holds everything.
-             * @return {jQuery} The node for the word.
-             */
-            const makeDerives = ( word, element ) => {
-                /** @type {jQuery} The new node. */
-                const $elem_word = createTreeNode( word );
-                /** @type {jQuery} The nodes from which the word derives. */
-                const $elem_upper = $( '<div>' );
-                $elem_upper.addClass( 'etymology' );
-                /** Create nodes of the parents. */
-                word.etymology.forEach( ( parent ) => {
-                    /** @type {jQuery} */
-                    const $container = $( '<div>' );
-                    $container.addClass( 'branch' );
-                    $container.appendTo( $elem_upper );
-                    /** Create nodes of the parents' parents. */
-                    makeDerives( parent, $container );
-                } );
-                element.append( $elem_upper, $elem_word );
-                return $elem_word;
-            };
-            /**
-             * @param {Word} word - The word.
-             * @param {jQuery} element - The container that holds everything.
-             * @return {jQuery} The node for the word.
-             */
-            const makeChildren = ( word, element ) => {
-                /** @type {jQuery} The new node. */
-                const $elem_word = createTreeNode( word );
-                const $elem_lower = $( '<div>' );
-                /** @type {jQuery} The nodes which are derived from the word. */
-                $elem_lower.addClass( 'children' );
-                /** Create nodes of the children. */
-                word.children.forEach( ( child ) => {
-                    /** @type {jQuery} */
-                    const $container = $( '<div>' );
-                    $container.addClass( 'branch' );
-                    $container.appendTo( $elem_lower );
-                    /** Create nodes of the children's children. */
-                    makeChildren( child, $container );
-                } );
-                element.append( $elem_word, $elem_lower );
-                return $elem_word;
-            };
 
+            /**
+             * @param {Word} word - The word.
+             * @param {jQuery} $container - The container that holds everything.
+             * @param {("up"|"down")} [side] - Which side to do, if not both.
+             */
+            const createEtymology = ( word, $container, side ) => {
+                /** @type {jQuery} The new node. */
+                const $elem_word = createTreeNode( word );
+
+                if ( side !== 'down' ) {
+                    /** @type {jQuery} The nodes from which the word derives. */
+                    const $div_parents = $( '<div>' );
+                    $div_parents.addClass( 'etymology' );
+                    /** Create nested nodes for the parents. */
+                    word.etymology.forEach( ( next_word ) => {
+                        /** @type {jQuery} */
+                        const $div = $( '<div>' );
+                        $div.addClass( 'branch' );
+                        $div.appendTo( $div_parents );
+                        /** Create nodes of the parents' parents. */
+                        createEtymology( next_word, $div, 'up' );
+                    } );
+                    $container.append( $div_parents );
+                }
+
+                $container.append( $elem_word );
+
+                if ( side !== 'up' ) {
+                    /** @type {jQuery} The nodes which are derived from the word. */
+                    const $div_children = $( '<div>' );
+                    $div_children.addClass( 'children' );
+                    /** Create nested nodes for the children. */
+                    word.children.forEach( ( next_word ) => {
+                        /** @type {jQuery} */
+                        const $div = $( '<div>' );
+                        $div.addClass( 'branch' );
+                        $div.appendTo( $div_children );
+                        /** Create nodes of the children's children. */
+                        createEtymology( next_word, $div, 'down' );
+                    } );
+                    $container.append( $div_children );
+                }
+            };
             /** Create the node tree. */
-            makeDerives( active_word, this.tree_container );
-            makeChildren( active_word, this.tree_container ).detach();
+            createEtymology( active_word, this.tree_container );
 
             /** Highlight the selected word's node. */
             $( `#${ active_word.id }` ).css( 'border-width', '3px' );
 
             /** Draw arrows connecting the nodes. */
             this.drawTreeSVG();
+        }
+
+        /** Update the controls.
+         * @param {Word} word - The word to select.
+         */
+        select( word ) {
+            /** @type {Word} The currently selected word. */
+            const active_word = word;
+            this.index = active_word.id;
+
+            this.updateTree();
 
             /** Set values of control panel. */
-            /**
-             * !!!!!
-             * This and other selection stuff should be in a separate function.
-             * !!!!!
-             */
             $( '#input-lang' ).val( active_word.dictionary.id );
             $( '#input-word' ).trigger( 'tag:add', [ active_word.name ] );
             $( '#input-ipa' ).val( active_word.ipa );
@@ -777,7 +778,7 @@ import AV from '/build/av.module.js/av.module.js';
     $( function () {
         const APP = new App();
         APP.load().then( () => {
-            APP.updateTree();
+            APP.select( ALL_WORDS[ APP.index ] );
             /** Print the dictionaries. */
             /** @type {object} */
             const obj = {};
