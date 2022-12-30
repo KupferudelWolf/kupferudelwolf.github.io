@@ -64,6 +64,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .etymology-container .header {
@@ -72,6 +73,9 @@ body {
 
 .etymology-container .word .translations {
     font-size: 1.25vmin;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
 .etymology-container .word .name {
@@ -131,7 +135,7 @@ body {
     padding: 0.5em 1em;
     box-sizing: border-box;
     background-color: white;
-    transition: bottom 1s;
+    transition: bottom 0.75s;
 }
 .keyboard-container.active {
     bottom: 0;
@@ -198,8 +202,13 @@ body {
 #input-ipa {
     font-family: sans-serif;
 }
+.keyboard-ipa button {
+    background-color: lightgrey;
+    border-width: 1px;
+}
 .keyboard-ipa button.used {
-    background-color: lightcyan;
+    background-color: #f0f0f0;
+    border-width: 1px;
 }
 
 

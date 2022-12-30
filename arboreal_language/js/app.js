@@ -3,12 +3,38 @@
 import AV from '/build/av.module.js/av.module.js';
 
 ( function () {
+    const getArrayFromXML = ( xml, key ) => {
+        return [ ...xml.getElementsByTagName( key ) ].map( ( obj ) => {
+            return obj.innerHTML;
+        } );
+    };
+
     /** @class */
     const ALL_WORDS = [];
     class Dictionary {
-        constructor( language ) {
-            this.name = language;
+        constructor( language, xml ) {
+            this.name = [ language ];
             this.lexicon = [];
+            this.color = 'white';
+            this.ipa = [];
+
+            if ( xml ) {
+                this.name = getArrayFromXML( xml, 'name' );
+                this.color = getArrayFromXML( xml, 'color' )[ 0 ];
+                [ ...xml.getElementsByTagName( 'ipa' ) ].forEach( ( ipa ) => {
+                    const value = ipa.getElementsByTagName( 'value' )[ 0 ];
+                    const roma = ipa.getElementsByTagName( 'roma' )[ 0 ];
+                    this.ipa.push( {
+                        value: value.innerHTML,
+                        roma: roma ? roma.innerHTML : null
+                    } );
+                } );
+            }
+
+            $( '<option>' )
+                .val( this.name[ 0 ] )
+                .text( this.name[ 0 ] )
+                .appendTo( 'select#input-lang' );
         }
 
         get age() {
@@ -33,19 +59,14 @@ import AV from '/build/av.module.js/av.module.js';
 
         newWord( xml ) {
             const $word = $( xml );
-            const getArray = ( key ) => {
-                return $word.find( key ).toArray().map( ( obj ) => {
-                    return obj.innerHTML;
-                } );
-            }
             const prop = {
                 age: +$word.find( 'age' ).text(),
-                etymology: getArray( 'etymology' ),
+                etymology: getArrayFromXML( xml, 'etymology' ),
                 id: $word[ 0 ].id,
                 ipa: $word.find( 'ipa' ).text() || null,
                 language: this,
-                name: getArray( 'word' ),
-                translations: getArray( 'translation' )
+                name: getArrayFromXML( xml, 'word' ),
+                translations: getArrayFromXML( xml, 'translation' )
             };
             if ( isNaN( prop.id ) ) {
                 console.error( `Cannot add ${ prop.name[ 0 ] }; ID is invalid.` );
@@ -68,7 +89,7 @@ import AV from '/build/av.module.js/av.module.js';
             this.dictionary = dictionary;
             this.name = prop.name;
             this.id = Math.max( prop.id, word_id++ );
-            this.language = dictionary.name;
+            // this.language = dictionary;
 
             this.age = prop.age;
             if ( isNaN( this.age ) ) {
@@ -135,7 +156,7 @@ import AV from '/build/av.module.js/av.module.js';
                     var val = this.innerHTML;
                     if ( cursor_start === null ) cursor_start = cursor_end = targ.val().length;
                     val = targ.val().slice( 0, cursor_start ) + val + targ.val().slice( cursor_end );
-                    targ.val( val );
+                    targ.val( val ).trigger( 'change' );
                     cursor_start += this.innerHTML.length;
                     cursor_end = cursor_start;
                 } );
@@ -148,6 +169,10 @@ import AV from '/build/av.module.js/av.module.js';
                 const elem = $( el );
                 const list = elem.children( 'ul' );
                 const input = elem.children( 'input' );
+
+                elem.on( 'click', () => {
+                    input.focus();
+                } );
 
                 var dragging, dragging_width, dragging_height;
                 const makeTag = () => {
@@ -322,25 +347,7 @@ import AV from '/build/av.module.js/av.module.js';
                         .text( word.ipa )
                         .appendTo( header );
                 }
-                var color = '';
-                switch ( word.language ) {
-                    case 'Ancient Glyphic':
-                        color = '#bdbdbf';
-                        break;
-                    case 'Common Arboreal':
-                        color = '#d0d1ef';
-                        break;
-                    case 'Proto-Yarla':
-                        color = '#cee0f0';
-                        break;
-                    case 'Old Yarla':
-                        color = '#cee0f0';
-                        break;
-                    case 'Yarla':
-                        color = '#b7d4ef';
-                        break;
-                }
-                button.css( 'background-color', color );
+                button.css( 'background-color', word.dictionary.color );
                 return button;
             };
             const makeDerives = ( word, element ) => {
@@ -370,9 +377,21 @@ import AV from '/build/av.module.js/av.module.js';
                 return elem_word;
             };
 
+            $( '#input-lang' ).val( active_word.dictionary.name );
             $( '#input-word' ).trigger( 'tag:add', [ active_word.name ] );
             $( '#input-ipa' ).val( active_word.ipa );
             $( '#input-translation' ).trigger( 'tag:add', [ active_word.translations ] );
+
+            const inventory = active_word.dictionary.ipa.map( ( obj ) => {
+                return obj.value;
+            } );
+            $( '.keyboard-ipa .used' ).removeClass( 'used' );
+            $( '.keyboard-ipa button' ).each( ( ind, el ) => {
+                const elem = $( el );
+                if ( inventory.includes( elem.text() ) ) {
+                    elem.addClass( 'used' );
+                }
+            } );
 
             makeDerives( active_word, this.container );
             makeChildren( active_word, this.container ).detach();
@@ -563,56 +582,86 @@ import AV from '/build/av.module.js/av.module.js';
             }
         }
 
-        load( url ) {
+        load() {
             const deferred = $.Deferred();
             const defers = [ $.Deferred() ];
 
-            const parse = ( xml ) => {
-                const lexicon = $( xml ).children( 'lexicon' );
-                const words = lexicon.children( 'word' );
-                words.each( ( index, word ) => {
-                    const lang = word.getElementsByTagName( 'language' )[ 0 ].innerHTML;
-                    var dictionary = this.language[ lang ]
-                    if ( !dictionary ) {
-                        dictionary = this.language[ lang ] = new Dictionary( lang );
+            const loadLanguages = () => {
+                const defer = $.Deferred();
+                defers.push( defer );
+                $.ajax( {
+                    type: 'GET',
+                    url: './data/languages.xml',
+                    dataType: 'xml',
+                    success: ( xml ) => {
+                        const langs = $( xml ).children().children( 'language' );
+                        langs.each( ( ind, lang_xml ) => {
+                            // const elem = $( lang_xml );
+                            const name = lang_xml.getElementsByTagName( 'name' )[ 0 ].innerHTML;
+                            this.language[ name ] = new Dictionary( name, lang_xml );
+                        } );
+                        defer.resolve();
                     }
-                    dictionary.newWord( word );
                 } );
+                return defer;
             };
 
-            defers.push( $.Deferred() );
-            $.ajax( {
-                type: 'GET',
-                url: url,
-                dataType: 'xml',
-                success: ( xml ) => {
-                    parse( xml );
-                    for ( const key in this.language ) {
-                        const dict = this.language[ key ];
-                        dict.lexicon.forEach( ( word ) => {
-                            word.etymology.forEach( ( val, ind, arr ) => {
-                                if ( val instanceof Word ) return;
-                                const parent = ALL_WORDS[ +val ];
-                                arr[ ind ] = parent;
-                                parent.children.push( word );
-                            } );
+            const loadLexicon = () => {
+                const defer = $.Deferred();
+                defers.push( defer );
+                $.ajax( {
+                    type: 'GET',
+                    url: './data/lexicon.xml',
+                    dataType: 'xml',
+                    success: ( xml ) => {
+                        const lexicon = $( xml ).children( 'lexicon' );
+                        const words = lexicon.children( 'word' );
+                        words.each( ( index, word ) => {
+                            const lang = word.getElementsByTagName( 'language' )[ 0 ].innerHTML;
+                            var dictionary = this.language[ lang ];
+                            if ( !dictionary ) {
+                                console.warning( `Language "${ lang }" was not found in languages.xml.` );
+                                dictionary = this.language[ lang ] = new Dictionary( lang );
+                            }
+                            dictionary.newWord( word );
                         } );
+                        defer.resolve();
                     }
-                    defers[ 1 ].resolve();
-                }
-            } );
+                } );
+                return defer;
+            };
 
-            defers[ 0 ].resolve();
-            $.when( ...defers ).then( () => {
-                deferred.resolve();
-            } );
+            const linkEtymology = () => {
+                for ( const key in this.language ) {
+                    const dict = this.language[ key ];
+                    dict.lexicon.forEach( ( word ) => {
+                        word.etymology.forEach( ( val, ind, arr ) => {
+                            if ( val instanceof Word ) return;
+                            const parent = ALL_WORDS[ +val ];
+                            arr[ ind ] = parent;
+                            parent.children.push( word );
+                        } );
+                    } );
+                }
+            };
+
+            loadLanguages()
+                .then( loadLexicon )
+                .then( linkEtymology )
+                .then( deferred.resolve );
+
+
+            // defers[ 0 ].resolve();
+            // $.when( ...defers ).then( () => {
+            //     deferred.resolve();
+            // } );
             return deferred;
         }
     }
 
     $( function () {
         const APP = new App();
-        APP.load( './data/lexicon.xml' ).then( () => {
+        APP.load().then( () => {
             console.log( APP.language );
             // for ( const ind in APP.language ) {
             //     const dict = APP.language[ ind ];
