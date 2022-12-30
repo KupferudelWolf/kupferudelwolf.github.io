@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>
+		Yarla
+	</title>
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="/build/jquery.min.js" type="text/javascript"></script>
+	<script src="js/app.js" type="module"></script>
+</head>
+
+<body>
+	<div class="container">
+		<div class="etymology-frame">
+			<div class="etymology-container">
+				<svg id="arrows" width="1200" height="600" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<defs>
+						<marker id="arrow" viewbox="0 0 4 4" refX="4" refY="2" markerUnits="strokeWidth" markerWidth="4"
+							markerHeight="4" orient="auto">
+							<path d="M 0 0 L 4 2 L 0 4 z" fill="black"></path>
+						</marker>
+					</defs>
+				</svg>
+			</div>
+		</div>
+		<div class="controls">
+			<!-- <div class="input-categories" id="word">
+				<input type="text" />
+			</div> -->
+			<label for="input-word">Word:</label>
+			<input type="text" id="input-word" data-role="input-tags"></input>
+			<label for="input-ipa">IPA:</label>
+			<input type="text" id="input-ipa"></input>
+			<label for="input-translation">Translations:</label>
+			<input type="text" id="input-translation" data-role="input-tags"></input>
+		</div>
+	</div>
+	<div class="full keyboard-container" data-target="input-ipa">
+		<div class="keyboard keyboard-ipa consonants">
+			<div class="title">Consonants</div>
+			<div></div>
+			<div class="header">Bilabial</div>
+			<div class="header">Labiodental</div>
+			<div class="header">Linguolabial</div>
+			<div class="header">Dental</div>
+			<div class="header">Alveolar</div>
+			<div class="header">Postalveolar</div>
+			<div class="header">Retroflex</div>
+			<div class="header">Palatal</div>
+			<div class="header">Velar</div>
+			<div class="header">Uvular</div>
+			<div class="header">Pharyngeal / Epiglottal</div>
+			<div class="header">Glottal</div>
+			<div class="axis">Nasal</div>
+			<button>&#x6D;&#x325;</button>
+			<button>&#x6D;</button>
+			<div></div>
+			<button>&#x271;</button>
+			<div></div>
+			<button>&#x6E;&#x33C;</button>
+			<div></div>
+			<div></div>
+			<button>&#x6E;&#x325;</button>
+			<button>&#x6E;</button>
+			<div></div>
+			<div></div>
+			<button>&#x273;&#x30A;</button>
+			<button>&#x273;</button>
+			<button>&#x272;&#x30A;</button>
+			<button>&#x272;</button>
+			<button>&#x14B;&#x30A;</button>
+			<button>&#x14B;</button>
+			<div></div>
+			<button>&#x274;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div class="axis">Plosive</div>
+			<button>&#x70;</button>
+			<button>&#x62;</button>
+			<button>&#x70;&#x32A;</button>
+			<button>&#x62;&#x32A;</button>
+			<button>&#x74;&#x33C;</button>
+			<button>&#x64;&#x33C;</button>
+			<button>&#x74;&#x32A;</button>
+			<button>&#x64;&#x32A;</button>
+			<button>&#x74;</button>
+			<button>&#x64;</button>
+			<div></div>
+			<div></div>
+			<button>&#x288;</button>
+			<button>&#x256;</button>
+			<button>&#x63;</button>
+			<button>&#x25F;</button>
+			<button>&#x6B;</button>
+			<button>&#x261;</button>
+			<button>&#x71;</button>
+			<button>&#x262;</button>
+			<button>&#x2A1;</button>
+			<div></div>
+			<button>&#x294;</button>
+			<div></div>
+			<div class="axis">Sibilant affricate</div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x74;&#x32A;&#x73;&#x32A;</button>
+			<button>&#x64;&#x32A;&#x7A;&#x32A;</button>
+			<button>&#x74;&#x73;</button>
+			<button>&#x64;&#x7A;</button>
+			<button>&#x74;&#x320;&#x283;</button>
+			<button>&#x64;&#x320;&#x292;</button>
+			<button>&#x74;&#x282;</button>
+			<button>&#x64;&#x290;</button>
+			<button>&#x74;&#x255;</button>
+			<button>&#x64;&#x291;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div class="axis">Non-sibilant affricate</div>
+			<button>&#x70;&#x278;</button>
+			<button>&#x62;&#x3B2;</button>
+			<button>&#x70;&#x32A;&#x66;</button>
+			<button>&#x62;&#x32A;&#x76;</button>
+			<div></div>
+			<div></div>
+			<button>&#x74;&#x32A;&#x3B8;</button>
+			<button>&#x64;&#x32A;&#xF0;</button>
+			<button>&#x74;&#x279;&#x31D;&#x30A;</button>
+			<button>&#x64;&#x279;&#x31D;</button>
+			<button>&#x74;&#x320;&#x279;&#x320;&#x30A;&#x2D4;</button>
+			<button>&#x64;&#x320;&#x279;&#x320;&#x2D4;</button>
+			<div></div>
+			<div></div>
+			<button>&#x63;&#xE7;</button>
+			<button>&#x25F;&#x29D;</button>
+			<button>&#x6B;&#x78;</button>
+			<button>&#x261;&#x263;</button>
+			<button>&#x71;&#x3C7;</button>
+			<button>&#x262;&#x281;</button>
+			<button>&#x2A1;&#x29C;</button>
+			<button>&#x2A1;&#x2A2;</button>
+			<button>&#x294;&#x68;</button>
+			<div></div>
+			<div class="axis">Sibilant fricative</div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x73;</button>
+			<button>&#x7A;</button>
+			<button>&#x283;</button>
+			<button>&#x292;</button>
+			<button>&#x282;</button>
+			<button>&#x290;</button>
+			<button>&#x255;</button>
+			<button>&#x291;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div class="axis">Non-sibilant fricative</div>
+			<button>&#x278;</button>
+			<button>&#x3B2;</button>
+			<button>&#x66;</button>
+			<button>&#x76;</button>
+			<button>&#x3B8;&#x33C;</button>
+			<button>&#xF0;&#x33C;</button>
+			<button>&#x3B8;</button>
+			<button>&#xF0;</button>
+			<button>&#x3B8;&#x320;</button>
+			<button>&#xF0;&#x320;</button>
+			<button>&#x279;&#x320;&#x30A;&#x2D4;</button>
+			<button>&#x279;&#x320;&#x2D4;</button>
+			<button>&#x27B;&#x30A;&#x2D4;</button>
+			<button>&#x27B;&#x2D4;</button>
+			<button>&#xE7;</button>
+			<button>&#x29D;</button>
+			<button>&#x78;</button>
+			<button>&#x263;</button>
+			<button>&#x3C7;</button>
+			<button>&#x281;</button>
+			<button>&#x127;</button>
+			<button>&#x295;</button>
+			<button>&#x68;</button>
+			<button>&#x266;</button>
+			<div class="axis">Approximant</div>
+			<div></div>
+			<button>&#x3B2;&#x31E;</button>
+			<div></div>
+			<button>&#x28B;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#xF0;&#x31E;</button>
+			<div></div>
+			<button>&#x279;</button>
+			<div></div>
+			<button>&#x279;&#x320;</button>
+			<div></div>
+			<button>&#x27B;</button>
+			<div></div>
+			<button>&#x6A;</button>
+			<div></div>
+			<button>&#x270;</button>
+			<div></div>
+			<button>&#x281;&#x31E;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x294;&#x31E;</button>
+			<div class="axis">Tap/flap</div>
+			<div></div>
+			<button>&#x2C71;&#x31F;</button>
+			<div></div>
+			<button>&#x2C71;</button>
+			<div></div>
+			<button>&#x27E;&#x33C;</button>
+			<div></div>
+			<div></div>
+			<button>&#x27E;&#x325;</button>
+			<button>&#x27E;</button>
+			<div></div>
+			<div></div>
+			<button>&#x27D;&#x30A;</button>
+			<button>&#x27D;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x261;&#x306;</button>
+			<div></div>
+			<button>&#x262;&#x306;</button>
+			<div></div>
+			<button>&#x2A1;&#x306;</button>
+			<div></div>
+			<div></div>
+			<div class="axis">Trill</div>
+			<button>&#x299;&#x325;</button>
+			<button>&#x299;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x72;&#x325;</button>
+			<button>&#x72;</button>
+			<div></div>
+			<button>&#x72;&#x320;</button>
+			<button>&#x27D;&#x30A;&#x72;&#x325;</button>
+			<button>&#x27D;&#x72;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x280;&#x325;</button>
+			<button>&#x280;</button>
+			<button>&#x29C;</button>
+			<button>&#x2A2;</button>
+			<div></div>
+			<div></div>
+			<div class="axis">Lateral affricate</div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x74;&#x26C;</button>
+			<button>&#x64;&#x26E;</button>
+			<div></div>
+			<div></div>
+			<button>&#x74;&#x26D;&#x30A;&#x2D4;</button>
+			<button>&#x64;&#x26D;&#x2D4;</button>
+			<button>&#x63;&#x28E;&#x31D;&#x30A;</button>
+			<button>&#x25F;&#x28E;&#x31D;</button>
+			<button>&#x6B;&#x29F;&#x31D;&#x30A;</button>
+			<button>&#x261;&#x29F;&#x31D;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div class="axis">Lateral fricative</div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x26C;</button>
+			<button>&#x26E;</button>
+			<div></div>
+			<div></div>
+			<button>&#xA78E;</button>
+			<button>&#x26D;&#x2D4;</button>
+			<button>&#xD837;&#xDF06;</button>
+			<button>&#x28E;&#x31D;</button>
+			<button>&#xD837;&#xDF04;</button>
+			<button>&#x29F;&#x31D;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div class="axis">Lateral approximant</div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x6C;&#x32A;</button>
+			<div></div>
+			<button>&#x6C;</button>
+			<div></div>
+			<button>&#x6C;&#x320;</button>
+			<div></div>
+			<button>&#x26D;</button>
+			<div></div>
+			<button>&#x28E;</button>
+			<div></div>
+			<button>&#x29F;</button>
+			<div></div>
+			<button>&#x29F;&#x320;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div class="axis">Lateral tap/flap</div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x27A;&#x325;</button>
+			<button>&#x27A;</button>
+			<div></div>
+			<div></div>
+			<button>&#xD837;&#xDF08;&#x325;</button>
+			<button>&#xD837;&#xDF08;</button>
+			<div></div>
+			<button>&#x28E;&#x306;</button>
+			<div></div>
+			<button>&#x29F;&#x306;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div style="grid-column-end: -1;"></div>
+			<div class="axis">Ejectives</div>
+			<button>&#x70;&#x2bc;</button>
+			<button>&#x74;&#x2bc;</button>
+			<button>&#x288;&#x2bc;</button>
+			<button>&#x63;&#x2bc;</button>
+			<button>&#x6b;&#x2bc;</button>
+			<button>&#x71;&#x2bc;</button>
+			<button>&#x2a1;&#x2bc;</button>
+			<button>&#x66;&#x2bc;</button>
+			<button>&#x3b8;&#x2bc;</button>
+			<button>&#x73;&#x2bc;</button>
+			<button>&#x283;&#x2bc;</button>
+			<button>&#x282;&#x2bc;</button>
+			<button>&#x255;&#x2bc;</button>
+			<button>&#x78;&#x2bc;</button>
+			<button>&#x3c7;&#x2bc;</button>
+			<button>&#x74;&#x73;&#x2bc;</button>
+			<button>&#x74;&#x320;&#x283;&#x2bc;</button>
+			<button>&#x288;&#x282;&#x2bc;</button>
+			<button>&#x6b;&#x78;&#x2bc;</button>
+			<button>&#x71;&#x3c7;&#x2bc;</button>
+			<button>&#x26c;&#x2bc;</button>
+			<button>&#x74;&#x26c;&#x2bc;</button>
+			<button>&#x63;&#x28e;&#x31d;&#x30a;&#x2bc;</button>
+			<button>&#x6b;&#x29f;&#x31d;&#x30a;&#x2bc;</button>
+			<div class="axis">Others</div>
+			<button>&#x6b;&#x361;&#x70;</button>
+			<button>&#x261;&#x361;&#x62;</button>
+			<button>&#x14b;&#x361;&#x6d;</button>
+			<button>&#x28d;</button>
+			<button>&#x77;</button>
+			<button>&#x265;</button>
+			<button>&#x267;</button>
+			<button>&#x26b;</button>
+			<div></div>
+			<button>k&#x298;</button>
+			<button>k&#x1c0;</button>
+			<button>k!</button>
+			<button>k&#x1c2;</button>
+			<button>k&#x1c1;</button>
+			<div></div>
+			<button>&#x253;</button>
+			<button>&#x257;</button>
+			<button>&#x284;</button>
+			<button>&#x260;</button>
+			<button>&#x29b;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+		<div class="keyboard keyboard-ipa vowels">
+			<div class="title">Vowels</div>
+			<div></div>
+			<div class="header">Front</div>
+			<div class="header">Central</div>
+			<div class="header">Back</div>
+			<div class="axis">Close</div>
+			<button>&#x69;</button>
+			<button>&#x79;</button>
+			<button>&#x268;</button>
+			<button>&#x289;</button>
+			<button>&#x26F;</button>
+			<button>&#x75;</button>
+			<div class="axis">Near-close</div>
+			<button>&#x26A;</button>
+			<button>&#x28F;</button>
+			<div></div>
+			<div></div>
+			<div></div>
+			<button>&#x28A;</button>
+			<div class="axis">Close-mid</div>
+			<button>&#x65;</button>
+			<button>&#xF8;</button>
+			<button>&#x258;</button>
+			<button>&#x275;</button>
+			<button>&#x264;</button>
+			<button>&#x6F;</button>
+			<div class="axis">Mid</div>
+			<button>&#x65;&#x31E;</button>
+			<button>&#xF8;&#x31E;</button>
+			<button style="grid-column-end: span 2;">&#x259;</button>
+			<button>&#x264;&#x31E;</button>
+			<button>&#x6F;&#x31E;</button>
+			<div class="axis">Open-mid</div>
+			<button>&#x25B;</button>
+			<button>&#x153;</button>
+			<button>&#x25C;</button>
+			<button>&#x25E;</button>
+			<button>&#x28C;</button>
+			<button>&#x254;</button>
+			<div class="axis">Near-open</div>
+			<button>&#xE6;</button>
+			<div></div>
+			<button style="grid-column-end: span 2;">&#x250;</button>
+			<div></div>
+			<div></div>
+			<div class="axis">Open</div>
+			<button>&#x61;</button>
+			<button>&#x276;</button>
+			<button>&#xE4;</button>
+			<div></div>
+			<button>&#x251;</button>
+			<button>&#x252;</button>
+			<div style="grid-column-end: -1;"></div>
+			<div style="grid-column-end: -1;"></div>
+			<div style="grid-column-end: -1;"></div>
+			<div style="grid-column-end: -1;"></div>
+		</div>
+	</div>
+</body>
+
+</html>

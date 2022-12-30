@@ -1,0 +1,266 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 80vw;
+    height: 60vh;
+    display: flex;
+    align-items: flex-start;
+    gap: 4vmin;
+}
+
+.etymology-frame {
+    width: 40%;
+    height: 100%;
+    overflow: auto;
+    border: 1px solid darkgrey;
+}
+
+.etymology-container {
+    width: min-content;
+    height: min-content;
+    min-height: 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+    padding: 0 4vmin;
+    margin: auto;
+    position: relative;
+    left: 0;
+    top: 0;
+    /* margin: auto; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4vmin;
+    transition: left 1s, top 1s;
+}
+.etymology-container .row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4vmin;
+    height: 6vh;
+}
+.etymology-container svg {
+    position: absolute;
+    pointer-events: none;
+}
+
+.etymology-container .word {
+    width: 8vw;
+    height: 6vh;
+    padding: 0.5vw;
+    border: 1px solid black;
+    white-space: normal;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.etymology-container .header {
+    margin-bottom: 0.25em;
+}
+
+.etymology-container .word .translations {
+    font-size: 1.25vmin;
+}
+
+.etymology-container .word .name {
+    font-weight: 600;
+    font-size: 1.75vmin;
+    margin-bottom: 0.25em;
+}
+.etymology-container .word .ipa {
+    font-family: sans-serif;
+    font-style: italic;
+    font-size: 1.125vmin;
+    font-weight: 400;
+    margin: 0.25em;
+}
+
+.etymology-container .children, .etymology {
+    display: flex;
+    gap: 4vmin;
+}
+.etymology-container .etymology {
+    align-items: flex-end;
+}
+.etymology-container .children {
+    align-items: flex-start;
+}
+.etymology-container .branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4vmin;
+}
+
+
+.controls {
+    flex: 1;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    /* grid-auto-rows: 2em; */
+    align-items: center;
+    gap: 2vmin;
+}
+
+.controls .full {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 5em;
+}
+
+
+
+.keyboard-container {
+    width: 100%;
+    display: flex;
+    position: absolute;
+    bottom: -100vh;
+    z-index: 100;
+    padding: 0.5em 1em;
+    box-sizing: border-box;
+    background-color: white;
+    transition: bottom 1s;
+}
+.keyboard-container.active {
+    bottom: 0;
+}
+
+.keyboard {
+    display: grid;
+    overflow: hidden;
+    text-align: center;
+    align-items: center;
+}
+
+.keyboard .title {
+    grid-column: 1 / -1;
+}
+.keyboard .header {
+    font-weight: 600;
+    align-self: end;
+}
+.keyboard .axis {
+    font-weight: 600;
+    text-align: right;
+}
+
+.keyboard-ipa {
+    word-break: break-all;
+    white-space: normal;
+    gap: 0.25em;
+}
+.keyboard-ipa.active {
+    height: 60vh;
+}
+.keyboard-ipa.consonants {
+    left: 0;
+    width: 80vw;
+    grid-template-columns: auto repeat(24, 1fr);
+}
+.keyboard-ipa.vowels {
+    right: 0;
+    width: 20vw;
+    grid-template-columns: auto repeat(6, 1fr);
+}
+
+.keyboard-ipa button {
+    width: auto;
+    font-size: 80%;
+}
+.keyboard-ipa .header {
+    font-size: 75%;
+    grid-column-end: span 2;
+}
+.keyboard-ipa .axis {
+    font-size: 75%;
+}
+.keyboard-ipa button {
+    min-width: 1.5em;
+    height: 100%;
+    white-space: nowrap;
+    padding: 0;
+    text-align: center;
+    overflow: hidden;
+}
+.keyboard-ipa button,
+#input-ipa {
+    font-family: sans-serif;
+}
+.keyboard-ipa button.used {
+    background-color: lightcyan;
+}
+
+
+
+
+.controls > input,
+.input-tags {
+    display: flex;
+    justify-content: flex-start;
+    border: 1px solid darkgrey;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+.controls > input {
+    padding: 1.5px 0.25em;
+}
+
+.input-tags ul {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    list-style-type: none;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.input-tags li,
+.input-tags-fake {
+    border: 1px solid darkgrey;
+    border-radius: 2px;
+    padding: 1px;
+    margin: 1px;
+    cursor: default;
+}
+.input-tags li .delete,
+.input-tags-fake .delete {
+    width: 1em;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+}
+
+.input-tags input {
+    flex: 1 1 auto;
+    align-self: flex-start;
+    margin: auto 0.25em;
+    outline: none;
+}
+.input-tags input:not(:focus) {
+    border: none;
+}
+
+.input-tags-fake {
+    display: none;
+    position: absolute;
+    cursor: default;
+    pointer-events: none;
+}
+.input-tags-fake.active {
+    display: block;
+}
