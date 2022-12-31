@@ -314,6 +314,7 @@ import AV from '/build/av.module.js/av.module.js';
             $input.val( active_word.words[ 0 ].value );
             $input.attr( 'data-id', active_word.id );
             const $select = $container.children( '.menu' );
+            $select.empty();
             const all_langs = ALL_LANGS.sort( ( a, b ) => {
                 return a.name[ 0 ] > b.name[ 0 ] ? 1 : -1;
             } );
