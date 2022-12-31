@@ -29,10 +29,25 @@
 		<div class="controls">
 			<label for="input-lang">Language:</label>
 			<select id="input-lang"></select>
-			<label for="input-word">Word:</label>
-			<input type="text" id="input-word" data-role="input-tags"></input>
-			<label for="input-ipa">IPA:</label>
-			<input type="text" id="input-ipa"></input>
+			<label>Spelling:</label>
+			<table class="word-table" data-role="input-table">
+				<tbody>
+					<tr class="header">
+						<td></td>
+						<td>Word</td>
+						<td>IPA</td>
+						<td>Notes</td>
+						<td></td>
+					</tr>
+					<tr class="template">
+						<td></td>
+						<td><input class="word" type="text" pattern=".*\S+.*" required /></td>
+						<td><input class="ipa" type="text" /></td>
+						<td><input class="notes" type="text" /></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
 			<label for="input-translation">Translations:</label>
 			<input type="text" id="input-translation" data-role="input-tags"></input>
 		</div>

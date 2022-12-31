@@ -1,115 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE xml><lexicon>
-<word id="1"><word>hidho</word><ipa></ipa><translation>star</translation><translation>soul</translation><language>1</language><age>45</age></word>
-<word id="2"><word>dhihor</word><ipa>/dʐɨˈʜɤɻ/</ipa><translation>star</translation><translation>soul</translation><language>2</language><age>35</age><etymology>1</etymology></word>
-<word id="3"><word>dihyor</word><ipa>/ɖiˈçɤɻ/</ipa><translation>star</translation><translation>soul</translation><language>3</language><age>25</age><etymology>2</etymology></word>
-<word id="4"><word>tilsor</word><ipa>/ʈiɭˈʂɤɻ/</ipa><translation>star</translation><translation>soul</translation><language>4</language><age>15</age><etymology>3</etymology></word>
-<word id="5"><word>tsor</word><ipa>/ʈʂɤɻ/</ipa><translation>star</translation><translation>soul</translation><language>5</language><age>5</age><etymology>4</etymology></word>
-<word id="6"><word>dhahidho</word><ipa></ipa><translation>aurora</translation><language>1</language><age>40</age><etymology>1</etymology><etymology>7</etymology></word>
-<word id="7"><word>dhahi</word><ipa></ipa><translation>aurora</translation><translation>rings</translation><language>1</language><age>45</age></word>
-<word id="8"><word>dhåhi</word><ipa></ipa><translation>rings (sky)</translation><language>1</language><age>40</age><etymology>24</etymology><etymology>7</etymology></word>
-<word id="9"><word>haidho</word><ipa>/ʜɑɨˈdʐɤ/</ipa><translation>aurora</translation><language>2</language><age>35</age><etymology>6</etymology></word>
-<word id="10"><word>zhato</word><ipa>/ʐɑˈʈɤ/</ipa><translation>aurora</translation><language>3</language><age>25</age><etymology>9</etymology></word>
-<word id="11"><word>zhato</word><ipa>/ʐɑˈʈɤ/</ipa><translation>aurora</translation><language>4</language><age>15</age><etymology>10</etymology></word>
-<word id="12"><word>zhado</word><ipa>/ʐæˈɖɤ/</ipa><translation>aurora</translation><language>5</language><age>5</age><etymology>11</etymology></word>
-<word id="13"><word>dhai</word><ipa>/dʐɑɨ/</ipa><translation>trail</translation><translation>path</translation><language>2</language><age>35</age><etymology>7</etymology></word>
-<word id="14"><word>da</word><ipa>/ɖɑ/</ipa><translation>trail</translation><translation>path</translation><language>3</language><age>25</age><etymology>13</etymology></word>
-<word id="15"><word>da</word><ipa>/dɑ/</ipa><translation>trail</translation><translation>path</translation><language>4</language><age>15</age><etymology>14</etymology></word>
-<word id="16"><word>da</word><ipa>/dæ/</ipa><translation>trail</translation><translation>path</translation><language>5</language><age>5</age><etymology>15</etymology></word>
-<word id="17"><word>dhi</word><ipa>/dʐɨ/</ipa><translation>rings (sky)</translation><language>2</language><age>35</age><etymology>8</etymology></word>
-<word id="18"><word>zhi</word><ipa>/ʐi/</ipa><translation>rings (sky)</translation><language>3</language><age>25</age><etymology>17</etymology></word>
-<word id="19"><word>zhi</word><ipa>/ʐi/</ipa><translation>rings (sky)</translation><language>4</language><age>15</age><etymology>18</etymology></word>
-<word id="20"><word>zhi</word><ipa>/ʐɪ/</ipa><translation>rings (sky)</translation><language>5</language><age>5</age><etymology>18</etymology></word>
-<word id="21"><word>so</word><ipa></ipa><translation>precipitation</translation><language>1</language><age>45</age></word>
-<word id="22"><word>sho</word><ipa>/ʂɤ/</ipa><translation>precipitation</translation><language>2</language><age>35</age><etymology>21</etymology></word>
-<word id="23"><word>-sho</word><ipa>/ʂɤ/</ipa><translation>related to weather</translation><language>3</language><age>27</age><etymology>22</etymology></word>
-<word id="24"><word>dhå</word><ipa></ipa><translation>warm</translation><translation>water</translation><translation>the sun</translation><language>1</language><age>45</age></word>
-<word id="25"><word>dhå</word><ipa>/dʐæ/</ipa><translation>warm</translation><translation>water</translation><translation>the sun</translation><language>2</language><age>35</age><etymology>24</etymology></word>
-<word id="26"><word>desho</word><ipa>/ɖɘˈʂɤ/</ipa><translation>sunny weather</translation><language>3</language><age>25</age><etymology>25</etymology><etymology>23</etymology></word>
-<word id="27"><word>dos</word><ipa>/ɖɤʂ/</ipa><translation>sunny weather</translation><language>4</language><age>15</age><etymology>26</etymology></word>
-<word id="28"><word>dos</word><ipa>/ɖɤʂ/</ipa><translation>sunny weather</translation><language>5</language><age>5</age><etymology>27</etymology></word>
-<word id="29"><word>zhe</word><ipa>/ʐɘ/</ipa><translation>the sun</translation><language>3</language><age>25</age><etymology>25</etymology></word>
-<word id="30"><word>zhe</word><ipa>/ʐɘ/</ipa><translation>the sun</translation><language>4</language><age>15</age><etymology>29</etymology></word>
-<word id="31"><word>zhe</word><ipa>/ʐɘ/</ipa><translation>the sun</translation><language>5</language><age>5</age><etymology>30</etymology></word>
-<word id="32"><word>zhi</word><ipa>/ʐi/</ipa><translation>warm</translation><translation>water</translation><language>3</language><age>25</age><etymology>25</etymology></word>
-<word id="33"><word>zhi</word><ipa>/ʐi/</ipa><translation>warm</translation><language>4</language><age>15</age><etymology>32</etymology></word>
-<word id="34"><word>zhi</word><ipa>/ʐɪ/</ipa><translation>warm</translation><language>5</language><age>5</age><etymology>33</etymology></word>
-<word id="35"><word>zhis</word><ipa>/ʐiʂ/</ipa><translation>water</translation><language>4</language><age>15</age><etymology>32</etymology></word>
-<word id="36"><word>zhis</word><ipa>/ʐɪʂ/</ipa><translation>water</translation><language>5</language><age>5</age><etymology>35</etymology></word>
-<word id="37"><word>zhisho</word><ipa>/ʐiˈʂɤ/</ipa><translation>raindrop</translation><language>3</language><age>25</age><etymology>25</etymology><etymology>23</etymology></word>
-<word id="38"><word>zhishos</word><ipa>/ʐiˈʂɤʂ/</ipa><translation>raindrop</translation><language>4</language><age>15</age><etymology>37</etymology></word>
-<word id="39"><word>shis</word><ipa>/ʂɪʂ/</ipa><translation>raindrop</translation><language>5</language><age>5</age><etymology>38</etymology></word>
-<word id="40"><word>så</word><ipa></ipa><translation>snow</translation><translation>cold</translation><translation>moon</translation><language>1</language><age>45</age></word>
-<word id="41"><word>shå</word><ipa>/ʂæ/</ipa><translation>snow</translation><translation>ice</translation><translation>cold</translation><translation>moon</translation><language>2</language><age>35</age><etymology>40</etymology></word>
-<word id="42"><word>she</word><ipa>/ʂɘ/</ipa><translation>snow (ground)</translation><translation>cold</translation><language>3</language><age>25</age><etymology>41</etymology></word>
-<word id="43"><word>shesho</word><ipa>/ʂɘˈʂɤ/</ipa><translation>snowflake</translation><language>3</language><age>25</age><etymology>42</etymology><etymology>23</etymology></word>
-<word id="44"><word>shos</word><ipa>/ʂɤʂ/</ipa><translation>snowflake</translation><language>4</language><age>15</age><etymology>43</etymology></word>
-<word id="45"><word>shos</word><ipa>/ʂɤʂ/</ipa><translation>snowflake</translation><language>5</language><age>5</age><etymology>44</etymology></word>
-<word id="46"><word>she</word><ipa>/ʂɘ/</ipa><translation>snow (ground)</translation><language>4</language><age>15</age><etymology>42</etymology></word>
-<word id="47"><word>she</word><ipa>/ʂɘ/</ipa><translation>snow (ground)</translation><language>5</language><age>5</age><etymology>46</etymology></word>
-<word id="48"><word>shi</word><ipa>/ʂi/</ipa><translation>cold</translation><language>4</language><age>15</age><etymology>42</etymology></word>
-<word id="49"><word>shi</word><ipa>/ʂɪ/</ipa><translation>cold</translation><language>5</language><age>5</age><etymology>48</etymology></word>
-<word id="50"><word>sha</word><ipa>/ʂɑ/</ipa><translation>moon</translation><language>3</language><age>25</age><etymology>41</etymology></word>
-<word id="51"><word>sha</word><ipa>/ʂɑ/</ipa><translation>moon</translation><language>4</language><age>15</age><etymology>50</etymology></word>
-<word id="52"><word>sha</word><ipa>/ʂæ/</ipa><translation>moon</translation><language>5</language><age>5</age><etymology>51</etymology></word>
-<word id="53"><word>hyeshe</word><ipa>/çɘˈʂɘ/</ipa><translation>ice</translation><language>3</language><age>25</age><etymology>41</etymology><etymology>66</etymology></word>
-<word id="54"><word>yes</word><ipa>/jɘʂ/</ipa><translation>ice</translation><language>4</language><age>15</age><etymology>53</etymology></word>
-<word id="55"><word>yes</word><ipa>/jɘʂ/</ipa><translation>ice</translation><language>5</language><age>5</age><etymology>54</etymology></word>
-<word id="56"><word>hyesho</word><ipa>/çɘˈʂɤ/</ipa><translation>mixed snowfall</translation><translation>hailstone</translation><translation>slush</translation><language>3</language><age>25</age><etymology>53</etymology><etymology>23</etymology></word>
-<word id="57"><word>shol</word><ipa>/ʂɤɭ/</ipa><translation>mixed snowfall</translation><translation>hailstone</translation><language>4</language><age>15</age><etymology>56</etymology></word>
-<word id="58"><word>shol</word><ipa>/ʂɤɭ/</ipa><translation>mixed snowfall</translation><translation>hailstone</translation><language>5</language><age>5</age><etymology>57</etymology></word>
-<word id="59"><word>yos</word><ipa>/jɤʂ/</ipa><translation>slush</translation><language>4</language><age>15</age><etymology>56</etymology></word>
-<word id="60"><word>yos</word><ipa>/jɤʂ/</ipa><translation>slush</translation><language>5</language><age>5</age><etymology>59</etymology></word>
-<word id="61"><word>hi</word><ipa></ipa><translation>bad</translation><translation>dangerous</translation><language>1</language><age>45</age></word>
-<word id="62"><word>khi</word><ipa>/xɨ/</ipa><translation>bad</translation><language>2</language><age>35</age><etymology>61</etymology></word>
-<word id="63"><word>khi</word><ipa>/xi/</ipa><translation>bad</translation><language>3</language><age>25</age><etymology>62</etymology></word>
-<word id="64"><word>khi</word><ipa>/xi/</ipa><translation>bad</translation><language>4</language><age>15</age><etymology>63</etymology></word>
-<word id="65"><word>khi</word><ipa>/xɪ/</ipa><translation>bad</translation><language>5</language><age>5</age><etymology>64</etymology></word>
-<word id="66"><word>hi</word><ipa>/ʜɨ/</ipa><translation>dangerous</translation><language>2</language><age>35</age><etymology>61</etymology></word>
-<word id="67"><word>hish</word><ipa>/ʜiʂ/</ipa><translation>dangerous</translation><language>3</language><age>25</age><etymology>66</etymology></word>
-<word id="68"><word>sil</word><ipa>/ʂiɭ/</ipa><translation>dangerous</translation><language>4</language><age>15</age><etymology>67</etymology></word>
-<word id="69"><word>tsil</word><ipa>/ʈʂɪɭ/</ipa><translation>dangerous</translation><language>5</language><age>5</age><etymology>68</etymology></word>
-<word id="70"><word>-lit</word><ipa>/l̠iʈ/</ipa><translation>one who</translation><language>3</language><age>27</age></word>
-<word id="71"><word>hyalin</word><ipa>/ˈçɑl̠iɳ/</ipa><translation>to write</translation><language>3</language><age>26</age></word>
-<word id="72"><word>yaln</word><ipa>/jɑɭɳ/</ipa><translation>to write</translation><language>4</language><age>15</age><etymology>71</etymology></word>
-<word id="73"><word>yaln</word><ipa>/jæɭɳ/</ipa><translation>to write</translation><language>5</language><age>5</age><etymology>72</etymology></word>
-<word id="74"><word>hyalit</word><ipa>/ˈçɑl̠iʈ/</ipa><translation>scribe</translation><language>3</language><age>25</age><etymology>71</etymology><etymology>70</etymology></word>
-<word id="75"><word>yalit</word><ipa>/jɑˈɭiʈ/</ipa><translation>scribe</translation><language>4</language><age>15</age><etymology>74</etymology></word>
-<word id="76"><word>yart</word><ipa>/jæɻʈ/</ipa><translation>bard (race)</translation><language>5</language><age>5</age><etymology>75</etymology></word>
-<word id="77"><word>hyal-la</word><ipa>/çɑl̠ˈl̠ɑ/</ipa><translation>Yarla (language)</translation><language>3</language><age>25</age><etymology>71</etymology><etymology>82</etymology></word>
-<word id="78"><word>yarla</word><ipa>/ˈjɑɻɭɑ/</ipa><translation>Yarla (language)</translation><language>4</language><age>15</age><etymology>77</etymology></word>
-<word id="79"><word>yärla</word><ipa>/ˈjəɻɭæ/</ipa><translation>Yarla (language)</translation><language>5</language><age>5</age><etymology>78</etymology></word>
-<word id="80"><word>wå</word><ipa></ipa><translation>noise, esp. howl</translation><language>1</language><age>45</age></word>
-<word id="81"><word>ra</word><ipa>/ɻɑ/</ipa><translation>noise</translation><language>2</language><age>35</age><etymology>80</etymology></word>
-<word id="82"><word>la</word><ipa>/l̠ɑ/</ipa><translation>noise</translation><language>3</language><age>25</age><etymology>81</etymology></word>
-<word id="83"><word>la</word><ipa>/ɭɑ/</ipa><translation>noise</translation><language>4</language><age>15</age><etymology>82</etymology></word>
-<word id="84"><word>ra</word><ipa>/ɻæ/</ipa><translation>noise</translation><language>5</language><age>5</age><etymology>83</etymology></word>
-<word id="85"><word>lal</word><ipa>/l̠ɑl̠/</ipa><translation>to speak or make noise</translation><language>3</language><age>25</age><etymology>81</etymology></word>
-<word id="86"><word>lar</word><ipa>/ɭɑɻ/</ipa><translation>to speak or make noise</translation><language>4</language><age>15</age><etymology>85</etymology></word>
-<word id="87"><word>ral</word><ipa>/ɻæɭ/</ipa><translation>to speak or make noise</translation><language>5</language><age>5</age><etymology>86</etymology></word>
-<word id="88"><word>hyå</word><ipa>/çæ/</ipa><translation>howl</translation><language>2</language><age>35</age><etymology>80</etymology></word>
-<word id="89"><word>hyel</word><ipa>/çɘl̠/</ipa><translation>to howl</translation><language>3</language><age>25</age><etymology>88</etymology></word>
-<word id="90"><word>yeŕ[-ŕo]</word><ipa>/jɘɽ, jɘˈɽɤː/</ipa><translation>to howl</translation><language>4</language><age>15</age><etymology>89</etymology></word>
-<word id="91"><word>yeŕ[-ŕo]</word><ipa>/jɘɽ, jɘˈɽɤː/</ipa><translation>to howl</translation><language>5</language><age>5</age><etymology>90</etymology></word>
-<word id="92"><word>hyolit</word><ipa>/ˈçɤl̠iʈ/</ipa><translation>router (race)</translation><language>3</language><age>25</age><etymology>88</etymology><etymology>70</etymology></word>
-<word id="93"><word>rotil</word><ipa>/ɻɤˈʈiɭ/</ipa><translation>router (race)</translation><language>4</language><age>15</age><etymology>92</etymology></word>
-<word id="94"><word>rotseŕ</word><ipa>/ɻɤˈʈʂɘɽ/</ipa><translation>router (race)</translation><language>5</language><age>5</age><etymology>93</etymology></word>
-<word id="95"><word>wådhu</word><ipa></ipa><translation>critter</translation><translation>person</translation><language>1</language><age>42</age><etymology>80</etymology><etymology>1</etymology></word>
-<word id="96"><word>dhauhya</word><ipa>/ˈdʐɑɯçɑ/</ipa><translation>critter</translation><translation>person</translation><language>2</language><age>35</age><etymology>95</etymology></word>
-<word id="97"><word>tauhya</word><ipa>/ˈʈɑɯçɑ/</ipa><translation>critter</translation><translation>person</translation><language>3</language><age>25</age><etymology>96</etymology></word>
-<word id="98"><word>toya</word><ipa>/ˈʈɤjɑ/</ipa><translation>critter</translation><translation>person</translation><language>4</language><age>15</age><etymology>97</etymology></word>
-<word id="99"><word>tsoya</word><ipa>/ˈʈʂɤjæ/</ipa><translation>critter</translation><translation>person</translation><language>5</language><age>5</age><etymology>98</etymology></word>
-<word id="100"><word>hå; hu; ha</word><ipa></ipa><translation>I</translation><translation>me</translation><language>1</language><age>45</age><etymology>1</etymology></word>
-<word id="101"><word>khå; khu; kha</word><ipa>/xæ, xɯ, xɑ/</ipa><translation>I</translation><translation>me</translation><language>2</language><age>35</age><etymology>100</etymology></word>
-<word id="102"><word>hyal</word><ipa>/çɑl̠/</ipa><translation>I (nom.)</translation><translation>me (acc.)</translation><language>3</language><age>25</age><etymology>101</etymology></word>
-<word id="103"><word>yar</word><ipa>/jɑɻ/</ipa><translation>I (nom.)</translation><translation>me (acc.)</translation><language>4</language><age>15</age><etymology>102</etymology></word>
-<word id="104"><word>yär</word><ipa>/jəɻ/</ipa><translation>I (nom.)</translation><translation>me (acc.)</translation><language>5</language><age>5</age><etymology>103</etymology></word>
-<word id="105"><word>hyo</word><ipa>/çɤ/</ipa><translation>me (dative)</translation><language>3</language><age>25</age><etymology>101</etymology></word>
-<word id="106"><word>yo</word><ipa>/jɤ/</ipa><translation>me (dative)</translation><language>4</language><age>15</age><etymology>105</etymology></word>
-<word id="107"><word>yo</word><ipa>/jɤ/</ipa><translation>me (dative)</translation><language>5</language><age>5</age><etymology>106</etymology></word>
-<word id="108"><word>håtå; hutu; hata</word><ipa></ipa><translation>we</translation><translation>us</translation><language>1</language><age>42</age><etymology>100</etymology></word>
-<word id="109"><word>tåt; tut; tat</word><ipa>/dʐæʈ, dʐɯʈ, dʐɑʈ/</ipa><translation>we</translation><translation>us</translation><language>2</language><age>35</age><etymology>108</etymology></word>
-<word id="110"><word>tat</word><ipa>/ʈɑʈ/</ipa><translation>we</translation><translation>us</translation><language>3</language><age>25</age><etymology>109</etymology></word>
-<word id="111"><word>tat</word><ipa>/ʈɑʈ/</ipa><translation>we</translation><translation>us</translation><language>4</language><age>15</age><etymology>110</etymology></word>
-<word id="112"><word>tsat</word><ipa>/ʈʂæʈ/</ipa><translation>us (dative)</translation><language>5</language><age>5</age><etymology>111</etymology></word>
-<word id="113"><word>tsayat</word><ipa>/ʈʂæˈjæʈ/</ipa><translation>we (nom.)</translation><translation>us (acc.)</translation><language>5</language><age>5</age><etymology>111</etymology></word>
+<word id="1"><word>hidho</word><translation>star</translation><translation>soul</translation><language>1</language><age>45</age></word>
+<word id="2"><word ipa="/dʐɨˈʜɤɻ/">dhihor</word><translation>star</translation><translation>soul</translation><language>2</language><age>35</age><etymology>1</etymology></word>
+<word id="3"><word ipa="/ɖiˈçɤɻ/">dihyor</word><translation>star</translation><translation>soul</translation><language>3</language><age>25</age><etymology>2</etymology></word>
+<word id="4"><word ipa="/ʈiɭˈʂɤɻ/">tilsor</word><translation>star</translation><translation>soul</translation><language>4</language><age>15</age><etymology>3</etymology></word>
+<word id="5"><word ipa="/ʈʂɤɻ/">tsor</word><translation>star</translation><translation>soul</translation><language>5</language><age>5</age><etymology>4</etymology></word>
+<word id="6"><word>dhahidho</word><translation>aurora</translation><language>1</language><age>40</age><etymology>1</etymology><etymology>7</etymology></word>
+<word id="7"><word>dhahi</word><translation>aurora</translation><translation>rings</translation><language>1</language><age>45</age></word>
+<word id="8"><word>dhåhi</word><translation>rings (sky)</translation><language>1</language><age>40</age><etymology>24</etymology><etymology>7</etymology></word>
+<word id="9"><word ipa="/ʜɑɨˈdʐɤ/">haidho</word><translation>aurora</translation><language>2</language><age>35</age><etymology>6</etymology></word>
+<word id="10"><word ipa="/ʐɑˈʈɤ/">zhato</word><translation>aurora</translation><language>3</language><age>25</age><etymology>9</etymology></word>
+<word id="11"><word ipa="/ʐɑˈʈɤ/">zhato</word><translation>aurora</translation><language>4</language><age>15</age><etymology>10</etymology></word>
+<word id="12"><word ipa="/ʐæˈɖɤ/">zhado</word><translation>aurora</translation><language>5</language><age>5</age><etymology>11</etymology></word>
+<word id="13"><word ipa="/dʐɑɨ/">dhai</word><translation>trail</translation><translation>path</translation><language>2</language><age>35</age><etymology>7</etymology></word>
+<word id="14"><word ipa="/ɖɑ/">da</word><translation>trail</translation><translation>path</translation><language>3</language><age>25</age><etymology>13</etymology></word>
+<word id="15"><word ipa="/dɑ/">da</word><translation>trail</translation><translation>path</translation><language>4</language><age>15</age><etymology>14</etymology></word>
+<word id="16"><word ipa="/dæ/">da</word><translation>trail</translation><translation>path</translation><language>5</language><age>5</age><etymology>15</etymology></word>
+<word id="17"><word ipa="/dʐɨ/">dhi</word><translation>rings (sky)</translation><language>2</language><age>35</age><etymology>8</etymology></word>
+<word id="18"><word ipa="/ʐi/">zhi</word><translation>rings (sky)</translation><language>3</language><age>25</age><etymology>17</etymology></word>
+<word id="19"><word ipa="/ʐi/">zhi</word><translation>rings (sky)</translation><language>4</language><age>15</age><etymology>18</etymology></word>
+<word id="20"><word ipa="/ʐɪ/">zhi</word><translation>rings (sky)</translation><language>5</language><age>5</age><etymology>18</etymology></word>
+<word id="21"><word>so</word><translation>precipitation</translation><language>1</language><age>45</age></word>
+<word id="22"><word ipa="/ʂɤ/">sho</word><translation>precipitation</translation><language>2</language><age>35</age><etymology>21</etymology></word>
+<word id="23"><word ipa="/ʂɤ/">-sho</word><translation>related to weather</translation><language>3</language><age>27</age><etymology>22</etymology></word>
+<word id="24"><word>dhå</word><translation>warm</translation><translation>water</translation><translation>the sun</translation><language>1</language><age>45</age></word>
+<word id="25"><word ipa="/dʐæ/">dhå</word><translation>warm</translation><translation>water</translation><translation>the sun</translation><language>2</language><age>35</age><etymology>24</etymology></word>
+<word id="26"><word ipa="/ɖɘˈʂɤ/">desho</word><translation>sunny weather</translation><language>3</language><age>25</age><etymology>25</etymology><etymology>23</etymology></word>
+<word id="27"><word ipa="/ɖɤʂ/">dos</word><translation>sunny weather</translation><language>4</language><age>15</age><etymology>26</etymology></word>
+<word id="28"><word ipa="/ɖɤʂ/">dos</word><translation>sunny weather</translation><language>5</language><age>5</age><etymology>27</etymology></word>
+<word id="29"><word ipa="/ʐɘ/">zhe</word><translation>the sun</translation><language>3</language><age>25</age><etymology>25</etymology></word>
+<word id="30"><word ipa="/ʐɘ/">zhe</word><translation>the sun</translation><language>4</language><age>15</age><etymology>29</etymology></word>
+<word id="31"><word ipa="/ʐɘ/">zhe</word><translation>the sun</translation><language>5</language><age>5</age><etymology>30</etymology></word>
+<word id="32"><word ipa="/ʐi/">zhi</word><translation>warm</translation><translation>water</translation><language>3</language><age>25</age><etymology>25</etymology></word>
+<word id="33"><word ipa="/ʐi/">zhi</word><translation>warm</translation><language>4</language><age>15</age><etymology>32</etymology></word>
+<word id="34"><word ipa="/ʐɪ/">zhi</word><translation>warm</translation><language>5</language><age>5</age><etymology>33</etymology></word>
+<word id="35"><word ipa="/ʐiʂ/">zhis</word><translation>water</translation><language>4</language><age>15</age><etymology>32</etymology></word>
+<word id="36"><word ipa="/ʐɪʂ/">zhis</word><translation>water</translation><language>5</language><age>5</age><etymology>35</etymology></word>
+<word id="37"><word ipa="/ʐiˈʂɤ/">zhisho</word><translation>raindrop</translation><language>3</language><age>25</age><etymology>25</etymology><etymology>23</etymology></word>
+<word id="38"><word ipa="/ʐiˈʂɤʂ/">zhishos</word><translation>raindrop</translation><language>4</language><age>15</age><etymology>37</etymology></word>
+<word id="39"><word ipa="/ʂɪʂ/">shis</word><translation>raindrop</translation><language>5</language><age>5</age><etymology>38</etymology></word>
+<word id="40"><word>så</word><translation>snow</translation><translation>cold</translation><translation>moon</translation><language>1</language><age>45</age></word>
+<word id="41"><word ipa="/ʂæ/">shå</word><translation>snow</translation><translation>ice</translation><translation>cold</translation><translation>moon</translation><language>2</language><age>35</age><etymology>40</etymology></word>
+<word id="42"><word ipa="/ʂɘ/">she</word><translation>snow (ground)</translation><translation>cold</translation><language>3</language><age>25</age><etymology>41</etymology></word>
+<word id="43"><word ipa="/ʂɘˈʂɤ/">shesho</word><translation>snowflake</translation><language>3</language><age>25</age><etymology>42</etymology><etymology>23</etymology></word>
+<word id="44"><word ipa="/ʂɤʂ/">shos</word><translation>snowflake</translation><language>4</language><age>15</age><etymology>43</etymology></word>
+<word id="45"><word ipa="/ʂɤʂ/">shos</word><translation>snowflake</translation><language>5</language><age>5</age><etymology>44</etymology></word>
+<word id="46"><word ipa="/ʂɘ/">she</word><translation>snow (ground)</translation><language>4</language><age>15</age><etymology>42</etymology></word>
+<word id="47"><word ipa="/ʂɘ/">she</word><translation>snow (ground)</translation><language>5</language><age>5</age><etymology>46</etymology></word>
+<word id="48"><word ipa="/ʂi/">shi</word><translation>cold</translation><language>4</language><age>15</age><etymology>42</etymology></word>
+<word id="49"><word ipa="/ʂɪ/">shi</word><translation>cold</translation><language>5</language><age>5</age><etymology>48</etymology></word>
+<word id="50"><word ipa="/ʂɑ/">sha</word><translation>moon</translation><language>3</language><age>25</age><etymology>41</etymology></word>
+<word id="51"><word ipa="/ʂɑ/">sha</word><translation>moon</translation><language>4</language><age>15</age><etymology>50</etymology></word>
+<word id="52"><word ipa="/ʂæ/">sha</word><translation>moon</translation><language>5</language><age>5</age><etymology>51</etymology></word>
+<word id="53"><word ipa="/çɘˈʂɘ/">hyeshe</word><translation>ice</translation><language>3</language><age>25</age><etymology>41</etymology><etymology>66</etymology></word>
+<word id="54"><word ipa="/jɘʂ/">yes</word><translation>ice</translation><language>4</language><age>15</age><etymology>53</etymology></word>
+<word id="55"><word ipa="/jɘʂ/">yes</word><translation>ice</translation><language>5</language><age>5</age><etymology>54</etymology></word>
+<word id="56"><word ipa="/çɘˈʂɤ/">hyesho</word><translation>mixed snowfall</translation><translation>hailstone</translation><translation>slush</translation><language>3</language><age>25</age><etymology>53</etymology><etymology>23</etymology></word>
+<word id="57"><word ipa="/ʂɤɭ/">shol</word><translation>mixed snowfall</translation><translation>hailstone</translation><language>4</language><age>15</age><etymology>56</etymology></word>
+<word id="58"><word ipa="/ʂɤɭ/">shol</word><translation>mixed snowfall</translation><translation>hailstone</translation><language>5</language><age>5</age><etymology>57</etymology></word>
+<word id="59"><word ipa="/jɤʂ/">yos</word><translation>slush</translation><language>4</language><age>15</age><etymology>56</etymology></word>
+<word id="60"><word ipa="/jɤʂ/">yos</word><translation>slush</translation><language>5</language><age>5</age><etymology>59</etymology></word>
+<word id="61"><word>hi</word><translation>bad</translation><translation>dangerous</translation><language>1</language><age>45</age></word>
+<word id="62"><word ipa="/xɨ/">khi</word><translation>bad</translation><language>2</language><age>35</age><etymology>61</etymology></word>
+<word id="63"><word ipa="/xi/">khi</word><translation>bad</translation><language>3</language><age>25</age><etymology>62</etymology></word>
+<word id="64"><word ipa="/xi/">khi</word><translation>bad</translation><language>4</language><age>15</age><etymology>63</etymology></word>
+<word id="65"><word ipa="/xɪ/">khi</word><translation>bad</translation><language>5</language><age>5</age><etymology>64</etymology></word>
+<word id="66"><word ipa="/ʜɨ/">hi</word><translation>dangerous</translation><language>2</language><age>35</age><etymology>61</etymology></word>
+<word id="67"><word ipa="/ʜiʂ/">hish</word><translation>dangerous</translation><language>3</language><age>25</age><etymology>66</etymology></word>
+<word id="68"><word ipa="/ʂiɭ/">sil</word><translation>dangerous</translation><language>4</language><age>15</age><etymology>67</etymology></word>
+<word id="69"><word ipa="/ʈʂɪɭ/">tsil</word><translation>dangerous</translation><language>5</language><age>5</age><etymology>68</etymology></word>
+<word id="70"><word ipa="/l̠iʈ/">-lit</word><translation>one who</translation><language>3</language><age>27</age></word>
+<word id="71"><word ipa="/ˈçɑl̠iɳ/">hyalin</word><translation>to write</translation><language>3</language><age>26</age></word>
+<word id="72"><word ipa="/jɑɭɳ/">yaln</word><translation>to write</translation><language>4</language><age>15</age><etymology>71</etymology></word>
+<word id="73"><word ipa="/jæɭɳ/">yaln</word><translation>to write</translation><language>5</language><age>5</age><etymology>72</etymology></word>
+<word id="74"><word ipa="/ˈçɑl̠iʈ/">hyalit</word><translation>scribe</translation><language>3</language><age>25</age><etymology>71</etymology><etymology>70</etymology></word>
+<word id="75"><word ipa="/jɑˈɭiʈ/">yalit</word><translation>scribe</translation><language>4</language><age>15</age><etymology>74</etymology></word>
+<word id="76"><word ipa="/jæɻʈ/">yart</word><translation>bard (race)</translation><language>5</language><age>5</age><etymology>75</etymology></word>
+<word id="77"><word ipa="/çɑl̠ˈl̠ɑ/">hyal-la</word><translation>Yarla (language)</translation><language>3</language><age>25</age><etymology>71</etymology><etymology>82</etymology></word>
+<word id="78"><word ipa="/ˈjɑɻɭɑ/">yarla</word><translation>Yarla (language)</translation><language>4</language><age>15</age><etymology>77</etymology></word>
+<word id="79"><word ipa="/ˈjəɻɭæ/">yärla</word><translation>Yarla (language)</translation><language>5</language><age>5</age><etymology>78</etymology></word>
+<word id="80"><word>wå</word><translation>howl</translation><translation>noise</translation><language>1</language><age>45</age></word>
+<word id="81"><word ipa="/ɻɑ/">ra</word><translation>noise</translation><language>2</language><age>35</age><etymology>80</etymology></word>
+<word id="82"><word ipa="/l̠ɑ/">la</word><translation>noise</translation><language>3</language><age>25</age><etymology>81</etymology></word>
+<word id="83"><word ipa="/ɭɑ/">la</word><translation>noise</translation><language>4</language><age>15</age><etymology>82</etymology></word>
+<word id="84"><word ipa="/ɻæ/">ra</word><translation>noise</translation><language>5</language><age>5</age><etymology>83</etymology></word>
+<word id="85"><word ipa="/l̠ɑl̠/">lal</word><translation>to speak or make noise</translation><language>3</language><age>25</age><etymology>81</etymology></word>
+<word id="86"><word ipa="/ɭɑɻ/">lar</word><translation>to speak or make noise</translation><language>4</language><age>15</age><etymology>85</etymology></word>
+<word id="87"><word ipa="/ɻæɭ/">ral</word><translation>to speak or make noise</translation><language>5</language><age>5</age><etymology>86</etymology></word>
+<word id="88"><word ipa="/çæ/">hyå</word><translation>howl</translation><language>2</language><age>35</age><etymology>80</etymology></word>
+<word id="89"><word ipa="/çɘl̠/">hyel</word><translation>to howl</translation><language>3</language><age>25</age><etymology>88</etymology></word>
+<word id="90"><word ipa="/jɘɽ/">yeŕ</word><word ipa="/jɘˈɽɤː/">yeŕŕo</word><translation>to howl</translation><language>4</language><age>15</age><etymology>89</etymology></word>
+<word id="91"><word ipa="/jɘɽ/">yeŕ</word><word ipa="/jɘˈɽɤː/">yeŕŕo</word><translation>to howl</translation><language>5</language><age>5</age><etymology>90</etymology></word>
+<word id="92"><word ipa="/ˈçɤl̠iʈ/">hyolit</word><translation>router (race)</translation><language>3</language><age>25</age><etymology>88</etymology><etymology>70</etymology></word>
+<word id="93"><word ipa="/ɻɤˈʈiɭ/">rotil</word><translation>router (race)</translation><language>4</language><age>15</age><etymology>92</etymology></word>
+<word id="94"><word ipa="/ɻɤˈʈʂɘɽ/">rotseŕ</word><translation>router (race)</translation><language>5</language><age>5</age><etymology>93</etymology></word>
+<word id="95"><word>wådhu</word><translation>critter</translation><translation>person</translation><language>1</language><age>42</age><etymology>80</etymology><etymology>1</etymology></word>
+<word id="96"><word ipa="/ˈdʐɑɯçɑ/">dhauhya</word><translation>critter</translation><translation>person</translation><language>2</language><age>35</age><etymology>95</etymology></word>
+<word id="97"><word ipa="/ˈʈɑɯçɑ/">tauhya</word><translation>critter</translation><translation>person</translation><language>3</language><age>25</age><etymology>96</etymology></word>
+<word id="98"><word ipa="/ˈʈɤjɑ/">toya</word><translation>critter</translation><translation>person</translation><language>4</language><age>15</age><etymology>97</etymology></word>
+<word id="99"><word ipa="/ˈʈʂɤjæ/">tsoya</word><translation>critter</translation><translation>person</translation><language>5</language><age>5</age><etymology>98</etymology></word>
+<word id="100"><word>hå</word><word>hu</word><word>ha</word><translation>I</translation><translation>me</translation><language>1</language><age>45</age><etymology>1</etymology></word>
+<word id="101"><word ipa="/xæ/">khå</word><word ipa="/xɯ/">khu</word><word ipa="/xɑ/">kha</word><translation>I</translation><translation>me</translation><language>2</language><age>35</age><etymology>100</etymology></word>
+<word id="102"><word ipa="/çɑl̠/">hyal</word><translation>I (nom.)</translation><translation>me (acc.)</translation><language>3</language><age>25</age><etymology>101</etymology></word>
+<word id="103"><word ipa="/jɑɻ/">yar</word><translation>I (nom.)</translation><translation>me (acc.)</translation><language>4</language><age>15</age><etymology>102</etymology></word>
+<word id="104"><word ipa="/jəɻ/">yär</word><translation>I (nom.)</translation><translation>me (acc.)</translation><language>5</language><age>5</age><etymology>103</etymology></word>
+<word id="105"><word ipa="/çɤ/">hyo</word><translation>me (dative)</translation><language>3</language><age>25</age><etymology>101</etymology></word>
+<word id="106"><word ipa="/jɤ/">yo</word><translation>me (dative)</translation><language>4</language><age>15</age><etymology>105</etymology></word>
+<word id="107"><word ipa="/jɤ/">yo</word><translation>me (dative)</translation><language>5</language><age>5</age><etymology>106</etymology></word>
+<word id="108"><word>håtå</word><word>hutu</word><word>hata</word><translation>we</translation><translation>us</translation><language>1</language><age>42</age><etymology>100</etymology></word>
+<word id="109"><word id="/dʐæʈ/">tåt</word><word id="/dʐɯʈ/">tut</word><word id="/dʐɑʈ/">tat</word><translation>we</translation><translation>us</translation><language>2</language><age>35</age><etymology>108</etymology></word>
+<word id="110"><word ipa="/ʈɑʈ/">tat</word><translation>we</translation><translation>us</translation><language>3</language><age>25</age><etymology>109</etymology></word>
+<word id="111"><word ipa="/ʈɑʈ/">tat</word><translation>we</translation><translation>us</translation><language>4</language><age>15</age><etymology>110</etymology></word>
+<word id="112"><word ipa="/ʈʂæʈ/">tsat</word><translation>us (dative)</translation><language>5</language><age>5</age><etymology>111</etymology></word>
+<word id="113"><word ipa="/ʈʂæˈjæʈ/">tsayat</word><translation>we (nom.)</translation><translation>us (acc.)</translation><language>5</language><age>5</age><etymology>111</etymology></word>
 </lexicon>

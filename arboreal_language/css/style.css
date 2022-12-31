@@ -72,6 +72,9 @@ body {
     align-items: center;
     justify-content: center;
 }
+input:invalid {
+    background-color: #ffd2d2;
+}
 
 .container {
     width: 80vw;
@@ -177,8 +180,10 @@ body {
 
 .etymology-container .word .ipa,
 .keyboard-ipa button,
-#input-ipa {
+#input-ipa,
+.ipa {
     font-family: AndikaW, CharisSILW, sans-serif;
+    font-size: 90%;
 }
 
 
@@ -186,7 +191,6 @@ body {
     flex: 1;
     display: grid;
     grid-template-columns: auto 1fr;
-    /* grid-auto-rows: 2em; */
     align-items: center;
     gap: 2vmin;
 }
@@ -197,6 +201,70 @@ body {
     height: 5em;
 }
 
+
+
+table {
+    overflow: hidden;
+    table-layout: fixed;
+    width: 100%;
+}
+.input-table-fake {
+    display: table-row-group;
+    background-color: white;
+    padding: 2px;
+}
+table .header {
+    font-weight: 600;
+    text-align: center;
+}
+.input-table-fake,
+table.word-table tr {
+    height: 1.5em;
+}
+.input-table-fake td,
+table.word-table td {
+    width: 100px;
+    height: 100%;
+    box-sizing: border-box;
+}
+.input-table-fake td:first-child,
+.input-table-fake td:last-child,
+table.word-table td:first-child,
+table.word-table td:last-child {
+    width: 1.5em;
+}
+.input-table-fake td:nth-last-child(2),
+table.word-table td:nth-last-child(2) {
+    width: 200px;
+}
+table.word-table > * {
+    overflow: hidden;
+    min-width: 0;
+}
+.input-table-fake td {
+    padding: 0 2px;
+}
+.input-table-fake input,
+table.word-table input {
+    width: 100%;
+    height: 1.5rem;
+    box-sizing: border-box;
+}
+.input-table-fake .move,
+.input-table-fake .add,
+.input-table-fake .delete,
+table.word-table .move,
+table.word-table .add,
+table.word-table .delete {
+    width: 1.25em;
+    height: 1.25em;
+    margin: auto;
+    border: 1px solid darkgrey;
+    border-radius: 2px;
+    background-color: white;
+    cursor: pointer;
+    text-align: center;
+}
 
 
 .keyboard-container {
@@ -334,12 +402,14 @@ body {
     border: none;
 }
 
+.input-table-fake,
 .input-tags-fake {
     display: none;
     position: absolute;
     cursor: default;
     pointer-events: none;
 }
+.input-table-fake.active,
 .input-tags-fake.active {
     display: block;
 }

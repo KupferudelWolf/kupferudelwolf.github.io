@@ -138,17 +138,23 @@ import AV from '/build/av.module.js/av.module.js';
                 age: +$word.find( 'age' ).text(),
                 etymology: getArrayFromXML( xml, 'etymology' ),
                 id: +$word[ 0 ].id,
-                ipa: $word.find( 'ipa' ).text() || null,
-                name: getArrayFromXML( xml, 'word' ),
-                translations: getArrayFromXML( xml, 'translation' )
+                translations: getArrayFromXML( xml, 'translation' ),
+                words: []
             };
+            [ ...xml.getElementsByTagName( 'word' ) ].forEach( ( elem ) => {
+                const ipa = elem.attributes.ipa;
+                prop.words.push( {
+                    value: elem.innerHTML,
+                    ipa: ipa ? ipa.value : ''
+                } );
+            } );
             /** Verify internal ID. */
             if ( isNaN( prop.id ) ) {
-                console.error( `Cannot add ${ prop.name[ 0 ] }; ID is invalid.` );
+                console.error( `Cannot add ${ prop.words[ 0 ].value }; ID is invalid.` );
                 return null;
             }
             if ( ALL_WORDS[ +prop.id ] instanceof Word ) {
-                console.error( `Cannot add ${ prop.name[ 0 ] }; Word #${ +prop.id } is already defined as ${ existing.name }: ${ existing.translations.join( ', ' ) }` );
+                console.error( `Cannot add ${ prop.words[ 0 ].value }; Word #${ +prop.id } is already defined as ${ ALL_WORDS[ +prop.id ].words[ 0 ].value }: ${ ALL_WORDS[ +prop.id ].translations.join( ', ' ) }` );
                 return null;
             }
             const word = new Word( this, prop );
@@ -163,20 +169,24 @@ import AV from '/build/av.module.js/av.module.js';
      */
     class Word {
         /**
+         * @typedef {object} WordObject
+         * @param {string} value - The IPA symbol.
+         * @param {string} [ipa] - Romanized form.
+         */
+        /**
          * @param {Dictionary} dictionary - This word's language and dictionary.
          * @param {object} prop - Properties.
          * @param {number} prop.id - Internal ID.
-         * @param {string[]} prop.name - The word's romanized spellings.
+         * @param {WordObject[]} prop.words - The word's (romanized) spellings.
          * @param {number} [prop.age] - Age.
          * @param {number[]} [prop.etymology] - IDs of word that this word derived from.
-         * @param {string} [prop.ipa] - How this word is pronounced.
          * @param {string[]} [prop.translations] - What this word means.
         */
         constructor( dictionary, prop ) {
+            /** @type {WordObject[]} The word's (romanized) spellings. */
+            this.words = prop.words;
             /** @type {Dictionary} The language this word belongs to. */
             this.dictionary = dictionary;
-            /** @type {string[]} The word's romanized spellings. */
-            this.name = prop.name;
             /** @type {number} Internal ID. */
             this.id = Math.max( prop.id );
             /** @type {number} */
@@ -188,8 +198,6 @@ import AV from '/build/av.module.js/av.module.js';
             this.translations = prop.translations || [];
             /** @type {Word[]} Words derived from this word. */
             this.children = [];
-            /** @type {string} How this word is pronounced. */
-            this.ipa = prop.ipa;
             /** @type {Word[]} Words from which this word derived. */
             this.etymology = ( prop.etymology || [] ).map( ( ind ) => {
                 /** See if this word has been created. */
@@ -221,19 +229,17 @@ import AV from '/build/av.module.js/av.module.js';
          * @return {XMLDocument}
          */
         generateXML() {
-            const $cont = $( '<word>' )
+            /** @type {jQuery} The new word. */
+            const $cont = $( '<word>' );
             $cont.attr( 'id', this.id );
-            this.name.forEach( ( word ) => {
+            this.words.forEach( ( word ) => {
                 $( '<word>' )
                     .text( word )
+                    .attr( 'ipa', word.ipa )
                     .appendTo( $cont );
             } );
             $( '<language>' )
                 .text( this.dictionary.id )
-                .appendTo( $cont );
-            $( '<ipa>' )
-                .attr( 'roma', this.roma )
-                .text( this.ipa )
                 .appendTo( $cont );
             this.translations.forEach( ( word ) => {
                 $( '<translation>' )
@@ -281,8 +287,12 @@ import AV from '/build/av.module.js/av.module.js';
 
             /** Set values of control panel. */
             $( '#input-lang' ).val( active_word.dictionary.id );
-            $( '#input-word' ).trigger( 'tag:add', [ active_word.name ] );
-            $( '#input-ipa' ).val( active_word.ipa );
+            /** Empty and populate the table. */
+            $( '.word-table .row' ).remove();
+            active_word.words.forEach( ( obj ) => {
+                $( '.word-table' ).trigger( 'tag:add', [ obj.value, obj.ipa, obj.notes ] );
+            } );
+            /** Populate the translations input. */
             $( '#input-translation' ).trigger( 'tag:add', [ active_word.translations ] );
 
             /** @type {string[]} The IPA inventory of this word's language. */
@@ -302,6 +312,7 @@ import AV from '/build/av.module.js/av.module.js';
         /** Initializes the control panel. */
         initControls() {
             /** Initialize special inputs. */
+            this.initCtrl_InputTable();
             this.initCtrl_InputTags();
             this.initCtrl_Keyboard();
 
@@ -314,16 +325,58 @@ import AV from '/build/av.module.js/av.module.js';
                 $( `#${ word.id }` ).css( 'background-color', word.dictionary.color );
             } );
 
-            /** Changes the word. */
+            /** Changes the words and their pronunciation. */
             /** @type {jQuery} The input. */
-            const $input_word = $( '#input-word' );
-            $input_word.on( 'tag:change', () => {
+            const $input_words = $( '.word-table' );
+            $input_words.on( 'tag:change', () => {
                 /** @type {Word} The currently selected word. */
                 const word = ALL_WORDS[ this.index ];
-                word.name = getInputTagValue( $input_word );
+                const $rows = $input_words.find( 'tr.row' );
+                const first_word = word.words[ 0 ];
+                word.words = [];
+                $rows.each( ( ind, elem ) => {
+                    const $elem = $( elem );
+                    const obj = {
+                        value: $elem.find( 'input.word' ).val().trim(),
+                        ipa: $elem.find( 'input.ipa' ).val().trim(),
+                        notes: $elem.find( 'input.notes' ).val().trim()
+                    };
+                    if ( !obj.value ) return;
+                    word.words.push( obj );
+                } );
+                /** Make sure that there's always a minimum of one word. */
+                if ( !word.words.length ) {
+                    word.words.push( first_word );
+                    $( '.word-table' ).trigger( 'tag:add', [ first_word.value, first_word.ipa, first_word.notes ] );
+                }
                 /** Update the etymology node. */
-                $( `#${ word.id } .name` ).text( word.name[ 0 ] );
+                $( `#${ word.id } .name` ).text( word.words[ 0 ].value );
+
+                // word.words = getInputTagValue( $input_words ).map( ( val ) => {
+                //     return {
+                //         value: val,
+                //         ipa: ''
+                //     };
+                // } );
+                /** Update the etymology node. */
+                // $( `#${ word.id } .name` ).text( word.words[ 0 ].value );
             } );
+
+            // /** Changes the word. */
+            // /** @type {jQuery} The input. */
+            // const $input_word = $( '#input-word' );
+            // $input_word.on( 'tag:change', () => {
+            //     /** @type {Word} The currently selected word. */
+            //     const word = ALL_WORDS[ this.index ];
+            //     word.words = getInputTagValue( $input_word ).map( ( val ) => {
+            //         return {
+            //             value: val,
+            //             ipa: ''
+            //         };
+            //     } );
+            //     /** Update the etymology node. */
+            //     $( `#${ word.id } .name` ).text( word.words[ 0 ].value );
+            // } );
 
             /** Changes the word's translation. */
             /** @type {jQuery} The input. */
@@ -336,15 +389,167 @@ import AV from '/build/av.module.js/av.module.js';
                 $( `#${ word.id } .translations` ).text( word.translations.join( '; ' ) );
             } );
 
-            /** Changes the word's pronunciation. */
-            /** @type {jQuery} The input. */
-            const $input_ipa = $( '#input-ipa' );
-            $input_ipa.on( 'input change', () => {
-                /** @type {Word} The currently selected word. */
-                const word = ALL_WORDS[ this.index ];
-                word.ipa = $input_ipa.val();
-                /** Update the etymology node. */
-                $( `#${ word.id } .ipa` ).text( word.ipa );
+            // /** Changes the word's pronunciation. */
+            // /** @type {jQuery} The input. */
+            // const $input_ipa = $( '#input-ipa' );
+            // $input_ipa.on( 'input change', () => {
+            //     /** @type {Word} The currently selected word. */
+            //     const word = ALL_WORDS[ this.index ];
+            //     word.ipa = $input_ipa.val();
+            //     /** Update the etymology node. */
+            //     $( `#${ word.id } .ipa` ).text( word.ipa );
+            // } );
+        }
+
+        /** Initializes "data-role:input-table" tables. */
+        initCtrl_InputTable() {
+            /** @type {jQuery} The body. */
+            const $body = $( 'body' );
+            /** @type {jQuery} All input-table tables */
+            const $input_tables = $( 'table[data-role="input-table"]' );
+
+            /** @type {jQuery} The tag that appears while dragging. */
+            const $fake = $( '<div>' );
+            $fake.addClass( 'input-table-fake' );
+            $fake.appendTo( $body );
+
+            /** @type {jQuery} The tag being dragged. */
+            var dragging;
+            /** @type {number} The width of {@link $fake}. */
+            var dragging_width;
+            /** @type {number} The height of {@link $fake}. */
+            var dragging_height;
+            $input_tables.each( ( ind, table ) => {
+                const $table = $( table );
+                const $tbody = $table.children( 'tbody' );
+                const $template = $tbody.children( 'tr.template' );
+                $template.addClass( 'row' );
+                $template.removeClass( 'template' );
+                $template.detach();
+                $template.children().first().remove();
+                $template.children().last().remove();
+
+                const $footer = $( '<tr>' );
+                $footer.addClass( 'footer' );
+                $footer.appendTo( $table )
+                const $btn_add = $( '<button>' );
+                $btn_add.addClass( 'add' );
+                $btn_add.html( '&plus;' );
+                $btn_add.appendTo( $footer );
+                $btn_add.wrap( '<td></td>' );
+                $btn_add.on( 'click', ( event ) => {
+                    /** Add a new row. */
+                    event.preventDefault();
+                    if ( ( event.which || event.button || event.buttons ) !== 1 ) {
+                        /** Only listen to left-clicks. */
+                        return;
+                    }
+                    $table.trigger( 'tag:add' );
+                } );
+
+                const $btn_move = $( '<div>' );
+                $btn_move.addClass( 'move' );
+                $btn_move.html( '&#x2261;' );
+                $btn_move.prependTo( $template );
+                $btn_move.wrap( '<td></td>' );
+                $btn_move.on( 'mousedown', function ( event ) {
+                    /** Start dragging this row. */
+                    event.preventDefault();
+                    if ( ( event.which || event.button || event.buttons ) !== 1 ) {
+                        /** Only listen to left-clicks. */
+                        return;
+                    }
+                    if ( dragging ) return;
+                    const $row = $( this ).parent().parent();
+                    dragging = $row;
+                    /** Hide this row and activate the fake. */
+                    dragging.css( 'opacity', '0' );
+                    $fake.addClass( 'active' );
+                    $fake.html( dragging.html() );
+                    $fake.find( 'input' ).each( ( ind, elem ) => {
+                        const query = 'input' + [ ...elem.classList ].map( ( val ) => { return '.' + val; } ).join();
+                        $( elem ).val( dragging.find( query ).val() );
+                    } );
+                    dragging_width = $fake.width();
+                    dragging_height = $fake.height();
+                    $fake.css( {
+                        left: event.clientX - dragging_width / 2,
+                        top: event.clientY - dragging_height / 2
+                    } );
+                } );
+
+                const $btn_del = $( '<button>' );
+                $btn_del.addClass( 'delete' );
+                $btn_del.html( '&times;' );
+                $btn_del.appendTo( $template );
+                $btn_del.wrap( '<td></td>' );
+                $btn_del.on( 'click', function ( event ) {
+                    /** Delete the row. */
+                    event.preventDefault();
+                    if ( ( event.which || event.button || event.buttons ) !== 1 ) {
+                        /** Only listen to left-clicks. */
+                        return;
+                    }
+                    const $row = $( this ).parent().parent();
+                    if ( $row.prev().hasClass( 'header' ) && $row.next().hasClass( 'footer' ) ) {
+                        /** Do not delete the only row. */
+                        return;
+                    }
+                    $row.detach();
+                    $table.trigger( 'tag:change' );
+                } );
+
+                /** Custom event to add new rows. */
+                $table.on( 'tag:add', ( event, ...row_data ) => {
+                    const $row = $template.clone( true );
+                    $row.appendTo( $table );
+
+                    const $cells = $row.children( 'td' );
+                    $cells.each( ( ind, elem ) => {
+                        if ( !ind || ind === $cells.length - 1 ) return;
+                        const value = row_data[ ind - 1 ];
+                        if ( typeof value === 'undefined' || value === null ) return;
+                        const $elem = $( elem ).children();
+                        if ( $elem.val ) {
+                            $elem.val( value );
+                            $elem.on( 'input change', () => {
+                                $table.trigger( 'tag:change' );
+                            } );
+                        } else {
+                            $elem.html( value );
+                        }
+                    } );
+
+                    $footer.insertAfter( $row );
+                    $table.trigger( 'tag:change' );
+                } );
+            } );
+            $body.on( 'mousemove', ( event ) => {
+                if ( !dragging ) return;
+                /** Keep the fake on the mouse. */
+                $fake.css( {
+                    left: event.clientX - dragging_width / 2,
+                    top: event.clientY - dragging_height / 2
+                } );
+                /** Show where the row would go if it were dropped at its current position. */
+                dragging.insertBefore( dragging.siblings( ':nth-child(2)' ) );
+                dragging.siblings().each( ( ind, elem ) => {
+                    /** @type {jQuery} */
+                    const $elem = $( elem );
+                    if ( $elem.is( ':last-child' ) ) return;
+                    /** @type {object} */
+                    const position = $elem.offset();
+                    if ( event.clientY < position.top ) return;
+                    dragging.insertAfter( $elem );
+                } );
+            } );
+            $body.on( 'mouseleave mouseup', ( event ) => {
+                if ( !dragging ) return;
+                /** Hide the fake and reveal the real row. */
+                dragging.css( 'opacity', '' );
+                $fake.removeClass( 'active' );
+                dragging.parent().parent().trigger( 'tag:change' );
+                dragging = null;
             } );
         }
 
@@ -399,6 +604,10 @@ import AV from '/build/av.module.js/av.module.js';
                     $del.on( 'mousedown', ( event ) => {
                         /** Delete the tag. */
                         event.preventDefault();
+                        if ( ( event.which || event.button || event.buttons ) !== 1 ) {
+                            /** Only listen to left-clicks. */
+                            return;
+                        }
                         event.stopPropagation();
                         dragging = null;
                         $item.remove();
@@ -603,7 +812,7 @@ import AV from '/build/av.module.js/av.module.js';
                 /** Word. */
                 $( '<span>' )
                     .addClass( 'name' )
-                    .text( word.name[ 0 ] )
+                    .text( word.words[ 0 ].value )
                     .appendTo( $header );
                 /** IPA. */
                 $( '<span>' )
@@ -759,7 +968,7 @@ import AV from '/build/av.module.js/av.module.js';
                 defers.push( defer );
                 $.ajax( {
                     type: 'GET',
-                    url: './data/languages.xml',
+                    url: './data/languages.xml?t=' + Date.now(),
                     dataType: 'xml',
                     success: ( xml ) => {
                         /** @type {jQuery} */
@@ -785,7 +994,7 @@ import AV from '/build/av.module.js/av.module.js';
                 defers.push( defer );
                 $.ajax( {
                     type: 'GET',
-                    url: './data/lexicon.xml',
+                    url: './data/lexicon.xml?t=' + Date.now(),
                     dataType: 'xml',
                     success: ( xml ) => {
                         const lexicon = $( xml ).children( 'lexicon' );
