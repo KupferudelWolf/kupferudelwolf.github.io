@@ -216,6 +216,40 @@ import AV from '/build/av.module.js/av.module.js';
             this.dictionary = dictionary;
             this.dictionary.lexicon.push( this );
         }
+
+        /** Generates an XML document containing this word's data.
+         * @return {XMLDocument}
+         */
+        generateXML() {
+            const $cont = $( '<word>' )
+            $cont.attr( 'id', this.id );
+            this.name.forEach( ( word ) => {
+                $( '<word>' )
+                    .text( word )
+                    .appendTo( $cont );
+            } );
+            $( '<language>' )
+                .text( this.dictionary.id )
+                .appendTo( $cont );
+            $( '<ipa>' )
+                .attr( 'roma', this.roma )
+                .text( this.ipa )
+                .appendTo( $cont );
+            this.translations.forEach( ( word ) => {
+                $( '<translation>' )
+                    .text( word )
+                    .appendTo( $cont );
+            } );
+            this.etymology.forEach( ( word ) => {
+                $( '<etymology>' )
+                    .text( word.id )
+                    .appendTo( $cont );
+            } );
+            $( '<age>' )
+                .text( this.age )
+                .appendTo( $cont );
+            return $cont.get( 0 );
+        }
     }
 
     /** @class */
