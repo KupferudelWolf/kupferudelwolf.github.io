@@ -80,6 +80,24 @@ input:invalid {
     width: 80vw;
     height: 60vh;
     display: flex;
+    flex-direction: column;
+    gap: 4vmin;
+}
+
+.container-upper {
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4vmin;
+}
+
+.container-lower {
+    width: 100%;
+    height: auto;
+    flex: 1;
+    display: flex;
     align-items: flex-start;
     gap: 4vmin;
 }
@@ -352,6 +370,30 @@ table.word-table ._delete {
 }
 
 
+.input-dropdown > * {
+    width: 12em;
+    box-sizing: border-box;
+}
+.input-dropdown > .menu {
+    background-color: white;
+    position: absolute;
+    z-index: 100;
+    border: 1px solid black;
+    height: 20vmin;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    display: none;
+}
+.input-dropdown > .menu.active {
+    display: block;
+}
+.input-dropdown > .menu optgroup > * {
+    padding-left: 1em;
+}
+.input-dropdown > .menu option:hover {
+    color: white;
+    background-color: #1e90ff;
+}
 
 
 .controls > input,

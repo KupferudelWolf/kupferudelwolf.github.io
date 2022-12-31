@@ -307,11 +307,52 @@ import AV from '/build/av.module.js/av.module.js';
                     $elem.addClass( 'used' );
                 }
             } );
+
+            /** Populate the dropdown menu. */
+            const $container = $( '#active-word' );
+            const $input = $container.children( 'input' );
+            $input.val( active_word.words[ 0 ].value );
+            $input.attr( 'data-id', active_word.id );
+            const $select = $container.children( '.menu' );
+            const all_langs = ALL_LANGS.sort( ( a, b ) => {
+                return a.name[ 0 ] > b.name[ 0 ] ? 1 : -1;
+            } );
+            all_langs.forEach( ( dictionary ) => {
+                const $optgroup = $( '<optgroup>' );
+                $optgroup.attr( 'label', dictionary.name[ 0 ] );
+                $optgroup.appendTo( $select );
+                const lexicon = [];
+                dictionary.lexicon.forEach( ( words ) => {
+                    words.words.forEach( ( word ) => {
+                        lexicon.push( {
+                            text: word.value,
+                            value: words.id
+                        } );
+                    } );
+                } );
+                lexicon.sort( ( a, b ) => {
+                    return a.text > b.text ? 1 : -1;
+                } );
+                lexicon.forEach( ( obj ) => {
+                    const $option = $( '<option>' );
+                    $option.attr( 'value', obj.value );
+                    $option.text( obj.text );
+                    $option.appendTo( $optgroup );
+                    $option.on( 'click', () => {
+                        $input.val( obj.text );
+                        $select.attr( 'data-id', obj.value );
+                        this.select( ALL_WORDS[ obj.value ] );
+                        $select.removeClass( 'active' );
+                        $input.trigger( 'change' );
+                    } );
+                } );
+            } );
         }
 
         /** Initializes the control panel. */
         initControls() {
             /** Initialize special inputs. */
+            this.initCtrl_InputDropdown();
             this.initCtrl_InputTable();
             this.initCtrl_InputTags();
             this.initCtrl_Keyboard();
@@ -401,11 +442,67 @@ import AV from '/build/av.module.js/av.module.js';
             // } );
         }
 
+        /** */
+        initCtrl_InputDropdown() {
+            const getLoose = ( text ) => {
+                return text
+                    .toLowerCase()
+                    .normalize( 'NFD' )
+                    .replace( /[\u0300-\u036f]/g, '' )
+                    .replace( /[^\S]/g, '' )
+                    .replace( /\u00e6/g, 'ae' )
+                    .replace( /\u0153/g, 'oe' )
+                    .replace( /\u00f0/g, 'th' )
+                    .replace( /\u00f8/g, 'o' )
+                    .replace( /\u00df/g, 'ss' )
+                    .replace( /[^a-z0-9]/g, '' );
+            };
+            // /** @type {jQuery} The body. */
+            // const $body = $( 'body' );
+            $( 'div[data-role="input-dropdown"]' ).each( ( ind, elem ) => {
+                /** @type {jQuery} All input-dropdown divs. */
+                const $container = $( elem );
+                const $input = $container.children( 'input' );
+                const $select = $container.children( '.menu' );
+
+                $input.on( 'focus', () => {
+                    $select.addClass( 'active' );
+                } );
+                $input.on( 'blur', () => {
+                    if ( $select.is( ':hover' ) ) return;
+                    $select.removeClass( 'active' );
+                } );
+                $input.on( 'input change', () => {
+                    const val = $input.val().trim();
+                    const val_loose = getLoose( val );
+                    const $options = $select.find( 'option' );
+                    if ( !val ) {
+                        $options.show();
+                        return;
+                    }
+                    $options.hide();
+                    $options.each( ( ind, opt ) => {
+                        const $opt = $( opt );
+                        const opt_val = $opt.text().trim();
+                        if ( opt_val.includes( val ) ) {
+                            $opt.show();
+                            return;
+                        }
+                        var opt_val_loose = getLoose( opt_val );
+                        if ( opt_val_loose.includes( val_loose ) ) {
+                            $opt.show();
+                            return;
+                        }
+                    } );
+                } );
+            } );
+        }
+
         /** Initializes "data-role:input-table" tables. */
         initCtrl_InputTable() {
             /** @type {jQuery} The body. */
             const $body = $( 'body' );
-            /** @type {jQuery} All input-table tables */
+            /** @type {jQuery} All input-table tables. */
             const $input_tables = $( 'table[data-role="input-table"]' );
 
             /** @type {jQuery} The tag that appears while dragging. */

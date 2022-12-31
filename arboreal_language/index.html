@@ -14,42 +14,50 @@
 
 <body>
 	<div class="container">
-		<div class="etymology-frame">
-			<div class="etymology-container">
-				<svg id="arrows" width="1200" height="600" xmlns:xlink="http://www.w3.org/1999/xlink">
-					<defs>
-						<marker id="arrow" viewbox="0 0 4 4" refX="4" refY="2" markerUnits="strokeWidth" markerWidth="4"
-							markerHeight="4" orient="auto">
-							<path d="M 0 0 L 4 2 L 0 4 z" fill="black"></path>
-						</marker>
-					</defs>
-				</svg>
+		<div class="container-upper">
+			<div class="input-dropdown" id="active-word" data-role="input-dropdown">
+				<input type="text" id="active-word-input" />
+				<div class="menu" id="active-word-select"></div>
 			</div>
 		</div>
-		<div class="controls">
-			<label for="input-lang">Language:</label>
-			<select id="input-lang"></select>
-			<label>Spelling:</label>
-			<table class="word-table" data-role="input-table">
-				<tbody>
-					<tr class="header">
-						<td></td>
-						<td>Word</td>
-						<td>IPA</td>
-						<td>Notes</td>
-						<td></td>
-					</tr>
-					<tr class="template">
-						<td></td>
-						<td><input class="word" type="text" pattern=".*\S+.*" required /></td>
-						<td><input class="ipa" type="text" /></td>
-						<td><input class="notes" type="text" /></td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
-			<label for="input-translation">Translations:</label>
-			<input type="text" id="input-translation" data-role="input-tags"></input>
+		<div class="container-lower">
+			<div class="etymology-frame">
+				<div class="etymology-container">
+					<svg id="arrows" width="1200" height="600" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<defs>
+							<marker id="arrow" viewbox="0 0 4 4" refX="4" refY="2" markerUnits="strokeWidth"
+								markerWidth="4" markerHeight="4" orient="auto">
+								<path d="M 0 0 L 4 2 L 0 4 z" fill="black"></path>
+							</marker>
+						</defs>
+					</svg>
+				</div>
+			</div>
+			<div class="controls">
+				<label for="input-lang">Language:</label>
+				<select id="input-lang"></select>
+				<label>Spelling:</label>
+				<table class="word-table" data-role="input-table">
+					<tbody>
+						<tr class="header">
+							<td></td>
+							<td>Word</td>
+							<td>IPA</td>
+							<td>Notes</td>
+							<td></td>
+						</tr>
+						<tr class="template">
+							<td></td>
+							<td><input class="word" type="text" pattern=".*\S+.*" required /></td>
+							<td><input class="ipa" type="text" /></td>
+							<td><input class="notes" type="text" /></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<label for="input-translation">Translations:</label>
+				<input type="text" id="input-translation" data-role="input-tags"></input>
+			</div>
 		</div>
 	</div>
 	<div class="full keyboard-container" data-target="input-ipa">
@@ -503,7 +511,6 @@
 			<div style="grid-column-end: -1;"></div>
 			<div style="grid-column-end: -1;"></div>
 		</div>
-	</div>
 </body>
 
 </html>
