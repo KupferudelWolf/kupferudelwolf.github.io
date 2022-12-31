@@ -309,45 +309,49 @@ import AV from '/build/av.module.js/av.module.js';
             } );
 
             /** Populate the dropdown menu. */
-            const $container = $( '#active-word' );
-            const $input = $container.children( 'input' );
-            $input.val( active_word.words[ 0 ].value );
-            $input.attr( 'data-id', active_word.id );
-            const $select = $container.children( '.menu' );
-            $select.empty();
-            const all_langs = ALL_LANGS.sort( ( a, b ) => {
-                return a.name[ 0 ] > b.name[ 0 ] ? 1 : -1;
-            } );
-            all_langs.forEach( ( dictionary ) => {
-                const $optgroup = $( '<optgroup>' );
-                $optgroup.attr( 'label', dictionary.name[ 0 ] );
-                $optgroup.appendTo( $select );
-                const lexicon = [];
-                dictionary.lexicon.forEach( ( words ) => {
-                    words.words.forEach( ( word ) => {
-                        lexicon.push( {
-                            text: word.value,
-                            value: words.id
+            $( '.all-words' ).each( ( ind, elem ) => {
+                const $select = $( elem );
+                const $input = $select.siblings( 'input' );
+                $input.val( active_word.words[ 0 ].value );
+                $input.attr( 'data-id', active_word.id );
+                $select.empty();
+                const all_langs = ALL_LANGS.sort( ( a, b ) => {
+                    return a.name[ 0 ] > b.name[ 0 ] ? 1 : -1;
+                } );
+                all_langs.forEach( ( dictionary ) => {
+                    const $optgroup = $( '<optgroup>' );
+                    $optgroup.attr( 'label', dictionary.name[ 0 ] );
+                    $optgroup.appendTo( $select );
+                    const lexicon = [];
+                    dictionary.lexicon.forEach( ( words ) => {
+                        words.words.forEach( ( word ) => {
+                            lexicon.push( {
+                                text: word.value,
+                                value: words.id,
+                                trans: words.translations.join( '; ' )
+                            } );
                         } );
                     } );
-                } );
-                lexicon.sort( ( a, b ) => {
-                    return a.text > b.text ? 1 : -1;
-                } );
-                lexicon.forEach( ( obj ) => {
-                    const $option = $( '<option>' );
-                    $option.attr( 'value', obj.value );
-                    $option.text( obj.text );
-                    $option.appendTo( $optgroup );
-                    $option.on( 'click', () => {
-                        $input.val( obj.text );
-                        $select.attr( 'data-id', obj.value );
-                        this.select( ALL_WORDS[ obj.value ] );
-                        $select.removeClass( 'active' );
-                        $input.trigger( 'change' );
+                    lexicon.sort( ( a, b ) => {
+                        return a.text > b.text ? 1 : -1;
                     } );
-                } );
+                    lexicon.forEach( ( obj ) => {
+                        const $option = $( '<option>' );
+                        $option.attr( 'value', obj.value );
+                        $option.text( obj.text );
+                        $option.appendTo( $optgroup );
+                        $option.attr( 'title', obj.trans );
+                        $option.on( 'click', () => {
+                            $input.val( obj.text );
+                            $select.attr( 'data-id', obj.value );
+                            this.select( ALL_WORDS[ obj.value ] );
+                            $select.removeClass( 'active' );
+                            $input.trigger( 'change' );
+                        } );
+                    } );
+                } )
             } );
+
         }
 
         /** Initializes the control panel. */
