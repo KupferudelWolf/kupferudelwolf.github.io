@@ -202,6 +202,20 @@ import AV from '/build/av.module.js/av.module.js';
                 return word;
             } );
         }
+
+        /** Moves this word to a different dictionary.
+         * @param {Dictionary} dictionary - The new dictionary.
+         */
+        changeLanguage( dictionary ) {
+            /** @type {Word[]} The old dictionary's lexicon without this word. */
+            const lexicon = [];
+            this.dictionary.lexicon.forEach( ( word ) => {
+                if ( word.id !== this.id ) lexicon.push( word );
+            } );
+            this.dictionary.lexicon = lexicon;
+            this.dictionary = dictionary;
+            this.dictionary.lexicon.push( this );
+        }
     }
 
     /** @class */
@@ -258,15 +272,10 @@ import AV from '/build/av.module.js/av.module.js';
             this.initCtrl_Keyboard();
 
             /** Word language selection. */
-            /**
-             * !!!!!
-             * This does not update Dictionary.lexicon[]!
-             * !!!!!
-             */
             const input_lang = $( '#input-lang' );
             input_lang.on( 'input change', () => {
                 const word = ALL_WORDS[ this.index ];
-                word.dictionary = ALL_LANGS[ input_lang.val() ];
+                word.changeLanguage( ALL_LANGS[ input_lang.val() ] );
                 /** Change the etymology node background superficially. */
                 $( `#${ word.id }` ).css( 'background-color', word.dictionary.color );
             } );
