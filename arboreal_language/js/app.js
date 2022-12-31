@@ -563,6 +563,7 @@ import AV from '/build/av.module.js/av.module.js';
                     /** Hide this row and activate the fake. */
                     dragging.css( 'opacity', '0' );
                     $fake.addClass( 'active' );
+                    $fake.css( 'width', `${ dragging.outerWidth() }px` );
                     $fake.html( dragging.html() );
                     $fake.find( 'input' ).each( ( ind, elem ) => {
                         const query = 'input' + [ ...elem.classList ].map( ( val ) => { return '.' + val; } ).join();
@@ -571,7 +572,7 @@ import AV from '/build/av.module.js/av.module.js';
                     dragging_width = $fake.width();
                     dragging_height = $fake.height();
                     $fake.css( {
-                        left: event.clientX - dragging_width / 2,
+                        left: event.clientX - dragging_height / 2,
                         top: event.clientY - dragging_height / 2
                     } );
                 } );
@@ -626,7 +627,7 @@ import AV from '/build/av.module.js/av.module.js';
                 if ( !dragging ) return;
                 /** Keep the fake on the mouse. */
                 $fake.css( {
-                    left: event.clientX - dragging_width / 2,
+                    left: event.clientX - dragging_height / 2,
                     top: event.clientY - dragging_height / 2
                 } );
                 /** Show where the row would go if it were dropped at its current position. */
