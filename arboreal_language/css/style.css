@@ -250,12 +250,12 @@ table.word-table input {
     height: 1.5rem;
     box-sizing: border-box;
 }
-.input-table-fake .move,
-.input-table-fake .add,
-.input-table-fake .delete,
-table.word-table .move,
-table.word-table .add,
-table.word-table .delete {
+.input-table-fake ._move,
+.input-table-fake ._add,
+.input-table-fake ._delete,
+table.word-table ._move,
+table.word-table ._add,
+table.word-table ._delete {
     width: 1.25em;
     height: 1.25em;
     margin: auto;
@@ -263,7 +263,9 @@ table.word-table .delete {
     border-radius: 2px;
     background-color: white;
     cursor: pointer;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 

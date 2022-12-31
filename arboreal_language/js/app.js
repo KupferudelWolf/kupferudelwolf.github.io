@@ -433,7 +433,7 @@ import AV from '/build/av.module.js/av.module.js';
                 $footer.addClass( 'footer' );
                 $footer.appendTo( $table )
                 const $btn_add = $( '<button>' );
-                $btn_add.addClass( 'add' );
+                $btn_add.addClass( '_add' );
                 $btn_add.html( '&plus;' );
                 $btn_add.appendTo( $footer );
                 $btn_add.wrap( '<td></td>' );
@@ -448,7 +448,7 @@ import AV from '/build/av.module.js/av.module.js';
                 } );
 
                 const $btn_move = $( '<div>' );
-                $btn_move.addClass( 'move' );
+                $btn_move.addClass( '_move' );
                 $btn_move.html( '&#x2261;' );
                 $btn_move.prependTo( $template );
                 $btn_move.wrap( '<td></td>' );
@@ -479,7 +479,7 @@ import AV from '/build/av.module.js/av.module.js';
                 } );
 
                 const $btn_del = $( '<button>' );
-                $btn_del.addClass( 'delete' );
+                $btn_del.addClass( '_delete' );
                 $btn_del.html( '&times;' );
                 $btn_del.appendTo( $template );
                 $btn_del.wrap( '<td></td>' );
