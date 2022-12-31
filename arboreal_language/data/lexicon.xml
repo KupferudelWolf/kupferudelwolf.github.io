@@ -112,4 +112,57 @@
 <word id="111"><word ipa="/ʈɑʈ/">tat</word><translation>we</translation><translation>us</translation><language>4</language><age>15</age><etymology>110</etymology></word>
 <word id="112"><word ipa="/ʈʂæʈ/">tsat</word><translation>us (dative)</translation><language>5</language><age>5</age><etymology>111</etymology></word>
 <word id="113"><word ipa="/ʈʂæˈjæʈ/">tsayat</word><translation>we (nom.)</translation><translation>us (acc.)</translation><language>5</language><age>5</age><etymology>111</etymology></word>
+<word id="114"><word ipa="">shura</word><translation>sky</translation><language>1</language></word>
+<word id="115"><word ipa="">rå</word><translation>wood</translation><translation>tree</translation><language>1</language></word>
+<word id="116"><word ipa="">ma rå</word><translation>log</translation><language>1</language><etymology>115</etymology><etymology>117</etymology></word>
+<word id="117"><word ipa="">ma</word><translation>to fall</translation><translation>to rot</translation><translation>to be sick</translation><translation>to die</translation><language>1</language></word>
+<word id="118"><word ipa="">pwå</word><translation>feather</translation><translation>wing</translation><language>1</language></word>
+<word id="119"><word ipa="/ʂɯ`ɹɑ/">shura</word><translation>the sky</translation><translation>air</translation><language>2</language><etymology>114</etymology></word>
+<word id="120"><word ipa="/ʂɤ`dʐɑ/">shodha</word><translation>breath</translation><language>2</language><etymology>114</etymology><etymology>24</etymology></word>
+<word id="121"><word ipa="/ɹɑɯ/">rau</word><translation>forest</translation><language>2</language><etymology>115</etymology></word>
+<word id="122"><word ipa="/ɹæ/">rå</word><translation>wood</translation><translation>tree</translation><language>2</language><etymology>115</etymology></word>
+<word id="123"><word ipa="/ɲɑɹ/">ñar</word><translation>log</translation><language>2</language><etymology>116</etymology></word>
+<word id="124"><word ipa="/ɲɑ/">ña</word><translation>to fall</translation><language>2</language><etymology>117</etymology></word>
+<word id="125"><word ipa="/ɲɑɯ/">ñau</word><translation>to make something fall</translation><language>2</language><etymology>117</etymology></word>
+<word id="126"><word ipa="/ɲɑɪ/">ñai</word><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>2</language><etymology>117</etymology></word>
+<word id="127"><word ipa="/ʜɨ`ɲɑ/">hiña</word><translation>to rot</translation><translation>to be sick</translation><translation>to die</translation><language>2</language><etymology>117</etymology></word>
+<word id="128"><word ipa="/ʂɯɾ/">shuŕ</word><translation>the sky</translation><language>3</language><etymology>119</etymology></word>
+<word id="129"><word ipa="/ʂɯɹ/">shur</word><translation>air</translation><language>3</language><etymology>119</etymology></word>
+<word id="130"><word ipa="/ʂɤ`ɖɑ/">shoda</word><translation>breath</translation><language>3</language><etymology>120</etymology></word>
+<word id="131"><word ipa="/l̠ɑɯ/">lau</word><translation>forest</translation><language>3</language><etymology>121</etymology></word>
+<word id="132"><word ipa="/ɾɑ/">ŕa</word><translation>tree</translation><language>3</language><etymology>122</etymology></word>
+<word id="133"><word ipa="/ɹɑ/">ra</word><translation>wood</translation><language>3</language><etymology>122</etymology></word>
+<word id="134"><word ipa="/`ɾɑɳɖɑ/">ŕanda</word><translation>log</translation><language>3</language><etymology>123</etymology></word>
+<word id="135"><word ipa="/`ɹɑɳɖɑ/">randa</word><translation>plank</translation><translation>bar</translation><language>3</language><etymology>123</etymology></word>
+<word id="136"><word ipa="/ɳɑl̠/">nal</word><translation>to fall</translation><language>3</language><etymology>124</etymology></word>
+<word id="137"><word ipa="/ɳɑɯl̠/">naul</word><translation>to make something fall</translation><language>3</language><etymology>125</etymology></word>
+<word id="138"><word ipa="/ɳi/">ni</word><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>3</language><etymology>126</etymology></word>
+<word id="139"><word ipa="/çɘ`ɳɑl̠/">henal</word><translation>to rot</translation><translation>to be sick</translation><language>3</language><etymology>127</etymology></word>
+<word id="140"><word ipa="/çi`ɳɑɯl̠/">hyinaul</word><translation>to die</translation><translation>to kill</translation><language>3</language><etymology>127</etymology></word>
+<word id="141"><word ipa="/ʂɤɽ/">shoŕ</word><translation>the sky</translation><language>4</language><etymology>128</etymology></word>
+<word id="142"><word ipa="/ʂɤɹ/">shor</word><translation>air</translation><language>4</language><etymology>129</etymology></word>
+<word id="143"><word ipa="/`ɖɤʂɑ/">dosha</word><translation>breath</translation><language>4</language><etymology>130</etymology></word>
+<word id="144"><word ipa="/ɭɑ`jɤ/">layo</word><translation>forest</translation><language>4</language><etymology>131</etymology></word>
+<word id="145"><word ipa="/ɽɑ/">ŕa</word><translation>tree</translation><language>4</language><etymology>132</etymology></word>
+<word id="146"><word ipa="/ɻɑ/">ra</word><translation>wood</translation><language>4</language><etymology>133</etymology></word>
+<word id="147"><word ipa="/`ɖɑɳɽɑ/">danŕa</word><translation>log</translation><language>4</language><etymology>134</etymology></word>
+<word id="148"><word ipa="/`ɖɑɳɻɑ/">danra</word><translation>plank</translation><translation>bar</translation><language>4</language><etymology>135</etymology></word>
+<word id="149"><word ipa="/ɳɑɻ/">nar</word><translation>to fall</translation><language>4</language><etymology>136</etymology></word>
+<word id="150"><word ipa="/ɳɑ`ɭɤɭ/">nalol</word><translation>to make something fall</translation><language>4</language><etymology>137</etymology></word>
+<word id="151"><word ipa="/ɳi/">ni</word><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>4</language><etymology>138</etymology></word>
+<word id="152"><word ipa="/ɳɘ`jɑɭ/">neyal</word><translation>to rot</translation><translation>to be sick</translation><translation>to sicken</translation><language>4</language><etymology>139</etymology></word>
+<word id="153"><word ipa="/ji`ɳɑɭɳ/">yinaln</word><translation>to die</translation><translation>to kill</translation><language>4</language><etymology>140</etymology></word>
+<word id="154"><word ipa="/ʂɤɽ/">shoŕ</word><translation>the sky</translation><language>5</language><etymology>141</etymology></word>
+<word id="155"><word ipa="/ʂɤɹ/">shor</word><translation>air</translation><language>5</language><etymology>142</etymology></word>
+<word id="156"><word ipa="/`ʈʂɤʂæ/">tsosha</word><translation>breath</translation><language>5</language><etymology>143</etymology></word>
+<word id="157"><word ipa="/ɭæ`jɤ/">layo</word><translation>forest</translation><language>5</language><etymology>144</etymology></word>
+<word id="158"><word ipa="/ɽæ/">ŕa</word><translation>tree</translation><language>5</language><etymology>145</etymology></word>
+<word id="159"><word ipa="/ɻæ/">ra</word><translation>wood</translation><language>5</language><etymology>146</etymology></word>
+<word id="160"><word ipa="/ɖæɽɳ/">darn</word><translation>log</translation><language>5</language><etymology>147</etymology></word>
+<word id="161"><word ipa="/`ɖæɳɻæ/">danra</word><translation>plank</translation><translation>bar</translation><language>5</language><etymology>148</etymology></word>
+<word id="162"><word ipa="/ɳæɻ/">nar</word><translation>to fall</translation><language>5</language><etymology>149</etymology></word>
+<word id="163"><word ipa="/ɳæɭ`ɽɤɭ/">nalŕol</word><translation>to make something fall</translation><language>5</language><etymology>150</etymology></word>
+<word id="164"><word ipa="/ɳɘ/">ne</word><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>5</language><etymology>151</etymology></word>
+<word id="165"><word ipa="/ɳɘ`jæɭ/">neyal</word><translation>to rot</translation><translation>to be sick</translation><translation>to sicken</translation><language>5</language><etymology>152</etymology></word>
+<word id="166"><word ipa="/jɪ`ɳæɭɳ/">yinaln</word><translation>to die</translation><translation>to kill</translation><language>5</language><etymology>153</etymology></word>
 </lexicon>
