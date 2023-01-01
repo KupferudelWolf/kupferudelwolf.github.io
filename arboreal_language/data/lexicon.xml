@@ -5,7 +5,7 @@
 <word id="4"><word ipa="/ʈiɭˈʂɤɻ/">tilsor</word><translation>star</translation><translation>soul</translation><language>4</language><age>15</age><etymology>3</etymology></word>
 <word id="5"><word ipa="/ʈʂɤɻ/">tsor</word><translation>star</translation><translation>soul</translation><language>5</language><age>5</age><etymology>4</etymology></word>
 <word id="6"><word>dhahidho</word><translation>aurora</translation><language>1</language><age>40</age><etymology>1</etymology><etymology>7</etymology></word>
-<word id="7"><word>dhahi</word><translation>aurora</translation><translation>rings</translation><language>1</language><age>45</age></word>
+<word id="7"><word>dhahi</word><translation>aurora</translation><translation>rings</translation><translation>path</translation><language>1</language><age>45</age></word>
 <word id="8"><word>dhåhi</word><translation>rings (sky)</translation><language>1</language><age>40</age><etymology>24</etymology><etymology>7</etymology></word>
 <word id="9"><word ipa="/ʜɑɨˈdʐɤ/">haidho</word><translation>aurora</translation><language>2</language><age>35</age><etymology>6</etymology></word>
 <word id="10"><word ipa="/ʐɑˈʈɤ/">zhato</word><translation>aurora</translation><language>3</language><age>25</age><etymology>9</etymology></word>
@@ -165,4 +165,9 @@
 <word id="164"><word ipa="/ɳɘ/">ne</word><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>5</language><etymology>151</etymology></word>
 <word id="165"><word ipa="/ɳɘ`jæɭ/">neyal</word><translation>to rot</translation><translation>to be sick</translation><translation>to sicken</translation><language>5</language><etymology>152</etymology></word>
 <word id="166"><word ipa="/jɪ`ɳæɭɳ/">yinaln</word><translation>to die</translation><translation>to kill</translation><language>5</language><etymology>153</etymology></word>
+<word id="167"><word ipa="">dhahå</word><translation>river</translation><language>1</language><etymology>24</etymology><etymology>7</etymology></word>
+<word id="168"><word ipa="/ʜɑ`dʐɑ/">hadha</word><translation>river</translation><language>2</language><etymology>167</etymology></word>
+<word id="169"><word ipa="/çɑʈ`ʐɑ/">hyatzha</word><translation>river</translation><language>3</language><etymology>168</etymology></word>
+<word id="170"><word ipa="/ʈɑɭ`ʐɑ/">talzha</word><translation>river</translation><language>4</language><etymology>169</etymology></word>
+<word id="171"><word ipa="/ʈʂæɭ`ʐæ/">tsalzha</word><translation>river</translation><language>5</language><etymology>170</etymology></word>
 </lexicon>
