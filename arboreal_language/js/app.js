@@ -476,6 +476,7 @@ import AV from '/build/av.module.js/av.module.js';
                 $input.on( 'blur', () => {
                     if ( $select.is( ':hover' ) ) return;
                     $select.removeClass( 'active' );
+                    $select.find( 'option' ).show();
                 } );
                 $input.on( 'input change', () => {
                     const val = $input.val().trim();
