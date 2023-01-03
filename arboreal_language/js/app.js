@@ -1115,8 +1115,6 @@ import AV from '/build/av.module.js/av.module.js';
         load() {
             /** @type {jQuery.Deferred} Primary callback. */
             const deferred = $.Deferred();
-            // /** @type {jQuery.Deferred[]} Deferred objects that must be resolved. */
-            // const defers = [ $.Deferred() ];
 
             /** Loads languages.xml.
              * @return {jQuery.Deferred}
@@ -1124,7 +1122,6 @@ import AV from '/build/av.module.js/av.module.js';
             const loadLanguages = () => {
                 /** @type {jQuery.Deferred} */
                 const deferred = $.Deferred();
-                // defers.push( deferred );
                 $.ajax( {
                     type: 'GET',
                     url: './data/languages.xml?t=' + Date.now(),
@@ -1164,52 +1161,26 @@ import AV from '/build/av.module.js/av.module.js';
                             const lang_id = +word.getElementsByTagName( 'language' )[ 0 ].innerHTML;
                             /** @type {Dictionary} The dictionary this word belongs in. */
                             const dictionary = ALL_LANGS[ +lang_id ];
-                            // var dictionary = this.language[ lang_id ];
                             if ( !dictionary ) {
                                 /** Invalid language. */
                                 console.error( `Language with ID #${ lang_id } was not found in languages.xml.` );
-                                // dictionary = this.language[ lang_id ] = new Dictionary( lang );
                                 return;
                             }
                             /** Create the word. */
                             dictionary.newWord( word );
+                            /** Defer the etymology connection. */
                             defers.push( word.defer_etymology );
                         } );
-                        $.when( ...defers ).then( () => {
-                            deferred.resolve();
-                        } );
+                        $.when( ...defers ).then( deferred.resolve );
                         defers[ 0 ].resolve();
                     }
                 } );
                 return deferred;
             };
 
-            /** Resolve unconnected etymology. */
-            // const linkEtymology = () => {
-            //     ALL_LANGS.forEach( ( dict ) => {
-            //         dict.lexicon.forEach( ( word ) => {
-            //             word.etymology.forEach( ( val, ind, arr ) => {
-            //                 if ( val instanceof Word ) return;
-            //                 /** @type {Word} The word from which this one is derived. */
-            //                 const parent = ALL_WORDS[ +val ];
-            //                 arr[ ind ] = parent || null;
-            //                 if ( parent ) parent.children.push( word );
-            //             } );
-            //         } );
-            //     } );
-            // };
-
-            /** Resolve the initial object to ensure the other deferred objects are added. */
-            // defers[ 0 ].resolve();
-            /** Wait for all deferred objects to resolve. */
-            // $.when( ...defers ).then( () => {
-            //     deferred.resolve();
-            // } );
-
             /** Actually, just run these in order. */
             loadLanguages()
                 .then( loadLexicon )
-                // .then( linkEtymology )
                 .then( deferred.resolve );
 
             return deferred;
