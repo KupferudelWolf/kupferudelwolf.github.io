@@ -452,6 +452,7 @@ import AV from '/build/av.module.js/av.module.js';
                 }
                 /** Update the etymology node. */
                 $( `#${ word.id } .name` ).text( word.name );
+                $( `#${ word.id } .ipa` ).text( word.words[ 0 ].ipa );
 
                 // word.words = getInputTagValue( $input_words ).map( ( val ) => {
                 //     return {
@@ -502,7 +503,7 @@ import AV from '/build/av.module.js/av.module.js';
             // } );
         }
 
-        /** */
+        /** Initializes "data-role:input-dropdown" divs. */
         initCtrl_InputDropdown() {
             const getLoose = ( text ) => {
                 return text
