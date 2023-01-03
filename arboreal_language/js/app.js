@@ -150,11 +150,11 @@ import AV from '/build/av.module.js/av.module.js';
             } );
             /** Verify internal ID. */
             if ( isNaN( prop.id ) ) {
-                console.error( `Cannot add ${ prop.words[ 0 ].value }; ID is invalid.` );
+                console.error( `Cannot add ${ prop.name }; ID is invalid.` );
                 return null;
             }
             if ( ALL_WORDS[ +prop.id ] instanceof Word ) {
-                console.error( `Cannot add ${ prop.words[ 0 ].value }; Word #${ +prop.id } is already defined as ${ ALL_WORDS[ +prop.id ].words[ 0 ].value }: ${ ALL_WORDS[ +prop.id ].translations.join( ', ' ) }` );
+                console.error( `Cannot add ${ prop.name }; Word #${ +prop.id } is already defined as ${ ALL_WORDS[ +prop.id ].name }: ${ ALL_WORDS[ +prop.id ].translations.join( ', ' ) }` );
                 return null;
             }
             const word = new Word( this, prop );
@@ -198,17 +198,34 @@ import AV from '/build/av.module.js/av.module.js';
             this.translations = prop.translations || [];
             /** @type {Word[]} Words derived from this word. */
             this.children = [];
+
+            /** @type {$.Deferred} Await etymology connections. */
+            this.defer_etymology = $.Deferred();
+            const defers = [ $.Deferred() ];
             /** @type {Word[]} Words from which this word derived. */
-            this.etymology = ( prop.etymology || [] ).map( ( ind ) => {
-                /** See if this word has been created. */
-                /** @type {(Word|undefined)} The word. */
-                const word = ALL_WORDS[ ind ];
-                /** Keep the number for now if the word hasn't been made yet. */
-                if ( !word ) return ind;
-                /** Add this word to its parent's {@link Word.children}. */
-                word.children.push( this );
-                return word;
+            this.etymology = [];
+            ( prop.etymology || [] ).forEach( ( val ) => {
+                defers.push( this.link_etymology( val ) );
             } );
+            $.when( ...defers ).then( () => {
+                this.defer_etymology.resolve();
+            } );
+            defers[ 0 ].resolve();
+            // this.etymology = ( prop.etymology || [] ).map( ( val ) => {
+            //     /** See if this word has been created. */
+            //     /** @type {(Word|undefined)} The word. */
+            //     const word = ALL_WORDS[ ind ];
+            //     /** Keep the number for now if the word hasn't been made yet. */
+            //     if ( !word ) return ind;
+            //     /** Add this word to its parent's {@link Word.children}. */
+            //     word.children.push( this );
+            //     return word;
+            // } );
+        }
+
+        /** @type {string} The first translation of this word. */
+        get name() {
+            return this.words[ 0 ].value;
         }
 
         /** Moves this word to a different dictionary.
@@ -255,6 +272,40 @@ import AV from '/build/av.module.js/av.module.js';
                 .text( this.age )
                 .appendTo( $cont );
             return $cont.get( 0 );
+        }
+
+        /** Connects the etymology of this word and another.
+         * @param {(Word|number)} word_or_id - The word, or the word's ID.
+         * @returns {$.Deferred} Deferred object awaiting the connection to be made.
+         */
+        link_etymology( word_or_id ) {
+            const deferred = $.Deferred();
+            var word, id;
+            if ( typeof this._etymology_tries === 'undefined' ) {
+                this._etymology_tries = 1000;
+            }
+            if ( word_or_id instanceof Word ) {
+                word = word_or_id;
+                id = word.id;
+            } else {
+                id = +word_or_id;
+                word = ALL_WORDS[ id ];
+            }
+            if ( word ) {
+                this.etymology.push( word );
+                word.children.push( this );
+                deferred.resolve();
+            } else {
+                if ( this._etymology_tries-- <= 0 ) {
+                    console.error( `${ this.name } cannot link to word #${ id }.` );
+                    deferred.resolve();
+                } else {
+                    setTimeout( () => {
+                        this.link_etymology( id );
+                    }, 50 * Math.random() );
+                }
+            }
+            return deferred;
         }
     }
 
@@ -310,18 +361,21 @@ import AV from '/build/av.module.js/av.module.js';
 
             /** Populate the dropdown menu. */
             $( '.all-words' ).each( ( ind, elem ) => {
+                /** @type {jQuery} The dropdown menu. */
                 const $select = $( elem );
+                /** @type {jQuery} The text input. */
                 const $input = $select.siblings( 'input' );
-                $input.val( active_word.words[ 0 ].value );
+                $input.val( active_word.name );
                 $input.attr( 'data-id', active_word.id );
                 $select.empty();
-                const all_langs = ALL_LANGS.sort( ( a, b ) => {
+                ALL_LANGS.sort( ( a, b ) => {
                     return a.name[ 0 ] > b.name[ 0 ] ? 1 : -1;
-                } );
-                all_langs.forEach( ( dictionary ) => {
+                } ).forEach( ( dictionary ) => {
+                    /** @type {jQuery} Category of languages for the dropdown menu. */
                     const $optgroup = $( '<optgroup>' );
                     $optgroup.attr( 'label', dictionary.name[ 0 ] );
                     $optgroup.appendTo( $select );
+                    /** @type {object[]} Data for each word's option element. */
                     const lexicon = [];
                     dictionary.lexicon.forEach( ( words ) => {
                         words.words.forEach( ( word ) => {
@@ -336,6 +390,7 @@ import AV from '/build/av.module.js/av.module.js';
                         return a.text > b.text ? 1 : -1;
                     } );
                     lexicon.forEach( ( obj ) => {
+                        /** @type {jQuery} The option element for each word. */
                         const $option = $( '<option>' );
                         $option.attr( 'value', obj.value );
                         $option.text( obj.text );
@@ -396,7 +451,7 @@ import AV from '/build/av.module.js/av.module.js';
                     $( '.word-table' ).trigger( 'tag:add', [ first_word.value, first_word.ipa, first_word.notes ] );
                 }
                 /** Update the etymology node. */
-                $( `#${ word.id } .name` ).text( word.words[ 0 ].value );
+                $( `#${ word.id } .name` ).text( word.name );
 
                 // word.words = getInputTagValue( $input_words ).map( ( val ) => {
                 //     return {
@@ -405,7 +460,7 @@ import AV from '/build/av.module.js/av.module.js';
                 //     };
                 // } );
                 /** Update the etymology node. */
-                // $( `#${ word.id } .name` ).text( word.words[ 0 ].value );
+                // $( `#${ word.id } .name` ).text( word.name );
             } );
 
             // /** Changes the word. */
@@ -421,7 +476,7 @@ import AV from '/build/av.module.js/av.module.js';
             //         };
             //     } );
             //     /** Update the etymology node. */
-            //     $( `#${ word.id } .name` ).text( word.words[ 0 ].value );
+            //     $( `#${ word.id } .name` ).text( word.name );
             // } );
 
             /** Changes the word's translation. */
@@ -916,7 +971,7 @@ import AV from '/build/av.module.js/av.module.js';
                 /** Word. */
                 $( '<span>' )
                     .addClass( 'name' )
-                    .text( word.words[ 0 ].value )
+                    .text( word.name )
                     .appendTo( $header );
                 /** IPA. */
                 $( '<span>' )
@@ -1060,16 +1115,16 @@ import AV from '/build/av.module.js/av.module.js';
         load() {
             /** @type {jQuery.Deferred} Primary callback. */
             const deferred = $.Deferred();
-            /** @type {jQuery.Deferred[]} Deferred objects that must be resolved. */
-            const defers = [ $.Deferred() ];
+            // /** @type {jQuery.Deferred[]} Deferred objects that must be resolved. */
+            // const defers = [ $.Deferred() ];
 
             /** Loads languages.xml.
              * @return {jQuery.Deferred}
             */
             const loadLanguages = () => {
                 /** @type {jQuery.Deferred} */
-                const defer = $.Deferred();
-                defers.push( defer );
+                const deferred = $.Deferred();
+                // defers.push( deferred );
                 $.ajax( {
                     type: 'GET',
                     url: './data/languages.xml?t=' + Date.now(),
@@ -1083,10 +1138,10 @@ import AV from '/build/av.module.js/av.module.js';
                             // this.language[ name ] = new Dictionary( name, lang_xml );
                             new Dictionary( lang_xml );
                         } );
-                        defer.resolve();
+                        deferred.resolve();
                     }
                 } );
-                return defer;
+                return deferred;
             };
 
             /** Loads lexicon.xml.
@@ -1094,8 +1149,9 @@ import AV from '/build/av.module.js/av.module.js';
             */
             const loadLexicon = () => {
                 /** @type {jQuery.Deferred} */
-                const defer = $.Deferred();
-                defers.push( defer );
+                const deferred = $.Deferred();
+                /** @type {jQuery.Deferred[]} Deferred objects that must be resolved. */
+                const defers = [ $.Deferred() ];
                 $.ajax( {
                     type: 'GET',
                     url: './data/lexicon.xml?t=' + Date.now(),
@@ -1117,27 +1173,31 @@ import AV from '/build/av.module.js/av.module.js';
                             }
                             /** Create the word. */
                             dictionary.newWord( word );
+                            defers.push( word.defer_etymology );
                         } );
-                        defer.resolve();
+                        $.when( ...defers ).then( () => {
+                            deferred.resolve();
+                        } );
+                        defers[ 0 ].resolve();
                     }
                 } );
-                return defer;
+                return deferred;
             };
 
             /** Resolve unconnected etymology. */
-            const linkEtymology = () => {
-                ALL_LANGS.forEach( ( dict ) => {
-                    dict.lexicon.forEach( ( word ) => {
-                        word.etymology.forEach( ( val, ind, arr ) => {
-                            if ( val instanceof Word ) return;
-                            /** @type {Word} The word from which this one is derived. */
-                            const parent = ALL_WORDS[ +val ];
-                            arr[ ind ] = parent || null;
-                            if ( parent ) parent.children.push( word );
-                        } );
-                    } );
-                } );
-            };
+            // const linkEtymology = () => {
+            //     ALL_LANGS.forEach( ( dict ) => {
+            //         dict.lexicon.forEach( ( word ) => {
+            //             word.etymology.forEach( ( val, ind, arr ) => {
+            //                 if ( val instanceof Word ) return;
+            //                 /** @type {Word} The word from which this one is derived. */
+            //                 const parent = ALL_WORDS[ +val ];
+            //                 arr[ ind ] = parent || null;
+            //                 if ( parent ) parent.children.push( word );
+            //             } );
+            //         } );
+            //     } );
+            // };
 
             /** Resolve the initial object to ensure the other deferred objects are added. */
             // defers[ 0 ].resolve();
@@ -1149,7 +1209,7 @@ import AV from '/build/av.module.js/av.module.js';
             /** Actually, just run these in order. */
             loadLanguages()
                 .then( loadLexicon )
-                .then( linkEtymology )
+                // .then( linkEtymology )
                 .then( deferred.resolve );
 
             return deferred;
