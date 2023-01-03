@@ -976,7 +976,7 @@ import AV from '/build/av.module.js/av.module.js';
                 /** IPA. */
                 $( '<span>' )
                     .addClass( 'ipa' )
-                    .text( word.ipa )
+                    .text( word.words[ 0 ].ipa )
                     .appendTo( $header );
                 /** Translations. */
                 $( '<div>' )

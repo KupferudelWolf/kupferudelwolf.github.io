@@ -76,6 +76,14 @@ input:invalid {
     background-color: #ffd2d2;
 }
 
+.etymology-container .word .ipa,
+.keyboard-ipa button,
+#input-ipa,
+.ipa {
+    font-family: AndikaW, CharisSILW, sans-serif;
+    font-size: 80%;
+}
+
 .container {
     width: 80vw;
     height: 60vh;
@@ -152,26 +160,30 @@ input:invalid {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    font-size: 1.1vh;
 }
 
-.etymology-container .header {
+.etymology-container .word .header {
     margin-bottom: 0.25em;
+    word-break: keep-all;
+    font-size: 100%;
 }
 
 .etymology-container .word .translations {
-    font-size: 1.25vmin;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+    font-size: 100%;
 }
 
 .etymology-container .word .name {
+    font-size: 120%;
     font-weight: 600;
     font-size: 1.75vmin;
     margin-bottom: 0.25em;
 }
 .etymology-container .word .ipa {
-    font-size: 1.125vmin;
+    font-size: 100%;
     /* font-weight: 400; */
     margin: 0.25em;
 }
@@ -194,14 +206,6 @@ input:invalid {
     flex-direction: column;
     align-items: center;
     gap: 4vmin;
-}
-
-.etymology-container .word .ipa,
-.keyboard-ipa button,
-#input-ipa,
-.ipa {
-    font-family: AndikaW, CharisSILW, sans-serif;
-    font-size: 90%;
 }
 
 
