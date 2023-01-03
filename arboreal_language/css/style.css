@@ -183,7 +183,7 @@ input:invalid {
     margin-bottom: 0.25em;
 }
 .etymology-container .word .ipa {
-    font-size: 100%;
+    font-size: 90%;
     /* font-weight: 400; */
     margin: 0.25em;
 }
