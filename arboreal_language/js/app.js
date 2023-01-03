@@ -205,7 +205,7 @@ import AV from '/build/av.module.js/av.module.js';
             /** @type {Word[]} Words from which this word derived. */
             this.etymology = [];
             ( prop.etymology || [] ).forEach( ( val ) => {
-                defers.push( this.link_etymology( val ) );
+                defers.push( this.linkEtymology( val ) );
             } );
             $.when( ...defers ).then( () => {
                 this.defer_etymology.resolve();
@@ -278,7 +278,7 @@ import AV from '/build/av.module.js/av.module.js';
          * @param {(Word|number)} word_or_id - The word, or the word's ID.
          * @returns {$.Deferred} Deferred object awaiting the connection to be made.
          */
-        link_etymology( word_or_id ) {
+        linkEtymology( word_or_id ) {
             const deferred = $.Deferred();
             var word, id;
             if ( typeof this._etymology_tries === 'undefined' ) {
@@ -286,14 +286,23 @@ import AV from '/build/av.module.js/av.module.js';
             }
             if ( word_or_id instanceof Word ) {
                 word = word_or_id;
-                id = word.id;
+                id = +word.id;
             } else {
                 id = +word_or_id;
                 word = ALL_WORDS[ id ];
             }
             if ( word ) {
-                this.etymology.push( word );
-                word.children.push( this );
+                const isRelated = ( test_word, key ) => {
+                    var out = test_word.id === id;
+                    test_word[ key ].forEach( ( word ) => {
+                        out |= isRelated( word, key );
+                    } );
+                    return out;
+                };
+                if ( !isRelated( this, 'etymology' ) && !isRelated( this, 'children' ) ) {
+                    this.etymology.push( word );
+                    word.children.push( this );
+                }
                 deferred.resolve();
             } else {
                 if ( this._etymology_tries-- <= 0 ) {
@@ -301,11 +310,38 @@ import AV from '/build/av.module.js/av.module.js';
                     deferred.resolve();
                 } else {
                     setTimeout( () => {
-                        this.link_etymology( id );
+                        this.linkEtymology( id );
                     }, 50 * Math.random() );
                 }
             }
             return deferred;
+        }
+
+        /** Disconnects the etymology of this word from another.
+         * @param {(Word|number)} word_or_id - The word, or the word's ID.
+         */
+        unlinkEtymology( word_or_id ) {
+            var word, id;
+            if ( word_or_id instanceof Word ) {
+                word = word_or_id;
+                id = word.id;
+            } else {
+                id = +word_or_id;
+                word = ALL_WORDS[ id ];
+            }
+            if ( !word ) return;
+            const new_etymology = [];
+            this.etymology.forEach( ( word ) => {
+                if ( word.id === id ) return;
+                new_etymology.push( word );
+            } );
+            this.etymology = new_etymology;
+            const new_parent_children = [];
+            word.children.forEach( ( word ) => {
+                if ( word.id === this.id ) return;
+                new_parent_children.push( word );
+            } );
+            word.children = new_parent_children;
         }
     }
 
@@ -334,8 +370,6 @@ import AV from '/build/av.module.js/av.module.js';
             const active_word = word;
             this.index = active_word.id;
 
-            this.updateTree();
-
             /** Set values of control panel. */
             $( '#input-lang' ).val( active_word.dictionary.id );
             /** Empty and populate the table. */
@@ -363,13 +397,16 @@ import AV from '/build/av.module.js/av.module.js';
             $( '.all-words' ).each( ( ind, elem ) => {
                 /** @type {jQuery} The dropdown menu. */
                 const $select = $( elem );
+                const id = $select.parent().attr( 'id' );
                 /** @type {jQuery} The text input. */
                 const $input = $select.siblings( 'input' );
-                $input.val( active_word.name );
-                $input.attr( 'data-id', active_word.id );
+                if ( id === 'active-word' ) {
+                    $input.val( active_word.name );
+                    $input.attr( 'data-id', active_word.id );
+                }
                 $select.empty();
                 ALL_LANGS.sort( ( a, b ) => {
-                    return a.name[ 0 ] > b.name[ 0 ] ? 1 : -1;
+                    return a.name > b.name ? 1 : -1;
                 } ).forEach( ( dictionary ) => {
                     /** @type {jQuery} Category of languages for the dropdown menu. */
                     const $optgroup = $( '<optgroup>' );
@@ -396,10 +433,19 @@ import AV from '/build/av.module.js/av.module.js';
                         $option.text( obj.text );
                         $option.appendTo( $optgroup );
                         $option.attr( 'title', obj.trans );
+                        var func = () => { };
+                        switch ( id ) {
+                            case 'active-word':
+                                func = () => {
+                                    this.select( ALL_WORDS[ obj.value ] );
+                                };
+                                break;
+                        }
                         $option.on( 'click', () => {
                             $input.val( obj.text );
+                            $input.attr( 'data-id', obj.value );
                             $select.attr( 'data-id', obj.value );
-                            this.select( ALL_WORDS[ obj.value ] );
+                            func();
                             $select.removeClass( 'active' );
                             $input.trigger( 'change' );
                         } );
@@ -407,12 +453,16 @@ import AV from '/build/av.module.js/av.module.js';
                 } )
             } );
 
+            $( '#list-derives' ).find( 'select.all-words' ).val( -1 ).trigger( 'change' );
+
+            this.updateTree();
         }
 
         /** Initializes the control panel. */
         initControls() {
             /** Initialize special inputs. */
             this.initCtrl_InputDropdown();
+            this.initCtrl_InputList();
             this.initCtrl_InputTable();
             this.initCtrl_InputTags();
             this.initCtrl_Keyboard();
@@ -491,6 +541,58 @@ import AV from '/build/av.module.js/av.module.js';
                 $( `#${ word.id } .translations` ).text( word.translations.join( '; ' ) );
             } );
 
+            /** Changes the word's etymology. */
+            /** @type {jQuery} */
+            const $ctrl_ety_container = $( '#list-derives' );
+            const $ctrl_ety_input = $ctrl_ety_container.find( 'input#etymology-word-input' );
+            // const $ctrl_ety_menu = $ctrl_ety_container.find( 'div#etymology-word-select' );
+            const $ctrl_ety_menu = $ctrl_ety_container.find( 'select.all-words' );
+            const $ctrl_ety_list = $ctrl_ety_container.find( 'div.input-list' );
+            const sortList = ( new_word ) => {
+                const active_word = ALL_WORDS[ this.index ];
+                if ( new_word ) {
+                    active_word.linkEtymology( new_word );
+                }
+                $ctrl_ety_list.empty();
+                const etymology = active_word.etymology.sort( ( a, b ) => {
+                    return a.name > b.name ? 1 : -1;
+                } );
+                etymology.forEach( ( word ) => {
+                    $ctrl_ety_container.trigger( 'tag:add', word.name );
+                    const $row = $ctrl_ety_list.children( '.row' ).last();
+                    $row.wrapInner( '<span class="word"></span>' );
+                    const $desc = $( '<span>' );
+                    $desc.addClass( 'definition' );
+                    var text = word.dictionary.name[ 0 ];
+                    if ( word.translations.length ) {
+                        text = `${ text }: ${ word.translations.join( ', ' ) }`;
+                    }
+                    $desc.text( text );
+                    $desc.appendTo( $row );
+                    // $row.attr( 'data-id', word.id );
+                    $ctrl_ety_list.children( '.delete' ).last().on( 'click', () => {
+                        active_word.unlinkEtymology( word.id );
+                        // $ctrl_ety_input.attr( 'data-id', '' );
+                        this.updateTree();
+                    } );
+                } );
+                this.updateTree();
+            };
+            $ctrl_ety_input.on( 'change', () => {
+                queueMicrotask( () => {
+                    const new_id = $ctrl_ety_input.attr( 'data-id' );
+                    console.log( new_id );
+                    // $ctrl_ety_input.val( '' );
+                    sortList( new_id );
+                    //     $ctrl_ety_input.attr( 'data-id', '' );
+                    $ctrl_ety_menu.find( 'option' ).show();
+                    // $ctrl_ety_menu.blur();
+                } );
+            } );
+            $ctrl_ety_menu.on( 'change', () => {
+                sortList( $ctrl_ety_menu.val() );
+            } );
+
             // /** Changes the word's pronunciation. */
             // /** @type {jQuery} The input. */
             // const $input_ipa = $( '#input-ipa' );
@@ -560,6 +662,51 @@ import AV from '/build/av.module.js/av.module.js';
             } );
         }
 
+        /** Initializes "data-role:input-list" divs. */
+        initCtrl_InputList() {
+            $( 'div[data-role="input-list"]' ).each( ( ind, elem ) => {
+                /** @type {jQuery} All input-list divs. */
+                const $container = $( elem );
+                // const $input = $container.find( 'input' );
+                const $list = $( '<div>' );
+                $list.addClass( 'input-list' );
+                $list.appendTo( $container );
+
+                // $input.on( 'change', () => {
+                //     $container.trigger( 'tag:add', [ $input.val() ] );
+                //     $input.val( '' );
+                //     // const $input_dropdown_menu = $input.siblings( '.menu' );
+                //     // if ( $input_dropdown_menu.length && $input_dropdown_menu.attr( 'data-id' ) ) {
+                //     //
+                //     // }
+                // } );
+
+                /** Custom event to add new rows. */
+                $container.on( 'tag:add', ( event, ...row_data ) => {
+                    if ( !row_data.length ) return;
+                    row_data.forEach( ( text ) => {
+                        const $row = $( '<div>' );
+                        $row.addClass( 'row' );
+                        $row.html( text );
+                        $row.appendTo( $list );
+                        const $delete = $( '<div>' );
+                        $delete.addClass( 'delete' );
+                        $delete.html( '&times;' );
+                        $delete.appendTo( $list );
+
+                        $delete.on( 'click', ( event ) => {
+                            event.preventDefault();
+                            $row.remove();
+                            $delete.remove();
+                            $container.trigger( 'tag:change' );
+                        } );
+                    } );
+
+                    $container.trigger( 'tag:change' );
+                } );
+            } );
+        }
+
         /** Initializes "data-role:input-table" tables. */
         initCtrl_InputTable() {
             /** @type {jQuery} The body. */
@@ -574,8 +721,6 @@ import AV from '/build/av.module.js/av.module.js';
 
             /** @type {jQuery} The tag being dragged. */
             var dragging;
-            /** @type {number} The width of {@link $fake}. */
-            var dragging_width;
             /** @type {number} The height of {@link $fake}. */
             var dragging_height;
             $input_tables.each( ( ind, table ) => {

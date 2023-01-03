@@ -33,30 +33,45 @@
 					</svg>
 				</div>
 			</div>
-			<div class="controls">
-				<label for="input-lang">Language:</label>
-				<select id="input-lang"></select>
-				<label>Spelling:</label>
-				<table class="word-table" data-role="input-table">
-					<tbody>
-						<tr class="header">
-							<td></td>
-							<td>Word</td>
-							<td>IPA</td>
-							<td>Notes</td>
-							<td></td>
-						</tr>
-						<tr class="template">
-							<td></td>
-							<td><input class="word" type="text" pattern=".*\S+.*" required /></td>
-							<td><input class="ipa" type="text" /></td>
-							<td><input class="notes" type="text" /></td>
-							<td></td>
-						</tr>
-					</tbody>
-				</table>
-				<label for="input-translation">Translations:</label>
-				<input type="text" id="input-translation" data-role="input-tags"></input>
+			<div class="controls-frame">
+				<div class="controls">
+					<label for="input-lang">Language:</label>
+					<select id="input-lang"></select>
+					<label>Spelling:</label>
+					<table class="word-table" data-role="input-table">
+						<tbody>
+							<tr class="header">
+								<td></td>
+								<td>Word</td>
+								<td>IPA</td>
+								<td>Notes</td>
+								<td></td>
+							</tr>
+							<tr class="template">
+								<td></td>
+								<td><input class="word" type="text" pattern=".*\S+.*" required /></td>
+								<td><input class="ipa" type="text" /></td>
+								<td><input class="notes" type="text" /></td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+					<label for="input-translation">Translations:</label>
+					<input type="text" id="input-translation" data-role="input-tags"></input>
+				</div>
+				<div class="controls-bottom">
+					<div class="list-derived">
+						<div class="header">Descends directly from:</div>
+						<div class="input-list-container" id="list-derives" data-role="input-list">
+							<!-- <div class="input-dropdown" id="etymology-word" data-role="input-dropdown">
+								<input type="text" id="etymology-word-input" />
+								<div class="menu all-words" id="etymology-word-select"></div>
+							</div> -->
+							<select class="all-words"></select>
+						</div>
+					</div>
+					<div class=""></div>
+				</div>
 			</div>
 		</div>
 	</div>
