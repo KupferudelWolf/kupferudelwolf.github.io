@@ -390,6 +390,9 @@ table.word-table ._delete {
 .input-dropdown > .menu optgroup > * {
     padding-left: 1em;
 }
+.input-dropdown > .menu option {
+    cursor: default;
+}
 .input-dropdown > .menu option:hover {
     color: white;
     background-color: #1e90ff;
