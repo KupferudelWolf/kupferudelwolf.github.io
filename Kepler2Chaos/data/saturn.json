@@ -1,0 +1,104 @@
+[
+    {
+        "name": "Sun",
+        "color": "yellow",
+        "mass": 1.9891e30,
+        "radius": 695700
+    },
+    {
+        "name": "Saturn",
+        "color": "#eec478",
+        "parent": "Sun",
+        "mass": 5.683e26,
+        "radius": 58232,
+        "e": 0.0565,
+        "a": 1.43353e9,
+        "i": 0.04337143191,
+        "raan": 1.98382849428,
+        "arg": 5.92350785493
+    },
+    {
+        "name": "Hyperion",
+        "color": "#c5b6a3",
+        "parent": "Saturn",
+        "mass": 5.6199e18,
+        "radius": 135,
+        "e": 0.1230061,
+        "a": 1481009,
+        "i": 0.007504916
+    },
+    {
+        "name": "Mimas",
+        "color": "#cbcbcb",
+        "parent": "Saturn",
+        "radius": 198,
+        "mass": 4e19,
+        "e": 0.0196,
+        "a": 185539,
+        "i": 0.02747148242,
+        "raan": 3.01994320473,
+        "arg": 5.80321976288
+    },
+    {
+        "name": "Enceladus",
+        "color": "#c5c5c5",
+        "parent": "Saturn",
+        "radius": 252,
+        "mass": 1.1e20,
+        "e": 0.0047,
+        "a": 237948,
+        "i": 0.00015707963
+    },
+    {
+        "name": "Tethys",
+        "color": "#a6a6a6",
+        "parent": "Saturn",
+        "radius": 531,
+        "mass": 6.2e20,
+        "e": 0.0001,
+        "a": 294619,
+        "i": 0.01954768762
+    },
+    {
+        "name": "Dione",
+        "color": "#bbbbbb",
+        "parent": "Saturn",
+        "radius": 561.5,
+        "mass": 1.1e21,
+        "e": 0.0022,
+        "a": 377396,
+        "i": 0.00033161255
+    },
+    {
+        "name": "Rhea",
+        "color": "#cacaca",
+        "parent": "Saturn",
+        "radius": 763.5,
+        "mass": 2.3e21,
+        "e": 0.0012583,
+        "a": 527108,
+        "i": 0.00602138591
+    },
+    {
+        "name": "Titan",
+        "color": "#e9d885",
+        "parent": "Saturn",
+        "mass": 1.3452e23,
+        "radius": 2574.7,
+        "e": 0.00591,
+        "a": 1221870,
+        "i": 1.18672964358,
+        "raan": 0.03344748978,
+        "arg": 4.43770033606
+    },
+    {
+        "name": "Iapetus",
+        "color": "#988971",
+        "parent": "Saturn",
+        "radius": 735,
+        "mass": 1.8e21,
+        "e": 0.0276812,
+        "a": 3560820,
+        "i": 0.27000243528
+    }
+]
