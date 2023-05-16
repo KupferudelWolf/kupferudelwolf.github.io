@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<species>
+    <poochyena>
+        <name>Poochyena</name>
+        <category>Bite</category>
+        <number>261</number>
+        <type>dark</type>
+        <type>electric</type>
+        <ability>Run Away</ability>
+        <ability>Quick Feet</ability>
+        <ability hidden="true">Rattled</ability>
+        <stats>
+            <hlt>35</hlt>
+            <att>55</att>
+            <def>35</def>
+            <spa>30</spa>
+            <spd>30</spd>
+            <spe>35</spe>
+        </stats>
+        <exp_rate>medfast</exp_rate>
+        <exp_yield>56</exp_yield>
+        <gender>0.5</gender>
+        <egg_group>field</egg_group>
+        <height_m>0.5</height_m>
+        <weight_kg>13.6</weight_kg>
+        <shape>e</shape>
+        <color>grey</color>
+        <pool>e</pool>
+        <pool>biting</pool>
+        <pool>biting+</pool>
+        <pool>hunter</pool>
+        <pool>scary</pool>
+    </poochyena>
+    <lycanroc_midday>
+        <name>Lycanroc (Midday Form)</name>
+        <category>Wolf</category>
+        <number>745</number>
+        <type>Rock</type>
+        <ability>Keen Eye</ability>
+        <ability>Sand Rush</ability>
+        <ability hidden="true">Steadfast</ability>
+        <stats>
+            <hlt>75</hlt>
+            <att>115</att>
+            <def>65</def>
+            <spa>55</spa>
+            <spd>65</spd>
+            <spe>112</spe>
+        </stats>
+        <exp_rate>medfast</exp_rate>
+        <exp_yield>170</exp_yield>
+        <gender>0.5</gender>
+        <egg_group>field</egg_group>
+        <height_m>0.8</height_m>
+        <weight_kg>25</weight_kg>
+        <shape>e</shape>
+    </lycanroc_midday>
+</species>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<moves>
+    <default>
+        <name>Basic Attack</name>
+        <type>typeless</type>
+        <category>physical</category>
+        <to_hit>0</to_hit>
+        <sp>0</sp>
+        <range>Melee</range>
+        <power>4</power>
+        <contact>true</contact>
+    </default>
+    <bite>
+        <name>Bite</name>
+        <type>dark</type>
+        <category>physical</category>
+        <to_hit>0</to_hit>
+        <sp>4</sp>
+        <range>Melee</range>
+        <power>12</power>
+        <contact>true</contact>
+        <effect>The target must succeed {Guard DC 4} or become Flinching.</effect>
+        <pool>e</pool>
+        <pool>biting</pool>
+        <pool>bitingplus</pool>
+        <pool>hunter</pool>
+    </bite>
+    <mirror_shot>
+        <name>Mirror Shot</name>
+        <type>steel</type>
+        <category>special</category>
+        <to_hit>-3</to_hit>
+        <sp>7</sp>
+        <range>6 Spaces</range>
+        <power>14</power>
+        <effect>The target must succeed {Resistance DC 4} or receive Weakened Accuracy.</effect>
+    </mirror_shot>
+    <odor_sleuth>
+        <name>Odor Sleuth</name>
+        <type>normal</type>
+        <category>status</category>
+        <save>stealth</save>
+        <to_hit>18</to_hit>
+        <sp>1</sp>
+        <range>Melee</range>
+        <effect>For 1 hour, you have advantage on all Perception checks against each target, you may ignore any boosts to each target's Evasion, and your Normal- and Fighting-type moves have normal effectiveness against each Ghost-type target.</effect>
+    </odor_sleuth>
+    <thunder_fang>
+        <name>Thunder Fang</name>
+        <type>electric</type>
+        <category>physical</category>
+        <to_hit>-1</to_hit>
+        <sp>6</sp>
+        <range>Melee</range>
+        <power>12</power>
+        <contact>true</contact>
+        <effect>The target must succeed {Guard DC 4}. If they fail, they become Flinching if their save was an even number, or Paralyzed if their save was an odd number.</effect>
+    </thunder_fang>
+    <tackle>
+        <name>Tackle</name>
+        <type>normal</type>
+        <category>physical</category>
+        <to_hit>0</to_hit>
+        <sp>2</sp>
+        <range>Melee</range>
+        <power>8</power>
+        <contact>true</contact>
+    </tackle>
+    <howl>
+        <name>Howl</name>
+        <type>normal</type>
+        <category>status</category>
+        <sp>6</sp>
+        <range>Self</range>
+        <effect>You gain Boosted Attack.</effect>
+    </howl>
+</moves>

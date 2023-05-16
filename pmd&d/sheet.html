@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>PMD&D 3.0 Character Sheet</title>
+	<!-- <link rel="stylesheet" type="text/css" href="/css/style.css"> -->
+	<link rel="stylesheet" type="text/css" href="css/style-sheet.css">
+	<script src="/build/jquery.min.js" type="text/javascript"></script>
+	<script src="js/sheet.js" type="module"></script>
+</head>
+
+<body>
+	<div class="sheet-container">
+		<div class="panel panel-a">
+			<div class="name-section">
+				<div class="exp-container border">
+					<div class="name-container border">
+						<div class="portrait-container">
+							<div class="portrait border"></div>
+							<div class="token border"></div>
+						</div>
+						<div class="spacer"></div>
+						<div class="name">
+							<span class="value-name"></span> (<span class="value-species"></span>)
+						</div>
+						<div class="level">Lv. <span class="value-level"></span></div>
+						<div class="types-container"></div>
+					</div>
+				</div>
+				<div class="details">
+					<div class="role-container">
+						<div class="value-role"></div>
+						<div class="divider"></div>
+						<div class="label-role">Role</div>
+					</div>
+					<div class="nature-container">
+						<div class="value-nature"></div>
+						<div class="divider"></div>
+						<div class="label-nature">Nature</div>
+					</div>
+					<div class="size-container">
+						<div class="value-size"></div>
+						<div class="divider"></div>
+						<div class="label-size">Size</div>
+					</div>
+					<div class="weight-container">
+						<div class="value-weight"></div>
+						<div class="divider"></div>
+						<div class="label-weight">Weight</div>
+					</div>
+				</div>
+			</div>
+			<div class="stat-section hlt">
+				<div class="stat-container">
+					<div class="stat-total-box border">
+						<div><span class="value-hlt-total"></span></div>
+					</div>
+					<div class="stat-box border">
+						<span class="value-hlt"></span>
+						<div class="label bold border">Health</div>
+					</div>
+				</div>
+				<div class="skill-container"></div>
+			</div>
+			<div class="stat-section att">
+				<div class="stat-container">
+					<div class="stat-total-box border">
+						<div><span class="value-att-total"></span></div>
+					</div>
+					<div class="stat-boost-container border"></div>
+					<div class="stat-box border">
+						<span class="value-att"></span>
+						<div class="label bold border">Attack</div>
+					</div>
+				</div>
+				<div class="skill-container">
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-strength" />
+						<span class="label">Strength</span>
+						<div class="spacer"></div>
+						<span class="value-skill-strength"></span>
+					</div>
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-endurance" />
+						<span class="label">Endurance</span>
+						<div class="spacer"></div>
+						<span class="value-skill-endurance"></span>
+					</div>
+				</div>
+			</div>
+			<div class="stat-section def">
+				<div class="stat-container">
+					<div class="stat-total-box border">
+						<div><span class="value-def-total"></span></div>
+					</div>
+					<div class="stat-boost-container border"></div>
+					<div class="stat-box border">
+						<span class="value-def"></span>
+						<div class="label bold border">Defense</div>
+					</div>
+				</div>
+				<div class="skill-container">
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-guard" />
+						<span class="label">Guard</span>
+						<div class="spacer"></div>
+						<span class="value-skill-guard"></span>
+					</div>
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-resistance" />
+						<span class="label">Resistance</span>
+						<div class="spacer"></div>
+						<span class="value-skill-resistance"></span>
+					</div>
+				</div>
+			</div>
+			<div class="stat-section spa">
+				<div class="stat-container">
+					<div class="stat-total-box border">
+						<div><span class="value-spa-total"></span></div>
+					</div>
+					<div class="stat-boost-container border"></div>
+					<div class="stat-box border">
+						<span class="value-spa"></span>
+						<div class="label bold border">Sp. Att.</div>
+					</div>
+				</div>
+				<div class="skill-container">
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-persuasion" />
+						<span class="label">Persuasion</span>
+						<div class="spacer"></div>
+						<span class="value-skill-persuasion"></span>
+					</div>
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-talent" />
+						<span class="label">Talent</span>
+						<div class="spacer"></div>
+						<span class="value-skill-talent"></span>
+					</div>
+				</div>
+			</div>
+			<div class="stat-section spd">
+				<div class="stat-container">
+					<div class="stat-total-box border">
+						<div><span class="value-spd-total"></span></div>
+					</div>
+					<div class="stat-boost-container border"></div>
+					<div class="stat-box border">
+						<span class="value-spd"></span>
+						<div class="label bold border">Sp. Def.</div>
+					</div>
+				</div>
+				<div class="skill-container">
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-intuition" />
+						<span class="label">Intuition</span>
+						<div class="spacer"></div>
+						<span class="value-skill-intuition"></span>
+					</div>
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-willpower" />
+						<span class="label">Willpower</span>
+						<div class="spacer"></div>
+						<span class="value-skill-willpower"></span>
+					</div>
+				</div>
+			</div>
+			<div class="stat-section spe">
+				<div class="stat-container">
+					<div class="stat-total-box border">
+						<div><span class="value-spe-total"></span></div>
+					</div>
+					<div class="stat-boost-container border"></div>
+					<div class="stat-box border">
+						<span class="value-spe"></span>
+						<div class="label bold border">Speed</div>
+					</div>
+				</div>
+				<div class="skill-container">
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-acrobatics" />
+						<span class="label">Acrobatics</span>
+						<div class="spacer"></div>
+						<span class="value-skill-acrobatics"></span>
+					</div>
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-stealth" />
+						<span class="label">Stealth</span>
+						<div class="spacer"></div>
+						<span class="value-skill-stealth"></span>
+					</div>
+				</div>
+			</div>
+			<div class="stat-section acc">
+				<div class="stat-container">
+					<div class="stat-total-box border">
+						<div><span class="value-acc-total"></span></div>
+					</div>
+					<div class="stat-boost-container border"></div>
+					<div class="stat-box border">
+						<span class="value-acc"></span>
+						<div class="label bold border">Accuracy</div>
+					</div>
+				</div>
+				<div class="skill-container">
+					<div class="skill-row border">
+						<input type="checkbox" class="bool-prof-perception" />
+						<span class="label">Perception</span>
+						<div class="spacer"></div>
+						<span class="value-skill-perception"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel panel-b">
+			<div class="table table-moves">
+				<div class="table-header">Moves</div>
+				<div class="table-content">
+					<div class="table-rows">
+						<div class="table-scroll"></div>
+					</div>
+					<div class="table-info">
+						<div class="header value-move-name"></div>
+						<div class="tag moves-row">
+							<div class="value-move-sp"></div>
+							<div class="value-move-range"></div>
+						</div>
+						<div class="tag value-move-to_hit"></div>
+						<div class="tag value-move-damage"></div>
+						<div class="table-body">
+							<div class="table-body bool-move-makes_contact">Makes contact.</div>
+							<div class="value-move-effect"></div>
+						</div>
+						<div class="table-ghost"></div>
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-c"></div>
+		</div>
+</body>
+
+</html>

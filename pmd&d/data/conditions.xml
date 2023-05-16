@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<conditions>
+    <flinching>
+        <name>Flinching</name>
+        <volatile>true</volatile>
+        <duration>1</duration>
+        <affects_mind>true</affects_mind>
+        <effect>You are petrified, stunned, or shocked. You are incapable of taking any actions whatsoever.</effect>
+    </flinching>
+</conditions>

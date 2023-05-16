@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<character>
+    <species>poochyena</species>
+    <name>Stellarity</name>
+    <xp>25</xp>
+    <role>artificer</role>
+    <nature>rash</nature>
+    <iv>
+        <hlt>3</hlt>
+        <att>1</att>
+        <def>3</def>
+        <spa>6</spa>
+        <spd>6</spd>
+        <spe>6</spe>
+    </iv>
+    <ev>
+        <spa>3</spa>
+        <spd>1</spd>
+        <spe>1</spe>
+    </ev>
+    <move>bite</move>
+    <move>mirror_shot</move>
+    <move>thunder_fang</move>
+    <move>odor_sleuth</move>
+    <move>tackle</move>
+    <move>howl</move>
+    <skill>guard</skill>
+    <skill>intuition</skill>
+    <skill>stealth</skill>
+    <skill>perception</skill>
+</character>

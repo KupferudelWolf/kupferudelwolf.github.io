@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<abilities>
+    <lightning_rod>
+        <name>Lightning Rod</name>
+        <source>species</source>
+        <effect>Whenever any Pokémon attempts to deal Electric- type damage, if you are within the move's range of the Pokémon, you may negate the move's damage and effects, then gain Boosted Special Attack.</effect>
+    </lightning_rod>
+</abilities>

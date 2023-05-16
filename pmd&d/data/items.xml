@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<items>
+    <first_aid_kit>
+        <name>First Aid Kit</name>
+        <category>other</category>
+        <space>2</space>
+        <value>1000</value>
+        <effect>Contains 5 charges. As a standard action, you may use a charge on yourself or any Pokémon within melee range to do one of the following: restore 5 HP; cure a non-volatile status condition; stabilize a dying Pokémon.</effect>
+        <desc>A small red pouch with a white non-copyrighted insignia on it. It can save lives if used properly.</desc>
+    </first_aid_kit>
+    <iron_thorn>
+        <name>Iron Thorn</name>
+        <category>throwable</category>
+        <space>0.1</space>
+        <value>4</value>
+        <type>steel</type>
+        <held_stack>true</held_stack>
+        <effect>Inflicts {8+att} physical steel damage. If thrown, it deals double damage but breaks on impact.</effect>
+        <desc>A sharp metallic weapon for throwing.</desc>
+    </iron_thorn>
+    <oren_berry>
+        <name>Oren Berry</name>
+        <category>berry</category>
+        <space>1</space>
+        <value>50</value>
+        <type>poison</type>
+        <flavor>
+            <spicy>10</spicy>
+            <sour>10</sour>
+            <dry>10</dry>
+            <bitter>10</bitter>
+            <sweet>10</sweet>
+        </flavor>
+        <lookalike>oran_berry</lookalike>
+        <effect>If held, as a reaction, you may consume this item when taking damage that will bring your HP from above 20% to below 20% (even if you would be KO'd).\nDeals 2 typeless direct damage when consumed.</effect>
+        <desc>Something's off about this berry...</desc>
+    </oren_berry>
+    <y_ray_specs>
+        <name>Y-Ray Specs</name>
+        <category>specs</category>
+        <slot>specs</slot>
+        <space>4</space>
+        <value>9000</value>
+        <lookalike>x_ray_specs</lookalike>
+        <effect>While this is equipped, you are Blinded.</effect>
+        <desc>A pair of very, very, VERY dark glasses.</desc>
+    </y_ray_specs>
+</items>
