@@ -158,7 +158,8 @@ import AV from '/build/av.module.js/av.module.js';
                 return null;
             }
             const word = new Word( this, prop );
-            this.lexicon.push( word );
+            // this.lexicon.push( word );
+            this.lexicon[ word.id ] = word;
             ALL_WORDS[ word.id ] = word;
             return word;
         }
@@ -232,14 +233,15 @@ import AV from '/build/av.module.js/av.module.js';
          * @param {Dictionary} dictionary - The new dictionary.
          */
         changeLanguage( dictionary ) {
-            /** @type {Word[]} The old dictionary's lexicon without this word. */
-            const lexicon = [];
-            this.dictionary.lexicon.forEach( ( word ) => {
-                if ( word.id !== this.id ) lexicon.push( word );
-            } );
-            this.dictionary.lexicon = lexicon;
+            // /** @type {Word[]} The old dictionary's lexicon without this word. */
+            // const lexicon = [];
+            // this.dictionary.lexicon.forEach( ( word ) => {
+            //     if ( word.id !== this.id ) lexicon.push( word );
+            // } );
+            // this.dictionary.lexicon = lexicon;
+            this.dictionary.lexicon[ this.id ] = null;
             this.dictionary = dictionary;
-            this.dictionary.lexicon.push( this );
+            this.dictionary.lexicon[ this.id ] = this;
         }
 
         /** Generates an XML document containing this word's data.
