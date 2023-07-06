@@ -471,7 +471,7 @@ import AV from '/build/av.module.js/av.module.js';
             const input_lang = $( '#input-lang' );
             input_lang.on( 'input change', () => {
                 const word = ALL_WORDS[ this.index ];
-                word.changeLanguage( ALL_LANGS[ input_lang.val() ] );
+                word.changeLanguage( ALL_LANGS[ input_lang.val() - 1 ] );
                 /** Change the etymology node background superficially. */
                 $( `#${ word.id }` ).css( 'background-color', word.dictionary.color );
             } );
