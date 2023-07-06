@@ -380,6 +380,7 @@ import AV from '/build/av.module.js/av.module.js';
                 $( '.word-table' ).trigger( 'tag:add', [ obj.value, obj.ipa, obj.notes ] );
             } );
             /** Populate the translations input. */
+            $( '#input-translation' ).siblings( 'ul' ).empty();
             $( '#input-translation' ).trigger( 'tag:add', [ active_word.translations ] );
 
             /** @type {string[]} The IPA inventory of this word's language. */
@@ -864,7 +865,7 @@ import AV from '/build/av.module.js/av.module.js';
         initCtrl_InputTags() {
             /** @type {jQuery} The body. */
             const $body = $( 'body' );
-            /** @type {jQuery} All input-tags inputs */
+            /** @type {jQuery} All input-tags inputs. */
             const $input_tags = $( 'input[data-role="input-tags"]' );
 
             /** Format. */
@@ -1142,7 +1143,7 @@ import AV from '/build/av.module.js/av.module.js';
                 /** Remove the current etymmology tree. */
                 this.$tree_container.find( '.etymology, .word, .children' ).remove();
                 /** Remove the current input tags. */
-                $( '.input-tags ul' ).empty();
+                // $( '.input-tags ul' ).empty();
                 // /** @type {number} Timeout ID. */
                 // var timeout;
                 /** @type {Word} The currently selected word. */
@@ -1153,7 +1154,7 @@ import AV from '/build/av.module.js/av.module.js';
                  * @param {jQuery} $container - The container that holds everything.
                  * @param {("up"|"down")} [side] - Which side to do, if not both.
                 */
-                const createEtymology = ( word, $container, side ) => {
+                const buildEtymologyTree = ( word, $container, side ) => {
                     /** @type {jQuery} The new node. */
                     const $elem_word = createTreeNode( word );
 
@@ -1168,7 +1169,7 @@ import AV from '/build/av.module.js/av.module.js';
                             $div.addClass( 'branch' );
                             $div.appendTo( $div_parents );
                             /** Create nodes of the parents' parents. */
-                            createEtymology( next_word, $div, 'up' );
+                            buildEtymologyTree( next_word, $div, 'up' );
                         } );
                         $container.append( $div_parents );
                     }
@@ -1186,13 +1187,13 @@ import AV from '/build/av.module.js/av.module.js';
                             $div.addClass( 'branch' );
                             $div.appendTo( $div_children );
                             /** Create nodes of the children's children. */
-                            createEtymology( next_word, $div, 'down' );
+                            buildEtymologyTree( next_word, $div, 'down' );
                         } );
                         $container.append( $div_children );
                     }
                 };
                 /** Create the node tree. */
-                createEtymology( active_word, this.$tree_container );
+                buildEtymologyTree( active_word, this.$tree_container );
 
                 /** @type {jQuery} The node containing the active word. */
                 const $active_node = $( `#${ active_word.id }` );
