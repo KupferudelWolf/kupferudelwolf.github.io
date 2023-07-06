@@ -490,10 +490,26 @@ import AV from '/build/av.module.js/av.module.js';
                 word.words = [];
                 $rows.each( ( ind, elem ) => {
                     const $elem = $( elem );
+                    const $word = $elem.find( 'input.word' );
+                    const $ipa = $elem.find( 'input.ipa' );
+                    const $notes = $elem.find( 'input.notes' );
+
+                    /** IPA auto-correct. */
+                    const ipa_cursor = $ipa.get( 0 ).selectionStart;
+                    const ipa = `/${ $ipa.val().trim()
+                        .replace( /\//g, '' )
+                        .replace( /'/g, '\u02C8' )
+                        }/`;
+                    $ipa.val( ipa );
+                    if ( ipa_cursor || ipa_cursor == 0 ) {
+                        const cur = Math.min( Math.max( ipa_cursor, 2 ), ipa.length - 1 );
+                        $ipa.get( 0 ).setSelectionRange( cur, cur );
+                    }
+
                     const obj = {
-                        value: $elem.find( 'input.word' ).val().trim(),
-                        ipa: $elem.find( 'input.ipa' ).val().trim(),
-                        notes: $elem.find( 'input.notes' ).val().trim()
+                        value: $word.val().trim(),
+                        ipa: ipa,
+                        notes: $notes.val().trim()
                     };
                     if ( !obj.value ) return;
                     word.words.push( obj );
