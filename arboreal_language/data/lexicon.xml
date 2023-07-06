@@ -1,173 +1,173 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE xml><lexicon>
-<word id="1"><word>hidho</word><translation>star</translation><translation>soul</translation><language>1</language><age>45</age></word>
-<word id="2"><word ipa="/dʐɨˈʜɤɻ/">dhihor</word><translation>star</translation><translation>soul</translation><language>2</language><age>35</age><etymology>1</etymology></word>
-<word id="3"><word ipa="/ɖiˈçɤɻ/">dihyor</word><translation>star</translation><translation>soul</translation><language>3</language><age>25</age><etymology>2</etymology></word>
-<word id="4"><word ipa="/ʈiɭˈʂɤɻ/">tilsor</word><translation>star</translation><translation>soul</translation><language>4</language><age>15</age><etymology>3</etymology></word>
-<word id="5"><word ipa="/ʈʂɤɻ/">tsor</word><translation>star</translation><translation>soul</translation><language>5</language><age>5</age><etymology>4</etymology></word>
-<word id="6"><word>dhahidho</word><translation>aurora</translation><language>1</language><age>40</age><etymology>1</etymology><etymology>7</etymology></word>
-<word id="7"><word>dhahi</word><translation>aurora</translation><translation>rings</translation><translation>path</translation><language>1</language><age>45</age></word>
-<word id="8"><word>dhåhi</word><translation>rings (sky)</translation><language>1</language><age>40</age><etymology>24</etymology><etymology>7</etymology></word>
-<word id="9"><word ipa="/ʜɑɨˈdʐɤ/">haidho</word><translation>aurora</translation><language>2</language><age>35</age><etymology>6</etymology></word>
-<word id="10"><word ipa="/ʐɑˈʈɤ/">zhato</word><translation>aurora</translation><language>3</language><age>25</age><etymology>9</etymology></word>
-<word id="11"><word ipa="/ʐɑˈʈɤ/">zhato</word><translation>aurora</translation><language>4</language><age>15</age><etymology>10</etymology></word>
-<word id="12"><word ipa="/ʐæˈɖɤ/">zhado</word><translation>aurora</translation><language>5</language><age>5</age><etymology>11</etymology></word>
-<word id="13"><word ipa="/dʐɑɨ/">dhai</word><translation>trail</translation><translation>path</translation><language>2</language><age>35</age><etymology>7</etymology></word>
-<word id="14"><word ipa="/ɖɑ/">da</word><translation>trail</translation><translation>path</translation><language>3</language><age>25</age><etymology>13</etymology></word>
-<word id="15"><word ipa="/dɑ/">da</word><translation>trail</translation><translation>path</translation><language>4</language><age>15</age><etymology>14</etymology></word>
-<word id="16"><word ipa="/dæ/">da</word><translation>trail</translation><translation>path</translation><language>5</language><age>5</age><etymology>15</etymology></word>
-<word id="17"><word ipa="/dʐɨ/">dhi</word><translation>rings (sky)</translation><language>2</language><age>35</age><etymology>8</etymology></word>
-<word id="18"><word ipa="/ʐi/">zhi</word><translation>rings (sky)</translation><language>3</language><age>25</age><etymology>17</etymology></word>
-<word id="19"><word ipa="/ʐi/">zhi</word><translation>rings (sky)</translation><language>4</language><age>15</age><etymology>18</etymology></word>
-<word id="20"><word ipa="/ʐɪ/">zhi</word><translation>rings (sky)</translation><language>5</language><age>5</age><etymology>18</etymology></word>
-<word id="21"><word>so</word><translation>precipitation</translation><language>1</language><age>45</age></word>
-<word id="22"><word ipa="/ʂɤ/">sho</word><translation>precipitation</translation><language>2</language><age>35</age><etymology>21</etymology></word>
-<word id="23"><word ipa="/ʂɤ/">-sho</word><translation>related to weather</translation><language>3</language><age>27</age><etymology>22</etymology></word>
-<word id="24"><word>dhå</word><translation>warm</translation><translation>water</translation><translation>the sun</translation><language>1</language><age>45</age></word>
-<word id="25"><word ipa="/dʐæ/">dhå</word><translation>warm</translation><translation>water</translation><translation>the sun</translation><language>2</language><age>35</age><etymology>24</etymology></word>
-<word id="26"><word ipa="/ɖɘˈʂɤ/">desho</word><translation>sunny weather</translation><language>3</language><age>25</age><etymology>25</etymology><etymology>23</etymology></word>
-<word id="27"><word ipa="/ɖɤʂ/">dos</word><translation>sunny weather</translation><language>4</language><age>15</age><etymology>26</etymology></word>
-<word id="28"><word ipa="/ɖɤʂ/">dos</word><translation>sunny weather</translation><language>5</language><age>5</age><etymology>27</etymology></word>
-<word id="29"><word ipa="/ʐɘ/">zhe</word><translation>the sun</translation><language>3</language><age>25</age><etymology>25</etymology></word>
-<word id="30"><word ipa="/ʐɘ/">zhe</word><translation>the sun</translation><language>4</language><age>15</age><etymology>29</etymology></word>
-<word id="31"><word ipa="/ʐɘ/">zhe</word><translation>the sun</translation><language>5</language><age>5</age><etymology>30</etymology></word>
-<word id="32"><word ipa="/ʐi/">zhi</word><translation>warm</translation><translation>water</translation><language>3</language><age>25</age><etymology>25</etymology></word>
-<word id="33"><word ipa="/ʐi/">zhi</word><translation>warm</translation><language>4</language><age>15</age><etymology>32</etymology></word>
-<word id="34"><word ipa="/ʐɪ/">zhi</word><translation>warm</translation><language>5</language><age>5</age><etymology>33</etymology></word>
-<word id="35"><word ipa="/ʐiʂ/">zhis</word><translation>water</translation><language>4</language><age>15</age><etymology>32</etymology></word>
-<word id="36"><word ipa="/ʐɪʂ/">zhis</word><translation>water</translation><language>5</language><age>5</age><etymology>35</etymology></word>
-<word id="37"><word ipa="/ʐiˈʂɤ/">zhisho</word><translation>raindrop</translation><language>3</language><age>25</age><etymology>25</etymology><etymology>23</etymology></word>
-<word id="38"><word ipa="/ʐiˈʂɤʂ/">zhishos</word><translation>raindrop</translation><language>4</language><age>15</age><etymology>37</etymology></word>
-<word id="39"><word ipa="/ʂɪʂ/">shis</word><translation>raindrop</translation><language>5</language><age>5</age><etymology>38</etymology></word>
-<word id="40"><word>så</word><translation>snow</translation><translation>cold</translation><translation>moon</translation><language>1</language><age>45</age></word>
-<word id="41"><word ipa="/ʂæ/">shå</word><translation>snow</translation><translation>ice</translation><translation>cold</translation><translation>moon</translation><language>2</language><age>35</age><etymology>40</etymology></word>
-<word id="42"><word ipa="/ʂɘ/">she</word><translation>snow (ground)</translation><translation>cold</translation><language>3</language><age>25</age><etymology>41</etymology></word>
-<word id="43"><word ipa="/ʂɘˈʂɤ/">shesho</word><translation>snowflake</translation><language>3</language><age>25</age><etymology>42</etymology><etymology>23</etymology></word>
-<word id="44"><word ipa="/ʂɤʂ/">shos</word><translation>snowflake</translation><language>4</language><age>15</age><etymology>43</etymology></word>
-<word id="45"><word ipa="/ʂɤʂ/">shos</word><translation>snowflake</translation><language>5</language><age>5</age><etymology>44</etymology></word>
-<word id="46"><word ipa="/ʂɘ/">she</word><translation>snow (ground)</translation><language>4</language><age>15</age><etymology>42</etymology></word>
-<word id="47"><word ipa="/ʂɘ/">she</word><translation>snow (ground)</translation><language>5</language><age>5</age><etymology>46</etymology></word>
-<word id="48"><word ipa="/ʂi/">shi</word><translation>cold</translation><language>4</language><age>15</age><etymology>42</etymology></word>
-<word id="49"><word ipa="/ʂɪ/">shi</word><translation>cold</translation><language>5</language><age>5</age><etymology>48</etymology></word>
-<word id="50"><word ipa="/ʂɑ/">sha</word><translation>moon</translation><language>3</language><age>25</age><etymology>41</etymology></word>
-<word id="51"><word ipa="/ʂɑ/">sha</word><translation>moon</translation><language>4</language><age>15</age><etymology>50</etymology></word>
-<word id="52"><word ipa="/ʂæ/">sha</word><translation>moon</translation><language>5</language><age>5</age><etymology>51</etymology></word>
-<word id="53"><word ipa="/çɘˈʂɘ/">hyeshe</word><translation>ice</translation><language>3</language><age>25</age><etymology>41</etymology><etymology>66</etymology></word>
-<word id="54"><word ipa="/jɘʂ/">yes</word><translation>ice</translation><language>4</language><age>15</age><etymology>53</etymology></word>
-<word id="55"><word ipa="/jɘʂ/">yes</word><translation>ice</translation><language>5</language><age>5</age><etymology>54</etymology></word>
-<word id="56"><word ipa="/çɘˈʂɤ/">hyesho</word><translation>mixed snowfall</translation><translation>hailstone</translation><translation>slush</translation><language>3</language><age>25</age><etymology>53</etymology><etymology>23</etymology></word>
-<word id="57"><word ipa="/ʂɤɭ/">shol</word><translation>mixed snowfall</translation><translation>hailstone</translation><language>4</language><age>15</age><etymology>56</etymology></word>
-<word id="58"><word ipa="/ʂɤɭ/">shol</word><translation>mixed snowfall</translation><translation>hailstone</translation><language>5</language><age>5</age><etymology>57</etymology></word>
-<word id="59"><word ipa="/jɤʂ/">yos</word><translation>slush</translation><language>4</language><age>15</age><etymology>56</etymology></word>
-<word id="60"><word ipa="/jɤʂ/">yos</word><translation>slush</translation><language>5</language><age>5</age><etymology>59</etymology></word>
-<word id="61"><word>hi</word><translation>bad</translation><translation>dangerous</translation><language>1</language><age>45</age></word>
-<word id="62"><word ipa="/xɨ/">khi</word><translation>bad</translation><language>2</language><age>35</age><etymology>61</etymology></word>
-<word id="63"><word ipa="/xi/">khi</word><translation>bad</translation><language>3</language><age>25</age><etymology>62</etymology></word>
-<word id="64"><word ipa="/xi/">khi</word><translation>bad</translation><language>4</language><age>15</age><etymology>63</etymology></word>
-<word id="65"><word ipa="/xɪ/">khi</word><translation>bad</translation><language>5</language><age>5</age><etymology>64</etymology></word>
-<word id="66"><word ipa="/ʜɨ/">hi</word><translation>dangerous</translation><language>2</language><age>35</age><etymology>61</etymology></word>
-<word id="67"><word ipa="/ʜiʂ/">hish</word><translation>dangerous</translation><language>3</language><age>25</age><etymology>66</etymology></word>
-<word id="68"><word ipa="/ʂiɭ/">sil</word><translation>dangerous</translation><language>4</language><age>15</age><etymology>67</etymology></word>
-<word id="69"><word ipa="/ʈʂɪɭ/">tsil</word><translation>dangerous</translation><language>5</language><age>5</age><etymology>68</etymology></word>
-<word id="70"><word ipa="/l̠iʈ/">-lit</word><translation>one who</translation><language>3</language><age>27</age></word>
-<word id="71"><word ipa="/ˈçɑl̠iɳ/">hyalin</word><translation>to write</translation><language>3</language><age>26</age></word>
-<word id="72"><word ipa="/jɑɭɳ/">yaln</word><translation>to write</translation><language>4</language><age>15</age><etymology>71</etymology></word>
-<word id="73"><word ipa="/jæɭɳ/">yaln</word><translation>to write</translation><language>5</language><age>5</age><etymology>72</etymology></word>
-<word id="74"><word ipa="/ˈçɑl̠iʈ/">hyalit</word><translation>scribe</translation><language>3</language><age>25</age><etymology>71</etymology><etymology>70</etymology></word>
-<word id="75"><word ipa="/jɑˈɭiʈ/">yalit</word><translation>scribe</translation><language>4</language><age>15</age><etymology>74</etymology></word>
-<word id="76"><word ipa="/jæɻʈ/">yart</word><translation>bard (race)</translation><language>5</language><age>5</age><etymology>75</etymology></word>
-<word id="77"><word ipa="/çɑl̠ˈl̠ɑ/">hyal-la</word><translation>Yarla (language)</translation><language>3</language><age>25</age><etymology>71</etymology><etymology>82</etymology></word>
-<word id="78"><word ipa="/ˈjɑɻɭɑ/">yarla</word><translation>Yarla (language)</translation><language>4</language><age>15</age><etymology>77</etymology></word>
-<word id="79"><word ipa="/ˈjəɻɭæ/">yärla</word><translation>Yarla (language)</translation><language>5</language><age>5</age><etymology>78</etymology></word>
-<word id="80"><word>wå</word><translation>howl</translation><translation>noise</translation><language>1</language><age>45</age></word>
-<word id="81"><word ipa="/ɻɑ/">ra</word><translation>noise</translation><language>2</language><age>35</age><etymology>80</etymology></word>
-<word id="82"><word ipa="/l̠ɑ/">la</word><translation>noise</translation><language>3</language><age>25</age><etymology>81</etymology></word>
-<word id="83"><word ipa="/ɭɑ/">la</word><translation>noise</translation><language>4</language><age>15</age><etymology>82</etymology></word>
-<word id="84"><word ipa="/ɻæ/">ra</word><translation>noise</translation><language>5</language><age>5</age><etymology>83</etymology></word>
-<word id="85"><word ipa="/l̠ɑl̠/">lal</word><translation>to speak or make noise</translation><language>3</language><age>25</age><etymology>81</etymology></word>
-<word id="86"><word ipa="/ɭɑɻ/">lar</word><translation>to speak or make noise</translation><language>4</language><age>15</age><etymology>85</etymology></word>
-<word id="87"><word ipa="/ɻæɭ/">ral</word><translation>to speak or make noise</translation><language>5</language><age>5</age><etymology>86</etymology></word>
-<word id="88"><word ipa="/çæ/">hyå</word><translation>howl</translation><language>2</language><age>35</age><etymology>80</etymology></word>
-<word id="89"><word ipa="/çɘl̠/">hyel</word><translation>to howl</translation><language>3</language><age>25</age><etymology>88</etymology></word>
-<word id="90"><word ipa="/jɘɽ/">yeŕ</word><word ipa="/jɘˈɽɤː/">yeŕŕo</word><translation>to howl</translation><language>4</language><age>15</age><etymology>89</etymology></word>
-<word id="91"><word ipa="/jɘɽ/">yeŕ</word><word ipa="/jɘˈɽɤː/">yeŕŕo</word><translation>to howl</translation><language>5</language><age>5</age><etymology>90</etymology></word>
-<word id="92"><word ipa="/ˈçɤl̠iʈ/">hyolit</word><translation>router (race)</translation><language>3</language><age>25</age><etymology>88</etymology><etymology>70</etymology></word>
-<word id="93"><word ipa="/ɻɤˈʈiɭ/">rotil</word><translation>router (race)</translation><language>4</language><age>15</age><etymology>92</etymology></word>
-<word id="94"><word ipa="/ɻɤˈʈʂɘɽ/">rotseŕ</word><translation>router (race)</translation><language>5</language><age>5</age><etymology>93</etymology></word>
-<word id="95"><word>wådhu</word><translation>critter</translation><translation>person</translation><language>1</language><age>42</age><etymology>80</etymology><etymology>1</etymology></word>
-<word id="96"><word ipa="/ˈdʐɑɯçɑ/">dhauhya</word><translation>critter</translation><translation>person</translation><language>2</language><age>35</age><etymology>95</etymology></word>
-<word id="97"><word ipa="/ˈʈɑɯçɑ/">tauhya</word><translation>critter</translation><translation>person</translation><language>3</language><age>25</age><etymology>96</etymology></word>
-<word id="98"><word ipa="/ˈʈɤjɑ/">toya</word><translation>critter</translation><translation>person</translation><language>4</language><age>15</age><etymology>97</etymology></word>
-<word id="99"><word ipa="/ˈʈʂɤjæ/">tsoya</word><translation>critter</translation><translation>person</translation><language>5</language><age>5</age><etymology>98</etymology></word>
-<word id="100"><word>hå</word><word>hu</word><word>ha</word><translation>I</translation><translation>me</translation><language>1</language><age>45</age><etymology>1</etymology></word>
-<word id="101"><word ipa="/xæ/">khå</word><word ipa="/xɯ/">khu</word><word ipa="/xɑ/">kha</word><translation>I</translation><translation>me</translation><language>2</language><age>35</age><etymology>100</etymology></word>
-<word id="102"><word ipa="/çɑl̠/">hyal</word><translation>I (nom.)</translation><translation>me (acc.)</translation><language>3</language><age>25</age><etymology>101</etymology></word>
-<word id="103"><word ipa="/jɑɻ/">yar</word><translation>I (nom.)</translation><translation>me (acc.)</translation><language>4</language><age>15</age><etymology>102</etymology></word>
-<word id="104"><word ipa="/jəɻ/">yär</word><translation>I (nom.)</translation><translation>me (acc.)</translation><language>5</language><age>5</age><etymology>103</etymology></word>
-<word id="105"><word ipa="/çɤ/">hyo</word><translation>me (dative)</translation><language>3</language><age>25</age><etymology>101</etymology></word>
-<word id="106"><word ipa="/jɤ/">yo</word><translation>me (dative)</translation><language>4</language><age>15</age><etymology>105</etymology></word>
-<word id="107"><word ipa="/jɤ/">yo</word><translation>me (dative)</translation><language>5</language><age>5</age><etymology>106</etymology></word>
-<word id="108"><word>håtå</word><word>hutu</word><word>hata</word><translation>we</translation><translation>us</translation><language>1</language><age>42</age><etymology>100</etymology></word>
-<word id="109"><word id="/dʐæʈ/">tåt</word><word id="/dʐɯʈ/">tut</word><word id="/dʐɑʈ/">tat</word><translation>we</translation><translation>us</translation><language>2</language><age>35</age><etymology>108</etymology></word>
-<word id="110"><word ipa="/ʈɑʈ/">tat</word><translation>we</translation><translation>us</translation><language>3</language><age>25</age><etymology>109</etymology></word>
-<word id="111"><word ipa="/ʈɑʈ/">tat</word><translation>we</translation><translation>us</translation><language>4</language><age>15</age><etymology>110</etymology></word>
-<word id="112"><word ipa="/ʈʂæʈ/">tsat</word><translation>us (dative)</translation><language>5</language><age>5</age><etymology>111</etymology></word>
-<word id="113"><word ipa="/ʈʂæˈjæʈ/">tsayat</word><translation>we (nom.)</translation><translation>us (acc.)</translation><language>5</language><age>5</age><etymology>111</etymology></word>
-<word id="114"><word ipa="">shura</word><translation>sky</translation><language>1</language></word>
-<word id="115"><word ipa="">rå</word><translation>wood</translation><translation>tree</translation><language>1</language></word>
-<word id="116"><word ipa="">ma rå</word><translation>log</translation><language>1</language><etymology>115</etymology><etymology>117</etymology></word>
-<word id="117"><word ipa="">ma</word><translation>to fall</translation><translation>to rot</translation><translation>to be sick</translation><translation>to die</translation><language>1</language></word>
-<word id="118"><word ipa="">pwå</word><translation>feather</translation><translation>wing</translation><language>1</language></word>
-<word id="119"><word ipa="/ʂɯ`ɹɑ/">shura</word><translation>the sky</translation><translation>air</translation><language>2</language><etymology>114</etymology></word>
-<word id="120"><word ipa="/ʂɤ`dʐɑ/">shodha</word><translation>breath</translation><language>2</language><etymology>114</etymology><etymology>24</etymology></word>
-<word id="121"><word ipa="/ɹɑɯ/">rau</word><translation>forest</translation><language>2</language><etymology>115</etymology></word>
-<word id="122"><word ipa="/ɹæ/">rå</word><translation>wood</translation><translation>tree</translation><language>2</language><etymology>115</etymology></word>
-<word id="123"><word ipa="/ɲɑɹ/">ñar</word><translation>log</translation><language>2</language><etymology>116</etymology></word>
-<word id="124"><word ipa="/ɲɑ/">ña</word><translation>to fall</translation><language>2</language><etymology>117</etymology></word>
-<word id="125"><word ipa="/ɲɑɯ/">ñau</word><translation>to make something fall</translation><language>2</language><etymology>117</etymology></word>
-<word id="126"><word ipa="/ɲɑɪ/">ñai</word><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>2</language><etymology>117</etymology></word>
-<word id="127"><word ipa="/ʜɨ`ɲɑ/">hiña</word><translation>to rot</translation><translation>to be sick</translation><translation>to die</translation><language>2</language><etymology>117</etymology></word>
-<word id="128"><word ipa="/ʂɯɾ/">shuŕ</word><translation>the sky</translation><language>3</language><etymology>119</etymology></word>
-<word id="129"><word ipa="/ʂɯɹ/">shur</word><translation>air</translation><language>3</language><etymology>119</etymology></word>
-<word id="130"><word ipa="/ʂɤ`ɖɑ/">shoda</word><translation>breath</translation><language>3</language><etymology>120</etymology></word>
-<word id="131"><word ipa="/l̠ɑɯ/">lau</word><translation>forest</translation><language>3</language><etymology>121</etymology></word>
-<word id="132"><word ipa="/ɾɑ/">ŕa</word><translation>tree</translation><language>3</language><etymology>122</etymology></word>
-<word id="133"><word ipa="/ɹɑ/">ra</word><translation>wood</translation><language>3</language><etymology>122</etymology></word>
-<word id="134"><word ipa="/`ɾɑɳɖɑ/">ŕanda</word><translation>log</translation><language>3</language><etymology>123</etymology></word>
-<word id="135"><word ipa="/`ɹɑɳɖɑ/">randa</word><translation>plank</translation><translation>bar</translation><language>3</language><etymology>123</etymology></word>
-<word id="136"><word ipa="/ɳɑl̠/">nal</word><translation>to fall</translation><language>3</language><etymology>124</etymology></word>
-<word id="137"><word ipa="/ɳɑɯl̠/">naul</word><translation>to make something fall</translation><language>3</language><etymology>125</etymology></word>
-<word id="138"><word ipa="/ɳi/">ni</word><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>3</language><etymology>126</etymology></word>
-<word id="139"><word ipa="/çɘ`ɳɑl̠/">henal</word><translation>to rot</translation><translation>to be sick</translation><language>3</language><etymology>127</etymology></word>
-<word id="140"><word ipa="/çi`ɳɑɯl̠/">hyinaul</word><translation>to die</translation><translation>to kill</translation><language>3</language><etymology>127</etymology></word>
-<word id="141"><word ipa="/ʂɤɽ/">shoŕ</word><translation>the sky</translation><language>4</language><etymology>128</etymology></word>
-<word id="142"><word ipa="/ʂɤɹ/">shor</word><translation>air</translation><language>4</language><etymology>129</etymology></word>
-<word id="143"><word ipa="/`ɖɤʂɑ/">dosha</word><translation>breath</translation><language>4</language><etymology>130</etymology></word>
-<word id="144"><word ipa="/ɭɑ`jɤ/">layo</word><translation>forest</translation><language>4</language><etymology>131</etymology></word>
-<word id="145"><word ipa="/ɽɑ/">ŕa</word><translation>tree</translation><language>4</language><etymology>132</etymology></word>
-<word id="146"><word ipa="/ɻɑ/">ra</word><translation>wood</translation><language>4</language><etymology>133</etymology></word>
-<word id="147"><word ipa="/`ɖɑɳɽɑ/">danŕa</word><translation>log</translation><language>4</language><etymology>134</etymology></word>
-<word id="148"><word ipa="/`ɖɑɳɻɑ/">danra</word><translation>plank</translation><translation>bar</translation><language>4</language><etymology>135</etymology></word>
-<word id="149"><word ipa="/ɳɑɻ/">nar</word><translation>to fall</translation><language>4</language><etymology>136</etymology></word>
-<word id="150"><word ipa="/ɳɑ`ɭɤɭ/">nalol</word><translation>to make something fall</translation><language>4</language><etymology>137</etymology></word>
-<word id="151"><word ipa="/ɳi/">ni</word><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>4</language><etymology>138</etymology></word>
-<word id="152"><word ipa="/ɳɘ`jɑɭ/">neyal</word><translation>to rot</translation><translation>to be sick</translation><translation>to sicken</translation><language>4</language><etymology>139</etymology></word>
-<word id="153"><word ipa="/ji`ɳɑɭɳ/">yinaln</word><translation>to die</translation><translation>to kill</translation><language>4</language><etymology>140</etymology></word>
-<word id="154"><word ipa="/ʂɤɽ/">shoŕ</word><translation>the sky</translation><language>5</language><etymology>141</etymology></word>
-<word id="155"><word ipa="/ʂɤɹ/">shor</word><translation>air</translation><language>5</language><etymology>142</etymology></word>
-<word id="156"><word ipa="/`ʈʂɤʂæ/">tsosha</word><translation>breath</translation><language>5</language><etymology>143</etymology></word>
-<word id="157"><word ipa="/ɭæ`jɤ/">layo</word><translation>forest</translation><language>5</language><etymology>144</etymology></word>
-<word id="158"><word ipa="/ɽæ/">ŕa</word><translation>tree</translation><language>5</language><etymology>145</etymology></word>
-<word id="159"><word ipa="/ɻæ/">ra</word><translation>wood</translation><language>5</language><etymology>146</etymology></word>
-<word id="160"><word ipa="/ɖæɽɳ/">darn</word><translation>log</translation><language>5</language><etymology>147</etymology></word>
-<word id="161"><word ipa="/`ɖæɳɻæ/">danra</word><translation>plank</translation><translation>bar</translation><language>5</language><etymology>148</etymology></word>
-<word id="162"><word ipa="/ɳæɻ/">nar</word><translation>to fall</translation><language>5</language><etymology>149</etymology></word>
-<word id="163"><word ipa="/ɳæɭ`ɽɤɭ/">nalŕol</word><translation>to make something fall</translation><language>5</language><etymology>150</etymology></word>
-<word id="164"><word ipa="/ɳɘ/">ne</word><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>5</language><etymology>151</etymology></word>
-<word id="165"><word ipa="/ɳɘ`jæɭ/">neyal</word><translation>to rot</translation><translation>to be sick</translation><translation>to sicken</translation><language>5</language><etymology>152</etymology></word>
-<word id="166"><word ipa="/jɪ`ɳæɭɳ/">yinaln</word><translation>to die</translation><translation>to kill</translation><language>5</language><etymology>153</etymology></word>
-<word id="167"><word ipa="">dhahå</word><translation>river</translation><language>1</language><etymology>24</etymology><etymology>7</etymology></word>
-<word id="168"><word ipa="/ʜɑ`dʐɑ/">hadha</word><translation>river</translation><language>2</language><etymology>167</etymology></word>
-<word id="169"><word ipa="/çɑʈ`ʐɑ/">hyatzha</word><translation>river</translation><language>3</language><etymology>168</etymology></word>
-<word id="170"><word ipa="/ʈɑɭ`ʐɑ/">talzha</word><translation>river</translation><language>4</language><etymology>169</etymology></word>
-<word id="171"><word ipa="/ʈʂæɭ`ʐæ/">tsalzha</word><translation>river</translation><language>5</language><etymology>170</etymology></word>
+<word id="1"><roma>hidho</roma><translation>star</translation><translation>soul</translation><language>1</language><age>45</age></word>
+<word id="2"><roma ipa="/dʐɨˈʜɤɻ/">dhihor</roma><translation>star</translation><translation>soul</translation><language>2</language><age>35</age><etymology>1</etymology></word>
+<word id="3"><roma ipa="/ɖiˈçɤɻ/">dihyor</roma><translation>star</translation><translation>soul</translation><language>3</language><age>25</age><etymology>2</etymology></word>
+<word id="4"><roma ipa="/ʈiɭˈʂɤɻ/">tilsor</roma><translation>star</translation><translation>soul</translation><language>4</language><age>15</age><etymology>3</etymology></word>
+<word id="5"><roma ipa="/ʈʂɤɻ/">tsor</roma><translation>star</translation><translation>soul</translation><language>5</language><age>5</age><etymology>4</etymology></word>
+<word id="6"><roma>dhahidho</roma><translation>aurora</translation><language>1</language><age>40</age><etymology>1</etymology><etymology>7</etymology></word>
+<word id="7"><roma>dhahi</roma><translation>aurora</translation><translation>rings</translation><translation>path</translation><language>1</language><age>45</age></word>
+<word id="8"><roma>dhåhi</roma><translation>rings (sky)</translation><language>1</language><age>40</age><etymology>24</etymology><etymology>7</etymology></word>
+<word id="9"><roma ipa="/ʜɑɨˈdʐɤ/">haidho</roma><translation>aurora</translation><language>2</language><age>35</age><etymology>6</etymology></word>
+<word id="10"><roma ipa="/ʐɑˈʈɤ/">zhato</roma><translation>aurora</translation><language>3</language><age>25</age><etymology>9</etymology></word>
+<word id="11"><roma ipa="/ʐɑˈʈɤ/">zhato</roma><translation>aurora</translation><language>4</language><age>15</age><etymology>10</etymology></word>
+<word id="12"><roma ipa="/ʐæˈɖɤ/">zhado</roma><translation>aurora</translation><language>5</language><age>5</age><etymology>11</etymology></word>
+<word id="13"><roma ipa="/dʐɑɨ/">dhai</roma><translation>trail</translation><translation>path</translation><language>2</language><age>35</age><etymology>7</etymology></word>
+<word id="14"><roma ipa="/ɖɑ/">da</roma><translation>trail</translation><translation>path</translation><language>3</language><age>25</age><etymology>13</etymology></word>
+<word id="15"><roma ipa="/dɑ/">da</roma><translation>trail</translation><translation>path</translation><language>4</language><age>15</age><etymology>14</etymology></word>
+<word id="16"><roma ipa="/dæ/">da</roma><translation>trail</translation><translation>path</translation><language>5</language><age>5</age><etymology>15</etymology></word>
+<word id="17"><roma ipa="/dʐɨ/">dhi</roma><translation>rings (sky)</translation><language>2</language><age>35</age><etymology>8</etymology></word>
+<word id="18"><roma ipa="/ʐi/">zhi</roma><translation>rings (sky)</translation><language>3</language><age>25</age><etymology>17</etymology></word>
+<word id="19"><roma ipa="/ʐi/">zhi</roma><translation>rings (sky)</translation><language>4</language><age>15</age><etymology>18</etymology></word>
+<word id="20"><roma ipa="/ʐɪ/">zhi</roma><translation>rings (sky)</translation><language>5</language><age>5</age><etymology>18</etymology></word>
+<word id="21"><roma>so</roma><translation>precipitation</translation><language>1</language><age>45</age></word>
+<word id="22"><roma ipa="/ʂɤ/">sho</roma><translation>precipitation</translation><language>2</language><age>35</age><etymology>21</etymology></word>
+<word id="23"><roma ipa="/ʂɤ/">-sho</roma><translation>related to weather</translation><language>3</language><age>27</age><etymology>22</etymology></word>
+<word id="24"><roma>dhå</roma><translation>warm</translation><translation>water</translation><translation>the sun</translation><language>1</language><age>45</age></word>
+<word id="25"><roma ipa="/dʐæ/">dhå</roma><translation>warm</translation><translation>water</translation><translation>the sun</translation><language>2</language><age>35</age><etymology>24</etymology></word>
+<word id="26"><roma ipa="/ɖɘˈʂɤ/">desho</roma><translation>sunny weather</translation><language>3</language><age>25</age><etymology>25</etymology><etymology>23</etymology></word>
+<word id="27"><roma ipa="/ɖɤʂ/">dos</roma><translation>sunny weather</translation><language>4</language><age>15</age><etymology>26</etymology></word>
+<word id="28"><roma ipa="/ɖɤʂ/">dos</roma><translation>sunny weather</translation><language>5</language><age>5</age><etymology>27</etymology></word>
+<word id="29"><roma ipa="/ʐɘ/">zhe</roma><translation>the sun</translation><language>3</language><age>25</age><etymology>25</etymology></word>
+<word id="30"><roma ipa="/ʐɘ/">zhe</roma><translation>the sun</translation><language>4</language><age>15</age><etymology>29</etymology></word>
+<word id="31"><roma ipa="/ʐɘ/">zhe</roma><translation>the sun</translation><language>5</language><age>5</age><etymology>30</etymology></word>
+<word id="32"><roma ipa="/ʐi/">zhi</roma><translation>warm</translation><translation>water</translation><language>3</language><age>25</age><etymology>25</etymology></word>
+<word id="33"><roma ipa="/ʐi/">zhi</roma><translation>warm</translation><language>4</language><age>15</age><etymology>32</etymology></word>
+<word id="34"><roma ipa="/ʐɪ/">zhi</roma><translation>warm</translation><language>5</language><age>5</age><etymology>33</etymology></word>
+<word id="35"><roma ipa="/ʐiʂ/">zhis</roma><translation>water</translation><language>4</language><age>15</age><etymology>32</etymology></word>
+<word id="36"><roma ipa="/ʐɪʂ/">zhis</roma><translation>water</translation><language>5</language><age>5</age><etymology>35</etymology></word>
+<word id="37"><roma ipa="/ʐiˈʂɤ/">zhisho</roma><translation>raindrop</translation><language>3</language><age>25</age><etymology>25</etymology><etymology>23</etymology></word>
+<word id="38"><roma ipa="/ʐiˈʂɤʂ/">zhishos</roma><translation>raindrop</translation><language>4</language><age>15</age><etymology>37</etymology></word>
+<word id="39"><roma ipa="/ʂɪʂ/">shis</roma><translation>raindrop</translation><language>5</language><age>5</age><etymology>38</etymology></word>
+<word id="40"><roma>så</roma><translation>snow</translation><translation>cold</translation><translation>moon</translation><language>1</language><age>45</age></word>
+<word id="41"><roma ipa="/ʂæ/">shå</roma><translation>snow</translation><translation>ice</translation><translation>cold</translation><translation>moon</translation><language>2</language><age>35</age><etymology>40</etymology></word>
+<word id="42"><roma ipa="/ʂɘ/">she</roma><translation>snow (ground)</translation><translation>cold</translation><language>3</language><age>25</age><etymology>41</etymology></word>
+<word id="43"><roma ipa="/ʂɘˈʂɤ/">shesho</roma><translation>snowflake</translation><language>3</language><age>25</age><etymology>42</etymology><etymology>23</etymology></word>
+<word id="44"><roma ipa="/ʂɤʂ/">shos</roma><translation>snowflake</translation><language>4</language><age>15</age><etymology>43</etymology></word>
+<word id="45"><roma ipa="/ʂɤʂ/">shos</roma><translation>snowflake</translation><language>5</language><age>5</age><etymology>44</etymology></word>
+<word id="46"><roma ipa="/ʂɘ/">she</roma><translation>snow (ground)</translation><language>4</language><age>15</age><etymology>42</etymology></word>
+<word id="47"><roma ipa="/ʂɘ/">she</roma><translation>snow (ground)</translation><language>5</language><age>5</age><etymology>46</etymology></word>
+<word id="48"><roma ipa="/ʂi/">shi</roma><translation>cold</translation><language>4</language><age>15</age><etymology>42</etymology></word>
+<word id="49"><roma ipa="/ʂɪ/">shi</roma><translation>cold</translation><language>5</language><age>5</age><etymology>48</etymology></word>
+<word id="50"><roma ipa="/ʂɑ/">sha</roma><translation>moon</translation><language>3</language><age>25</age><etymology>41</etymology></word>
+<word id="51"><roma ipa="/ʂɑ/">sha</roma><translation>moon</translation><language>4</language><age>15</age><etymology>50</etymology></word>
+<word id="52"><roma ipa="/ʂæ/">sha</roma><translation>moon</translation><language>5</language><age>5</age><etymology>51</etymology></word>
+<word id="53"><roma ipa="/çɘˈʂɘ/">hyeshe</roma><translation>ice</translation><language>3</language><age>25</age><etymology>41</etymology><etymology>66</etymology></word>
+<word id="54"><roma ipa="/jɘʂ/">yes</roma><translation>ice</translation><language>4</language><age>15</age><etymology>53</etymology></word>
+<word id="55"><roma ipa="/jɘʂ/">yes</roma><translation>ice</translation><language>5</language><age>5</age><etymology>54</etymology></word>
+<word id="56"><roma ipa="/çɘˈʂɤ/">hyesho</roma><translation>mixed snowfall</translation><translation>hailstone</translation><translation>slush</translation><language>3</language><age>25</age><etymology>53</etymology><etymology>23</etymology></word>
+<word id="57"><roma ipa="/ʂɤɭ/">shol</roma><translation>mixed snowfall</translation><translation>hailstone</translation><language>4</language><age>15</age><etymology>56</etymology></word>
+<word id="58"><roma ipa="/ʂɤɭ/">shol</roma><translation>mixed snowfall</translation><translation>hailstone</translation><language>5</language><age>5</age><etymology>57</etymology></word>
+<word id="59"><roma ipa="/jɤʂ/">yos</roma><translation>slush</translation><language>4</language><age>15</age><etymology>56</etymology></word>
+<word id="60"><roma ipa="/jɤʂ/">yos</roma><translation>slush</translation><language>5</language><age>5</age><etymology>59</etymology></word>
+<word id="61"><roma>hi</roma><translation>bad</translation><translation>dangerous</translation><language>1</language><age>45</age></word>
+<word id="62"><roma ipa="/xɨ/">khi</roma><translation>bad</translation><language>2</language><age>35</age><etymology>61</etymology></word>
+<word id="63"><roma ipa="/xi/">khi</roma><translation>bad</translation><language>3</language><age>25</age><etymology>62</etymology></word>
+<word id="64"><roma ipa="/xi/">khi</roma><translation>bad</translation><language>4</language><age>15</age><etymology>63</etymology></word>
+<word id="65"><roma ipa="/xɪ/">khi</roma><translation>bad</translation><language>5</language><age>5</age><etymology>64</etymology></word>
+<word id="66"><roma ipa="/ʜɨ/">hi</roma><translation>dangerous</translation><language>2</language><age>35</age><etymology>61</etymology></word>
+<word id="67"><roma ipa="/ʜiʂ/">hish</roma><translation>dangerous</translation><language>3</language><age>25</age><etymology>66</etymology></word>
+<word id="68"><roma ipa="/ʂiɭ/">sil</roma><translation>dangerous</translation><language>4</language><age>15</age><etymology>67</etymology></word>
+<word id="69"><roma ipa="/ʈʂɪɭ/">tsil</roma><translation>dangerous</translation><language>5</language><age>5</age><etymology>68</etymology></word>
+<word id="70"><roma ipa="/l̠iʈ/">-lit</roma><translation>one who</translation><language>3</language><age>27</age></word>
+<word id="71"><roma ipa="/ˈçɑl̠iɳ/">hyalin</roma><translation>to write</translation><language>3</language><age>26</age></word>
+<word id="72"><roma ipa="/jɑɭɳ/">yaln</roma><translation>to write</translation><language>4</language><age>15</age><etymology>71</etymology></word>
+<word id="73"><roma ipa="/jæɭɳ/">yaln</roma><translation>to write</translation><language>5</language><age>5</age><etymology>72</etymology></word>
+<word id="74"><roma ipa="/ˈçɑl̠iʈ/">hyalit</roma><translation>scribe</translation><language>3</language><age>25</age><etymology>71</etymology><etymology>70</etymology></word>
+<word id="75"><roma ipa="/jɑˈɭiʈ/">yalit</roma><translation>scribe</translation><language>4</language><age>15</age><etymology>74</etymology></word>
+<word id="76"><roma ipa="/jæɻʈ/">yart</roma><translation>bard (race)</translation><language>5</language><age>5</age><etymology>75</etymology></word>
+<word id="77"><roma ipa="/çɑl̠ˈl̠ɑ/">hyal-la</roma><translation>Yarla (language)</translation><language>3</language><age>25</age><etymology>71</etymology><etymology>82</etymology></word>
+<word id="78"><roma ipa="/ˈjɑɻɭɑ/">yarla</roma><translation>Yarla (language)</translation><language>4</language><age>15</age><etymology>77</etymology></word>
+<word id="79"><roma ipa="/ˈjəɻɭæ/">yärla</roma><translation>Yarla (language)</translation><language>5</language><age>5</age><etymology>78</etymology></word>
+<word id="80"><roma>wå</roma><translation>howl</translation><translation>noise</translation><language>1</language><age>45</age></word>
+<word id="81"><roma ipa="/ɻɑ/">ra</roma><translation>noise</translation><language>2</language><age>35</age><etymology>80</etymology></word>
+<word id="82"><roma ipa="/l̠ɑ/">la</roma><translation>noise</translation><language>3</language><age>25</age><etymology>81</etymology></word>
+<word id="83"><roma ipa="/ɭɑ/">la</roma><translation>noise</translation><language>4</language><age>15</age><etymology>82</etymology></word>
+<word id="84"><roma ipa="/ɻæ/">ra</roma><translation>noise</translation><language>5</language><age>5</age><etymology>83</etymology></word>
+<word id="85"><roma ipa="/l̠ɑl̠/">lal</roma><translation>to speak or make noise</translation><language>3</language><age>25</age><etymology>81</etymology></word>
+<word id="86"><roma ipa="/ɭɑɻ/">lar</roma><translation>to speak or make noise</translation><language>4</language><age>15</age><etymology>85</etymology></word>
+<word id="87"><roma ipa="/ɻæɭ/">ral</roma><translation>to speak or make noise</translation><language>5</language><age>5</age><etymology>86</etymology></word>
+<word id="88"><roma ipa="/çæ/">hyå</roma><translation>howl</translation><language>2</language><age>35</age><etymology>80</etymology></word>
+<word id="89"><roma ipa="/çɘl̠/">hyel</roma><translation>to howl</translation><language>3</language><age>25</age><etymology>88</etymology></word>
+<word id="90"><roma ipa="/jɘɽ/">yeŕ</roma><roma ipa="/jɘˈɽɤː/">yeŕŕo</roma><translation>to howl</translation><language>4</language><age>15</age><etymology>89</etymology></word>
+<word id="91"><roma ipa="/jɘɽ/">yeŕ</roma><roma ipa="/jɘˈɽɤː/">yeŕŕo</roma><translation>to howl</translation><language>5</language><age>5</age><etymology>90</etymology></word>
+<word id="92"><roma ipa="/ˈçɤl̠iʈ/">hyolit</roma><translation>router (race)</translation><language>3</language><age>25</age><etymology>88</etymology><etymology>70</etymology></word>
+<word id="93"><roma ipa="/ɻɤˈʈiɭ/">rotil</roma><translation>router (race)</translation><language>4</language><age>15</age><etymology>92</etymology></word>
+<word id="94"><roma ipa="/ɻɤˈʈʂɘɽ/">rotseŕ</roma><translation>router (race)</translation><language>5</language><age>5</age><etymology>93</etymology></word>
+<word id="95"><roma>wådhu</roma><translation>critter</translation><translation>person</translation><language>1</language><age>42</age><etymology>80</etymology><etymology>1</etymology></word>
+<word id="96"><roma ipa="/ˈdʐɑɯçɑ/">dhauhya</roma><translation>critter</translation><translation>person</translation><language>2</language><age>35</age><etymology>95</etymology></word>
+<word id="97"><roma ipa="/ˈʈɑɯçɑ/">tauhya</roma><translation>critter</translation><translation>person</translation><language>3</language><age>25</age><etymology>96</etymology></word>
+<word id="98"><roma ipa="/ˈʈɤjɑ/">toya</roma><translation>critter</translation><translation>person</translation><language>4</language><age>15</age><etymology>97</etymology></word>
+<word id="99"><roma ipa="/ˈʈʂɤjæ/">tsoya</roma><translation>critter</translation><translation>person</translation><language>5</language><age>5</age><etymology>98</etymology></word>
+<word id="100"><roma>hå</roma><roma>hu</roma><roma>ha</roma><translation>I</translation><translation>me</translation><language>1</language><age>45</age><etymology>1</etymology></word>
+<word id="101"><roma ipa="/xæ/">khå</roma><roma ipa="/xɯ/">khu</roma><roma ipa="/xɑ/">kha</roma><translation>I</translation><translation>me</translation><language>2</language><age>35</age><etymology>100</etymology></word>
+<word id="102"><roma ipa="/çɑl̠/">hyal</roma><translation>I (nom.)</translation><translation>me (acc.)</translation><language>3</language><age>25</age><etymology>101</etymology></word>
+<word id="103"><roma ipa="/jɑɻ/">yar</roma><translation>I (nom.)</translation><translation>me (acc.)</translation><language>4</language><age>15</age><etymology>102</etymology></word>
+<word id="104"><roma ipa="/jəɻ/">yär</roma><translation>I (nom.)</translation><translation>me (acc.)</translation><language>5</language><age>5</age><etymology>103</etymology></word>
+<word id="105"><roma ipa="/çɤ/">hyo</roma><translation>me (dative)</translation><language>3</language><age>25</age><etymology>101</etymology></word>
+<word id="106"><roma ipa="/jɤ/">yo</roma><translation>me (dative)</translation><language>4</language><age>15</age><etymology>105</etymology></word>
+<word id="107"><roma ipa="/jɤ/">yo</roma><translation>me (dative)</translation><language>5</language><age>5</age><etymology>106</etymology></word>
+<word id="108"><roma>håtå</roma><roma>hutu</roma><roma>hata</roma><translation>we</translation><translation>us</translation><language>1</language><age>42</age><etymology>100</etymology></word>
+<word id="109"><roma ipa="/dʐæʈ/">tåt</roma><roma ipa="/dʐɯʈ/">tut</roma><roma ipa="/dʐɑʈ/">tat</roma><translation>we</translation><translation>us</translation><language>2</language><age>35</age><etymology>108</etymology></word>
+<word id="110"><roma ipa="/ʈɑʈ/">tat</roma><translation>we</translation><translation>us</translation><language>3</language><age>25</age><etymology>109</etymology></word>
+<word id="111"><roma ipa="/ʈɑʈ/">tat</roma><translation>we</translation><translation>us</translation><language>4</language><age>15</age><etymology>110</etymology></word>
+<word id="112"><roma ipa="/ʈʂæʈ/">tsat</roma><translation>us (dative)</translation><language>5</language><age>5</age><etymology>111</etymology></word>
+<word id="113"><roma ipa="/ʈʂæˈjæʈ/">tsayat</roma><translation>we (nom.)</translation><translation>us (acc.)</translation><language>5</language><age>5</age><etymology>111</etymology></word>
+<word id="114"><roma ipa="">shura</roma><translation>sky</translation><language>1</language></word>
+<word id="115"><roma ipa="">rå</roma><translation>wood</translation><translation>tree</translation><language>1</language></word>
+<word id="116"><roma ipa="">ma rå</roma><translation>log</translation><language>1</language><etymology>115</etymology><etymology>117</etymology></word>
+<word id="117"><roma ipa="">ma</roma><translation>to fall</translation><translation>to rot</translation><translation>to be sick</translation><translation>to die</translation><language>1</language></word>
+<word id="118"><roma ipa="">pwå</roma><translation>feather</translation><translation>wing</translation><language>1</language></word>
+<word id="119"><roma ipa="/ʂɯ`ɹɑ/">shura</roma><translation>the sky</translation><translation>air</translation><language>2</language><etymology>114</etymology></word>
+<word id="120"><roma ipa="/ʂɤ`dʐɑ/">shodha</roma><translation>breath</translation><language>2</language><etymology>114</etymology><etymology>24</etymology></word>
+<word id="121"><roma ipa="/ɹɑɯ/">rau</roma><translation>forest</translation><language>2</language><etymology>115</etymology></word>
+<word id="122"><roma ipa="/ɹæ/">rå</roma><translation>wood</translation><translation>tree</translation><language>2</language><etymology>115</etymology></word>
+<word id="123"><roma ipa="/ɲɑɹ/">ñar</roma><translation>log</translation><language>2</language><etymology>116</etymology></word>
+<word id="124"><roma ipa="/ɲɑ/">ña</roma><translation>to fall</translation><language>2</language><etymology>117</etymology></word>
+<word id="125"><roma ipa="/ɲɑɯ/">ñau</roma><translation>to make something fall</translation><language>2</language><etymology>117</etymology></word>
+<word id="126"><roma ipa="/ɲɑɪ/">ñai</roma><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>2</language><etymology>117</etymology></word>
+<word id="127"><roma ipa="/ʜɨ`ɲɑ/">hiña</roma><translation>to rot</translation><translation>to be sick</translation><translation>to die</translation><language>2</language><etymology>117</etymology></word>
+<word id="128"><roma ipa="/ʂɯɾ/">shuŕ</roma><translation>the sky</translation><language>3</language><etymology>119</etymology></word>
+<word id="129"><roma ipa="/ʂɯɹ/">shur</roma><translation>air</translation><language>3</language><etymology>119</etymology></word>
+<word id="130"><roma ipa="/ʂɤ`ɖɑ/">shoda</roma><translation>breath</translation><language>3</language><etymology>120</etymology></word>
+<word id="131"><roma ipa="/l̠ɑɯ/">lau</roma><translation>forest</translation><language>3</language><etymology>121</etymology></word>
+<word id="132"><roma ipa="/ɾɑ/">ŕa</roma><translation>tree</translation><language>3</language><etymology>122</etymology></word>
+<word id="133"><roma ipa="/ɹɑ/">ra</roma><translation>wood</translation><language>3</language><etymology>122</etymology></word>
+<word id="134"><roma ipa="/`ɾɑɳɖɑ/">ŕanda</roma><translation>log</translation><language>3</language><etymology>123</etymology></word>
+<word id="135"><roma ipa="/`ɹɑɳɖɑ/">randa</roma><translation>plank</translation><translation>bar</translation><language>3</language><etymology>123</etymology></word>
+<word id="136"><roma ipa="/ɳɑl̠/">nal</roma><translation>to fall</translation><language>3</language><etymology>124</etymology></word>
+<word id="137"><roma ipa="/ɳɑɯl̠/">naul</roma><translation>to make something fall</translation><language>3</language><etymology>125</etymology></word>
+<word id="138"><roma ipa="/ɳi/">ni</roma><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>3</language><etymology>126</etymology></word>
+<word id="139"><roma ipa="/çɘ`ɳɑl̠/">henal</roma><translation>to rot</translation><translation>to be sick</translation><language>3</language><etymology>127</etymology></word>
+<word id="140"><roma ipa="/çi`ɳɑɯl̠/">hyinaul</roma><translation>to die</translation><translation>to kill</translation><language>3</language><etymology>127</etymology></word>
+<word id="141"><roma ipa="/ʂɤɽ/">shoŕ</roma><translation>the sky</translation><language>4</language><etymology>128</etymology></word>
+<word id="142"><roma ipa="/ʂɤɹ/">shor</roma><translation>air</translation><language>4</language><etymology>129</etymology></word>
+<word id="143"><roma ipa="/`ɖɤʂɑ/">dosha</roma><translation>breath</translation><language>4</language><etymology>130</etymology></word>
+<word id="144"><roma ipa="/ɭɑ`jɤ/">layo</roma><translation>forest</translation><language>4</language><etymology>131</etymology></word>
+<word id="145"><roma ipa="/ɽɑ/">ŕa</roma><translation>tree</translation><language>4</language><etymology>132</etymology></word>
+<word id="146"><roma ipa="/ɻɑ/">ra</roma><translation>wood</translation><language>4</language><etymology>133</etymology></word>
+<word id="147"><roma ipa="/`ɖɑɳɽɑ/">danŕa</roma><translation>log</translation><language>4</language><etymology>134</etymology></word>
+<word id="148"><roma ipa="/`ɖɑɳɻɑ/">danra</roma><translation>plank</translation><translation>bar</translation><language>4</language><etymology>135</etymology></word>
+<word id="149"><roma ipa="/ɳɑɻ/">nar</roma><translation>to fall</translation><language>4</language><etymology>136</etymology></word>
+<word id="150"><roma ipa="/ɳɑ`ɭɤɭ/">nalol</roma><translation>to make something fall</translation><language>4</language><etymology>137</etymology></word>
+<word id="151"><roma ipa="/ɳi/">ni</roma><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>4</language><etymology>138</etymology></word>
+<word id="152"><roma ipa="/ɳɘ`jɑɭ/">neyal</roma><translation>to rot</translation><translation>to be sick</translation><translation>to sicken</translation><language>4</language><etymology>139</etymology></word>
+<word id="153"><roma ipa="/ji`ɳɑɭɳ/">yinaln</roma><translation>to die</translation><translation>to kill</translation><language>4</language><etymology>140</etymology></word>
+<word id="154"><roma ipa="/ʂɤɽ/">shoŕ</roma><translation>the sky</translation><language>5</language><etymology>141</etymology></word>
+<word id="155"><roma ipa="/ʂɤɹ/">shor</roma><translation>air</translation><language>5</language><etymology>142</etymology></word>
+<word id="156"><roma ipa="/`ʈʂɤʂæ/">tsosha</roma><translation>breath</translation><language>5</language><etymology>143</etymology></word>
+<word id="157"><roma ipa="/ɭæ`jɤ/">layo</roma><translation>forest</translation><language>5</language><etymology>144</etymology></word>
+<word id="158"><roma ipa="/ɽæ/">ŕa</roma><translation>tree</translation><language>5</language><etymology>145</etymology></word>
+<word id="159"><roma ipa="/ɻæ/">ra</roma><translation>wood</translation><language>5</language><etymology>146</etymology></word>
+<word id="160"><roma ipa="/ɖæɽɳ/">darn</roma><translation>log</translation><language>5</language><etymology>147</etymology></word>
+<word id="161"><roma ipa="/`ɖæɳɻæ/">danra</roma><translation>plank</translation><translation>bar</translation><language>5</language><etymology>148</etymology></word>
+<word id="162"><roma ipa="/ɳæɻ/">nar</roma><translation>to fall</translation><language>5</language><etymology>149</etymology></word>
+<word id="163"><roma ipa="/ɳæɭ`ɽɤɭ/">nalŕol</roma><translation>to make something fall</translation><language>5</language><etymology>150</etymology></word>
+<word id="164"><roma ipa="/ɳɘ/">ne</roma><translation>then</translation><translation>that</translation><translation>after</translation><translation>(clause seperator)</translation><language>5</language><etymology>151</etymology></word>
+<word id="165"><roma ipa="/ɳɘ`jæɭ/">neyal</roma><translation>to rot</translation><translation>to be sick</translation><translation>to sicken</translation><language>5</language><etymology>152</etymology></word>
+<word id="166"><roma ipa="/jɪ`ɳæɭɳ/">yinaln</roma><translation>to die</translation><translation>to kill</translation><language>5</language><etymology>153</etymology></word>
+<word id="167"><roma ipa="">dhahå</roma><translation>river</translation><language>1</language><etymology>24</etymology><etymology>7</etymology></word>
+<word id="168"><roma ipa="/ʜɑ`dʐɑ/">hadha</roma><translation>river</translation><language>2</language><etymology>167</etymology></word>
+<word id="169"><roma ipa="/çɑʈ`ʐɑ/">hyatzha</roma><translation>river</translation><language>3</language><etymology>168</etymology></word>
+<word id="170"><roma ipa="/ʈɑɭ`ʐɑ/">talzha</roma><translation>river</translation><language>4</language><etymology>169</etymology></word>
+<word id="171"><roma ipa="/ʈʂæɭ`ʐæ/">tsalzha</roma><translation>river</translation><language>5</language><etymology>170</etymology></word>
 </lexicon>
