@@ -1,0 +1,96 @@
+Ancient Glyphics: &ref_0
+  name:
+    - Ancient Glyphics
+  parent: null
+  dead: true
+  lexicon:
+    - &ref_1
+      def:
+        - star
+        - soul
+      ety: null
+      roma:
+        - hidho
+      language: *ref_0
+Arboreal Common: &ref_2
+  name:
+    - Arboreal Common
+    - Glyphics
+  parent: *ref_0
+  dead: true
+  lexicon:
+    - &ref_3
+      def:
+        - star
+        - soul
+      ety: *ref_1
+      roma:
+        - dhihor
+      language: *ref_2
+Proto-Yarla: &ref_4
+  name:
+    - Proto-Yarla
+  parent: *ref_2
+  dead: true
+  lexicon:
+    - &ref_5
+      def:
+        - star
+        - soul
+      ety: *ref_3
+      roma:
+        - dihyor
+      language: *ref_4
+Old Yarla: &ref_6
+  name:
+    - Old Yarla
+  parent: *ref_4
+  dead: true
+  lexicon:
+    - &ref_7
+      def:
+        - star
+        - soul
+      ety: *ref_5
+      roma:
+        - tor
+      language: *ref_6
+Yarla: &ref_8
+  name:
+    - Yarla
+    - Modern Yarla
+  parent: *ref_6
+  lexicon:
+    - def:
+        - star
+        - soul
+      ety: *ref_7
+      roma:
+        - tsor
+      language: *ref_8
+Classic Ludi: &ref_9
+  name:
+    - Classic Ludi
+  parent: *ref_2
+  dead: true
+  lexicon:
+    - &ref_10
+      def:
+        - star
+        - soul
+      ety: *ref_3
+      roma:
+        - tihor
+      language: *ref_9
+Ruti: &ref_11
+  name:
+    - Ruti
+  parent: *ref_9
+  lexicon:
+    - def:
+        - star
+        - soul
+      ety: *ref_10
+      roma:
+        - dhor
+      language: *ref_11
