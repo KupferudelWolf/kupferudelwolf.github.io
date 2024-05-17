@@ -1,7 +1,5 @@
 /*jshint esversion: 7*/
 
-import AV from '/build/av.module.js/av.module.js';
-
 ( function () {
     const CONST = {
         AU: {
@@ -15,7 +13,7 @@ import AV from '/build/av.module.js/av.module.js';
     };
 
     class App {
-        constructor() {
+        constructor () {
             this.units = {
                 acceleration: {
                     'm/s2': {
